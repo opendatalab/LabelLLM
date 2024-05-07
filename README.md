@@ -20,7 +20,7 @@ AI 辅助标注，支持载入预标注结果并可在此基础上自行微调�
 
 # 快速上手
 
-- <a href="[https://opendatalab.github.io/labelU-Kit/](https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF)">
+-  <a href="[https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF]">
     <button>运营端使用教程</button>
 </a>
 
