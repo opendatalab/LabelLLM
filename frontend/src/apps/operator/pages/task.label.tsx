@@ -210,7 +210,7 @@ export default function TaskList() {
     () => ({
       columns,
       dataSource: data?.list,
-      rowKey: 'id',
+      rowKey: 'task_id',
       loading: isFetching,
       pagination: {
         total: data?.total,

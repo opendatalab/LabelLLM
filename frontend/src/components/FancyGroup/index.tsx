@@ -62,7 +62,7 @@ export const FancyGroup: React.FC<FancyGroupProps> = ({ group, disabled, value, 
           rules,
           type,
           children,
-          key,
+          key: someKey,
           field,
           initialValue,
           hidden,
@@ -95,7 +95,7 @@ export const FancyGroup: React.FC<FancyGroupProps> = ({ group, disabled, value, 
 
           return (
             <StyledGroupFormItem
-              key={key}
+              key={someKey}
               layout={layout}
               label={label}
               rules={rules}
@@ -103,7 +103,7 @@ export const FancyGroup: React.FC<FancyGroupProps> = ({ group, disabled, value, 
               initialValue={initialValue}
               hidden={hidden}
             >
-              <FancyGroup key={key} disabled={disabled} group={children} value={value} name={finalName} />
+              <FancyGroup key={someKey} disabled={disabled} group={children} value={value} name={finalName} />
             </StyledGroupFormItem>
           );
         }
@@ -111,7 +111,7 @@ export const FancyGroup: React.FC<FancyGroupProps> = ({ group, disabled, value, 
         if (typeof renderFormItem !== 'function') {
           return (
             <Form.Item
-              key={key}
+              key={someKey}
               label={label}
               preserve={false}
               name={finalName}
@@ -121,13 +121,13 @@ export const FancyGroup: React.FC<FancyGroupProps> = ({ group, disabled, value, 
               hidden={hidden}
               {...fieldProps}
             >
-              <FancyInput disabled={disabled} {...itemConfig} {...antProps} fullField={finalName} />
+              <FancyInput disabled={disabled} {...itemConfig} {...antProps} fullField={finalName} key={someKey} />
             </Form.Item>
           );
         }
 
         return (
-          <Form.Item noStyle shouldUpdate dependencies={dependencies} key={key}>
+          <Form.Item noStyle shouldUpdate dependencies={dependencies} key={someKey}>
             {() => {
               let input: React.ReactNode = (
                 <FancyInput {...itemConfig} {...antProps} disabled={disabled} fullField={finalName} />
