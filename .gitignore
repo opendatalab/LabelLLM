@@ -40,4 +40,4 @@ lerna-debug.log*
 
 /packages/server/public
 
-
+.vscode
