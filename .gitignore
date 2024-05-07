@@ -1,13 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-web/node_modules
+frontend/node_modules
 .DS_Store
 
 # lock file
-web/yarn.lock
-web/index.html
-web/pnpm-lock.yaml
+frontend/yarn.lock
+frontend/index.html
+frontend/pnpm-lock.yaml
 gptcommit.toml
 .husky/prepare-commit-msg
 
