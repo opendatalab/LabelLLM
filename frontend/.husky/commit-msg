@@ -5,4 +5,4 @@
 
 echo "$(pwd)"
 
-"$(pwd)/web/node_modules/.bin/commitlint" --config ./web/.commitlintrc --edit "$1"
+"$(pwd)/frontend/node_modules/.bin/commitlint" --config ./web/.commitlintrc --edit "$1"

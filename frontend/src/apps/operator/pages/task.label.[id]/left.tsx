@@ -2,7 +2,6 @@ import { useParams, useRevalidator, useRouteLoaderData } from 'react-router';
 import styled from 'styled-components';
 import type { ProDescriptionsProps } from '@ant-design/pro-components';
 import { ProDescriptions } from '@ant-design/pro-components';
-import formatter from '@label-u/formatter';
 import { Link } from 'react-router-dom';
 import { Button, Form, Select } from 'antd';
 import Icon, { CheckOutlined, CloseOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
@@ -21,6 +20,7 @@ import JsonlUpload from '../../components/JsonlUpload';
 import { ReactComponent as BookIcon } from '../../assets/book.svg';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
+import dayjs from 'dayjs';
 
 export const fillDefaultPluginValues = (toolConfig: TaskToolConfig) => {
   const result = _.cloneDeep(toolConfig);
@@ -151,7 +151,7 @@ const basicInfoColumns: ProDescriptionsProps['columns'] = [
     key: 'created_time',
     dataIndex: 'created_time',
     render: (text) => {
-      return formatter.format('dateTime', text, { style: 'YYYY-MM-DD HH:mm:ss' });
+      return dayjs(text as string).format('YYYY-MM-DD HH:mm:ss');
     },
   },
 ];

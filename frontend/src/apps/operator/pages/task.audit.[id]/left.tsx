@@ -2,7 +2,6 @@ import { useParams, useRevalidator, useRouteLoaderData } from 'react-router';
 import styled from 'styled-components';
 import type { ProDescriptionsProps } from '@ant-design/pro-components';
 import { ProDescriptions } from '@ant-design/pro-components';
-import formatter from '@label-u/formatter';
 import { Link } from 'react-router-dom';
 import { Button, Card, Form, Select } from 'antd';
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
@@ -21,6 +20,7 @@ import Help from '../../components/Help';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
 import { fillDefaultPluginValues } from '../task.label.[id]/left';
+import dayjs from 'dayjs';
 
 const StyledDescription = styled(ProDescriptions)`
   .ant-descriptions-row:last-child .ant-descriptions-item {
@@ -106,7 +106,7 @@ const basicInfoColumns: ProDescriptionsProps['columns'] = [
     key: 'created_time',
     dataIndex: 'created_time',
     render: (text) => {
-      return formatter.format('dateTime', text, { style: 'YYYY-MM-DD HH:mm:ss' });
+      return dayjs(text as string).format('YYYY-MM-DD HH:mm:ss');
     },
   },
 ];

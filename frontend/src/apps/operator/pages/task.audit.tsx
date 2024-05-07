@@ -6,7 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import type { ColumnsType } from 'antd/es/table';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import _ from 'lodash';
-import formatter from '@label-u/formatter';
 
 import type { FancyInputParams } from '@/components/FancyInput/types';
 
@@ -16,6 +15,7 @@ import { auditTaskKey } from '../constant/query-key-factories';
 import QueryBlock from '../components/QueryBlock';
 import chineseCharMap from '../constant/chineseCharMap';
 import { getOperateList } from '../services/team';
+import dayjs from 'dayjs';
 
 const taskStatusOptions = Object.values(TaskStatus).map((status) => ({
   label: TaskStatusMapping[status],
@@ -167,7 +167,7 @@ export default function TaskList() {
         key: 'created_time',
         responsive: ['lg', 'xl', 'xxl'],
         render: (text: string) => {
-          return formatter.format('dateTime', text, { style: 'YYYY-MM-DD HH:mm:ss' });
+          return dayjs(text).format('YYYY-MM-DD HH:mm:ss');
         },
       },
       {

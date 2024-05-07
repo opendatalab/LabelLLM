@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: [require.resolve('@shlab/fabric/dist/eslint')],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   plugins: ['prettier'],
   rules: {
     '@typescript-eslint/no-namespace': 0,

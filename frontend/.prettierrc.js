@@ -1,7 +1,7 @@
-const fabric = require('@shlab/fabric');
-
 module.exports = {
-  ...fabric.prettier,
+  trailingComma: 'all',
+  proseWrap: 'never',
+  endOfLine: 'lf',
   tabWidth: 2,
   printWidth: 120,
   singleQuote: true,

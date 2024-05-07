@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.shlab.tech/bigmodel/chat-web.git"
+    "url": "https://github.com/opendatalab/LabelLLM.git"
   },
   "keywords": [
     "llm"
@@ -32,7 +32,6 @@
     "@ant-design/icons": "^5.0.1",
     "@ant-design/pro-components": "^2.6.4",
     "@fingerprintjs/fingerprintjs": "^3.4.1",
-    "@label-u/formatter": "1.0.1-alpha.1",
     "@loadable/component": "^5.15.3",
     "@tanstack/react-query": "^5.25.0",
     "@tanstack/react-query-devtools": "^5.25.0",
@@ -75,7 +74,6 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
-    "@shlab/fabric": "^1.2.1",
     "@types/diff": "^5.0.9",
     "@types/inquirer": "^9.0.3",
     "@types/jest": "^29.5.0",
