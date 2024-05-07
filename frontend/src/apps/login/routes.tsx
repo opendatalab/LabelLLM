@@ -1,14 +1,14 @@
-import Start from './pages/start';
+import Login from './pages/login';
 
 export default [
   {
     path: '/',
-    element: <Start />,
+    element: <Login />,
     // 此ID可以用于在路由中获取loader中的数据
-    id: 'start',
+    id: 'login',
     handle: {
       crumb: () => {
-        return '冰山之下 - 项目官网';
+        return 'LabelU-LLM';
       },
     },
   },

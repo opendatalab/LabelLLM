@@ -37,14 +37,6 @@ export async function ssoLoader({ request }: LoaderFunctionArgs) {
         gcTime: Infinity,
       });
 
-      // 给埋点工具使用
-      localStorage.setItem('ssoUserInfo', JSON.stringify(data));
-      // 更新埋点工具用户信息
-      window.AnalyzeWiz.setUser({
-        id: data.sso_uid,
-        name: data.username,
-      });
-
       return data;
     }
   } catch (err) {

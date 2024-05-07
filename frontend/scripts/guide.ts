@@ -18,9 +18,9 @@ const options = [
         value: 'start:operator',
       },
       {
-        key: 'home',
-        name: '启动打开启动页',
-        value: 'start:home',
+        key: 'login',
+        name: '启动登录页',
+        value: 'start:login',
       },
       {
         key: 3,
