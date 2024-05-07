@@ -24,8 +24,8 @@ AI 辅助标注，支持载入预标注结果并可在此基础上自行微调�
     <button>使用手册-运营端</button>
 </a>
 
--  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF">
-    <button>使用手册-标注员</button>
+-  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E6%A0%87%E6%B3%A8%E5%91%98-%E5%AE%A1%E6%A0%B8%E5%91%98">
+    <button>使用手册-标注员 审核员</button>
 </a>
 
 
