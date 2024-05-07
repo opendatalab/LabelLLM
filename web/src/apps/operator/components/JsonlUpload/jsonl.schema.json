@@ -1,0 +1,89 @@
+{
+  "title": "DataCreate",
+  "type": "object",
+  "properties": {
+    "questionnaire_id": {
+      "title": "Questionnaire Id",
+      "description": "问卷id",
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "prompt": { "title": "Prompt", "description": "任务提示", "type": "string" },
+    "conversation_id": {
+      "title": "Conversation Id",
+      "description": "对话id",
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "conversation": {
+      "title": "Conversation",
+      "description": "对话内容",
+      "type": "array",
+      "items": { "$ref": "#/definitions/Message" }
+    },
+    "reference_evaluation": {
+      "title": "Reference Evaluation",
+      "description": "参考评价",
+      "allOf": [{ "$ref": "#/definitions/LabelEvaluation" }]
+    },
+    "custom": {
+      "title": "Custom",
+      "description": "自定义数据",
+      "type": ["object"]
+    }
+  },
+  "required": ["prompt", "conversation"],
+  "definitions": {
+    "Message": {
+      "title": "Message",
+      "type": "object",
+      "properties": {
+        "message_id": {
+          "title": "Message Id",
+          "description": "消息ID",
+          "type": "string",
+          "format": "uuid"
+        },
+        "parent_id": { "title": "Parent Id", "description": "父消息ID", "type": ["string", "null"], "format": "uuid" },
+        "message_type": {
+          "title": "Message Type",
+          "description": "消息类型",
+          "enum": ["send", "receive"],
+          "type": "string"
+        },
+        "content": { "title": "Content", "description": "消息内容", "type": "string" },
+        "user_id": { "title": "User Id", "description": "用户ID", "default": "", "type": ["string", "null"] }
+      },
+      "required": ["message_id", "message_type", "content"]
+    },
+    "QuestionnaireEvaluation": {
+      "title": "QuestionnaireEvaluation",
+      "type": "object",
+      "properties": {
+        "is_invalid_questionnaire": {
+          "title": "Is Invalid Questionnaire",
+          "description": "是否为无效问卷",
+          "default": false,
+          "type": "boolean"
+        }
+      }
+    },
+    "LabelEvaluation": {
+      "title": "LabelEvaluation",
+      "type": ["object", "null"],
+      "properties": {
+        "message_evaluation": { "title": "Message Evaluation", "description": "针对单条消息的评价", "type": "object" },
+        "conversation_evaluation": {
+          "title": "Conversation Evaluation",
+          "description": "针对整个对话的评价",
+          "type": "object"
+        },
+        "questionnaire_evaluation": {
+          "title": "Questionnaire Evaluation",
+          "description": "针对整个问卷的评价",
+          "allOf": [{ "$ref": "#/definitions/QuestionnaireEvaluation" }]
+        }
+      }
+    }
+  }
+}

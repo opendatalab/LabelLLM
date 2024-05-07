@@ -1,0 +1,162 @@
+before_script:
+  - export IMAGE_TAG=${CI_COMMIT_TAG:-${CI_COMMIT_BRANCH}.${CI_PIPELINE_IID:-c.${CI_COMMIT_SHA:0:8}}}
+
+stages:
+  - dry-run
+  - build
+  - build-notification
+  - release
+  - deploy
+
+pre-develop:
+  stage: dry-run
+  only:
+    - develop
+  image: node:20.8.1-bullseye
+  script:
+    - echo "next-version=$CI_COMMIT_BRANCH.$CI_PIPELINE_IID" >> version.txt
+  artifacts:
+    paths:
+      - version.txt
+
+release-dry-run:
+  stage: dry-run
+  only:
+    - iceberg
+    - iceberg-test
+  image: node:20.8.1-bullseye
+  script:
+    - npm i -g semantic-release @semantic-release/gitlab --registry=https://npm.shlab.tech
+    - npx semantic-release --dry-run
+    - NEXT_VERSION=$(npx semantic-release --dry-run | grep -i 'the next release version is' | sed -E 's/.* ([0-9a-z.-]+)$/\1/')
+    - echo "$NEXT_VERSION"
+    - echo "next-version=v$NEXT_VERSION" >> version.txt
+  artifacts:
+    paths:
+      - version.txt
+
+release:
+  stage: release
+  rules:
+    - if: $CI_COMMIT_BRANCH == "iceberg"
+      when: manual
+    - if: $CI_COMMIT_BRANCH == "iceberg-test"
+      when: on_success
+  image: node:20.8.1-bullseye
+  script:
+    - npm i -g semantic-release @semantic-release/gitlab --registry=https://npm.shlab.tech
+    - npm_config_registry=https://npm.shlab.tech npx semantic-release
+
+build-svc-image:
+  stage: build
+  dependencies:
+    - release-dry-run
+    - pre-develop
+  only:
+    - iceberg-test
+    - iceberg
+  image:
+    name: docker.shlab.tech/public/kaniko-executor:debug
+    entrypoint: [""]
+  cache:
+    paths:
+      - /cache
+  script:
+    - export IMAGE_TAG=$(grep next-version version.txt | cut -d'=' -f2)
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - export IMAGE_NAME=${CI_REGISTRY}/${CI_PROJECT_PATH}-svc:${IMAGE_TAG}
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/svc"
+      --dockerfile "${CI_PROJECT_DIR}/svc/Dockerfile"
+      --destination "${IMAGE_NAME}"
+      --build-arg "APP_VERSION=${IMAGE_TAG}"
+      --cache=true
+
+build-web-image:
+  stage: build
+  dependencies:
+    - release-dry-run
+    - pre-develop
+  only:
+    - iceberg-test
+    - iceberg
+  image:
+    name: docker.shlab.tech/public/kaniko-executor:debug
+    entrypoint: [""]
+  cache:
+    paths:
+      - /cache
+  script:
+    - export IMAGE_TAG=$(grep next-version version.txt | cut -d'=' -f2)
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - export IMAGE_NAME=${CI_REGISTRY}/${CI_PROJECT_PATH}-web:${IMAGE_TAG}
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/web"
+      --dockerfile "${CI_PROJECT_DIR}/web/Dockerfile"
+      --destination "${IMAGE_NAME}"
+      --build-arg VITE_APP_VERSION=${IMAGE_TAG}
+      --build-arg SENTRY_AUTH_TOKEN_WEB=${SENTRY_AUTH_TOKEN_WEB}
+      # test环境需要发tag，develop不需要
+      --cache=$(if [ "$CI_COMMIT_BRANCH" == "develop" ]; then echo true; else echo false; fi)
+
+deploy-test:
+  stage: deploy
+  image: node:20-alpine
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+-iceberg-test\.[0-9]+$/
+      when: on_success
+  environment:
+    name: test
+    url: https://iceberg-labelu-llm-test.shlab.tech/
+  script:
+    - npm_config_registry=https://npm.shlab.tech npx gitops-deploy -c ./deployrc.iceberg-test.json
+
+deploy-uat:
+  stage: deploy
+  image: node:20-alpine
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/
+      when: on_success
+  environment:
+    name: uat
+    url: https://labelu-llm-uat.shlab.tech/
+  script:
+    - npm_config_registry=https://npm.shlab.tech npx gitops-deploy -c ./deployrc.uat.json
+
+deploy-iceberg:
+  stage: deploy
+  image: node:20-alpine
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+-iceberg\.[0-9]+$/
+      when: on_success
+  environment:
+    name: iceberg
+    url: https://iceberg-labelu-llm.shlab.tech/
+  script:
+    - npm_config_registry=https://npm.shlab.tech npx gitops-deploy -c ./deployrc.iceberg.json
+
+deploy-notification:
+  stage: build-notification
+  image: curlimages/curl
+  rules:
+    - if: $CI_COMMIT_BRANCH == "iceberg"
+      when: on_success
+  script:
+    - >-
+      echo "{\"msgtype\":\"markdown\",\"markdown\":{\"content\":\"## ${CI_PROJECT_NAME}\\n\\n冰山之下 Build 完成，点击[部署升级](${CI_PIPELINE_URL})\"}}" | \
+        curl -X POST -H 'Content-Type: application/json; charset=utf-8' -d @- ${WEBHOOK_URL_DEV}
+
+dev-notification:
+  stage: .pre
+  image: curlimages/curl
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: on_success
+  script:
+    - >-
+      echo "{\"msgtype\":\"markdown\",\"markdown\":{\"content\":\"## ${CI_PROJECT_NAME}\\n\\n${CI_COMMIT_MESSAGE} 👉🏻 [${CI_COMMIT_SHORT_SHA}](https://gitlab.shlab.tech/${CI_PROJECT_PATH}/-/commit/${CI_COMMIT_SHA})\"}}" | \
+        curl -X POST -H 'Content-Type: application/json; charset=utf-8' -d @- ${WEBHOOK_URL_DEV}

@@ -1,0 +1,103 @@
+.page-bg {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page-bg::after {
+  background-image: url('./bg-2-min.jpg');
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.hover-gradient-text:hover {
+  --color-1: hsl(180deg 100% 55%);
+  --color-2: hsl(263deg 100% 67%);
+
+  background: linear-gradient(90deg, var(--color-1), var(--color-2), var(--color-1)) 0 0 / 400% 100%;
+  color: transparent;
+  background-clip: text;
+}
+
+.gradient-text {
+  --color-1: hsl(180deg 100% 55%);
+  --color-2: hsl(263deg 100% 67%);
+
+  background: linear-gradient(90deg, var(--color-1), var(--color-2), var(--color-1)) 0 0 / 400% 100%;
+  color: transparent;
+  background-clip: text;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gradient-text {
+    animation: move-bg 8s linear infinite;
+  }
+  @keyframes move-bg {
+    to {
+      background-position: 400% 0;
+    }
+  }
+}
+
+.gradient-shadow {
+  --gradient-shadow: linear-gradient(
+    45deg,
+    hsl(180deg 100% 55%),
+    hsl(230.41deg 100% 55%),
+    hsl(203.4deg 100% 55%),
+    hsl(263deg 100% 67%)
+  );
+
+  width: 16rem;
+  height: 3rem;
+  position: relative;
+}
+
+.gradient-shadow__inner {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gradient-shadow::after {
+  filter: blur(20px);
+  transition: all 0.5s ease;
+  opacity: 0;
+  content: '';
+  position: absolute;
+  top: calc(50%);
+  left: calc(50% - 7rem);
+  width: 82%;
+  height: 34%;
+  background: var(--gradient-shadow);
+  background-size: 400%;
+  z-index: 1;
+  animation: shadow-animate 20s linear infinite;
+}
+
+.gradient-shadow:hover::after {
+  opacity: 1;
+}
+
+@keyframes shadow-animate {
+  0% {
+    background-position: 0 0;
+  }
+
+  50% {
+    background-position: 300% 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}

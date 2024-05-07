@@ -1,0 +1,34 @@
+{
+  "extends": [
+    "@commitlint/config-conventional"
+  ],
+  "rules": {
+    "body-max-line-length": [
+      0,
+      "always",
+      "Infinity"
+    ],
+    "type-enum": [
+      2,
+      "always",
+      [
+        "feat",
+        "update",
+        "fix",
+        "refactor",
+        "optimize",
+        "style",
+        "docs",
+        "chore",
+        "test",
+        "perf",
+        "revert"
+      ]
+    ],
+    "header-max-length": [0, "always", 100],
+    "header-case": [
+      0,
+      "never"
+    ]
+  }
+}

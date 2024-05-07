@@ -1,0 +1,42 @@
+{
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "CommonJS",
+      "esModuleInterop": true,
+      "moduleResolution": "node"
+    }
+  },
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "target": "ES2015",
+    "composite": false,
+    "declaration": true,
+    "declarationMap": false,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "baseUrl": "./",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "scripts", ".eslintrc.js", "vite.config.dev.ts", "vite.config.prod.ts", "rollup.config.ts"],
+  "exclude": ["node_modules", "**/*.test.tsx", "**/*.test.ts"]
+}

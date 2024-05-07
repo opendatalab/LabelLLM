@@ -1,0 +1,5 @@
+branches: [main, {name: test, prerelease: alpha}, {name: iceberg, prerelease: iceberg}, {name: iceberg-test, prerelease: iceberg-test}]
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - "@semantic-release/gitlab"

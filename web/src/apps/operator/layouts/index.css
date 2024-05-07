@@ -1,0 +1,29 @@
+.layout-wrapper .ant-pro-sider-logo {
+  @apply !py-6 !px-8;
+
+  height: 71px;
+}
+
+.layout-wrapper .ant-layout-sider-children {
+  @apply !p-0;
+}
+
+.layout-wrapper .ant-pro-sider-menu {
+  @apply !p-4;
+}
+
+.layout-wrapper .ant-menu-inline-collapsed {
+  @apply !p-1;
+}
+
+.layout-wrapper .ant-pro-sider-actions {
+  @apply !pr-4;
+}
+
+.layout-wrapper .ant-pro-sider-actions-avatar {
+  @apply !mx-3 !my-3;
+}
+
+.layout-wrapper .ant-pro-sider-logo img {
+  @apply !h-7;
+}

@@ -1,0 +1,26 @@
+/* 菜单 item 背景圆角 */
+.layout-wrapper .ant-menu-item {
+  @apply rounded-none;
+}
+
+.layout-wrapper .ant-pro-sider-logo {
+  @apply !py-5 !px-8;
+
+  height: var(--header-height);
+}
+
+.layout-wrapper .ant-layout-sider-children {
+  @apply !p-0;
+}
+
+.layout-wrapper .ant-pro-sider-menu {
+  @apply !p-4;
+}
+
+.layout-wrapper .ant-menu-inline-collapsed {
+  @apply !p-1;
+}
+
+.layout-wrapper .ant-pro-sider-logo img {
+  @apply !h-7;
+}
