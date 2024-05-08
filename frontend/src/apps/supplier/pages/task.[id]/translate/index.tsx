@@ -3,7 +3,7 @@ import React from 'react';
 import { Spin } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 
-import Markdown from '@/components/markdown';
+import Markdown from '@/components/Markdown';
 import type { ITranslateParams, ITranslateRes } from '@/apps/supplier/services/task';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 

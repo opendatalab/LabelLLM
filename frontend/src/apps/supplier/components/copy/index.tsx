@@ -4,7 +4,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Tooltip } from 'antd';
 import clsx from 'clsx';
 
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 import { message } from '@/components/StaticAnt';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {

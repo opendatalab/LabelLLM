@@ -6,7 +6,7 @@ import clsx from 'clsx';
 
 import type { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
 import EventGrammarCheck from '@/apps/supplier/components/eventGrammarCheck';
-import Markdown from '@/components/markdown';
+import Markdown from '@/components/Markdown';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
 import { grammarCheck } from '@/apps/supplier/services/task';
 import { addSpanTags } from '@/apps/supplier/utils/addSpanTags';

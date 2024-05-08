@@ -12,7 +12,7 @@ import { editOperator, getOperateList } from '@/apps/operator/services/team';
 import { ETeamAccess } from '@/api/team';
 import { message, modal } from '@/components/StaticAnt';
 
-import Invite from './invite';
+import Invite from './Invite';
 import { operatorTeamKey } from '../../constant/query-key-factories';
 import CustomPageContainer from '../../layouts/CustomPageContainer';
 

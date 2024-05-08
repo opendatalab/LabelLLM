@@ -10,7 +10,7 @@ import request from '@/api/request';
 import { message } from '@/components/StaticAnt';
 
 import { ReactComponent as UploadCloud } from '../../assets/upload-cloud.svg';
-import { ReactComponent as DeleteIcon } from '../customFancy/QuestionEditor/svgs/delete.svg';
+import { ReactComponent as DeleteIcon } from '../CustomFancy/QuestionEditor/svgs/delete.svg';
 import Help from '../Help';
 import schema from './jsonl.schema.json';
 

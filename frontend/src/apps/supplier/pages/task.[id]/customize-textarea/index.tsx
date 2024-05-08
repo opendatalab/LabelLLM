@@ -4,10 +4,10 @@ import { ProFormTextArea } from '@ant-design/pro-components';
 import { Switch, Button, Upload, Spin } from 'antd';
 import type { UploadProps } from 'antd';
 
-import Markdown from '@/components/markdown';
+import Markdown from '@/components/Markdown';
 import type { IQuestion } from '@/apps/supplier/services/task';
 import { message } from '@/components/StaticAnt';
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 
 import { upload } from './upload';
 

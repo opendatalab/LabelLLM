@@ -2,7 +2,7 @@ import type { HTMLAttributes, PropsWithChildren } from 'react';
 import React from 'react';
 import { Button, Tooltip } from 'antd';
 
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import Copy from '@/apps/supplier/components/copy';

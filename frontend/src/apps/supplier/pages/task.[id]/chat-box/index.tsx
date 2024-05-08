@@ -8,7 +8,7 @@ import clsx from 'clsx';
 
 import type { IMessage, IMessageQuestion, IQuestion } from '@/apps/supplier/services/task';
 import { EMessageType, translate, googleTranslate } from '@/apps/supplier/services/task';
-import MessageBox from '@/components/message-box';
+import MessageBox from '@/components/MessageBox';
 import Copy from '@/apps/supplier/components/copy';
 import { ssoUserInfoKey } from '@/constant/query-key-factories';
 import type { SSOUserInfo } from '@/api/sso';

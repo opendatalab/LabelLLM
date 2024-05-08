@@ -3,7 +3,7 @@ import { Form, message } from 'antd';
 
 import type { TStoreKey } from '@/hooks/useStoreIds';
 import { useStoreIds } from '@/hooks/useStoreIds';
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 
 const obj = {
   data_id: {

@@ -14,7 +14,7 @@ import type { Match } from '@/components/Breadcrumb';
 import { hasPermission } from '@/apps/operator/constant/access';
 import NoAuth from '@/apps/operator/components/NoAuth';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 
 import logo from '../assets/logo.svg';
 import { ReactComponent as LabelingTitle } from '../assets/title.svg';

@@ -24,7 +24,7 @@ import grid2 from '../../assets/grid2.png';
 import grid3 from '../../assets/grid3.png';
 import grid4 from '../../assets/grid4.png';
 import { ToolConfigUpload } from '../../components/ToolConfigUpload';
-import FancyQuestionEditor from '../../components/customFancy/QuestionEditor';
+import FancyQuestionEditor from '@/apps/operator/components/CustomFancy/QuestionEditor';
 import type { OperatorTaskDetail, OperatorTaskUpdatePayload, TaskToolConfig } from '../../services/task';
 import { TaskStatus, createLabelTask, updateLabelTask } from '../../services/task';
 import TaskFormContext from './context';

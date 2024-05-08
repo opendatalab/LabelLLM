@@ -13,7 +13,7 @@ import { getTeamList } from '@/apps/operator/services/team';
 
 import { teamKey } from '../../constant/query-key-factories';
 import CustomPageContainer from '../../layouts/CustomPageContainer';
-import Edit from './edit';
+import Edit from './Edit';
 
 export default function UsersTeam() {
   const [state, setState] = useUrlState({ page: 1, page_size: 10 });

@@ -3,7 +3,7 @@ import type { HTMLAttributes, PropsWithChildren } from 'react';
 import React from 'react';
 
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 
 type IProps = HTMLAttributes<HTMLDivElement>;
 

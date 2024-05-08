@@ -9,7 +9,7 @@ import { useKeyPressEvent } from 'react-use';
 import Empty from '@/apps/supplier/components/empty';
 import type { IMessage } from '@/apps/supplier/services/task';
 import { EMessageType } from '@/apps/supplier/services/task';
-import IconFont from '@/components/icon-font';
+import IconFont from '@/components/IconFont';
 import 'diff2html/bundles/css/diff2html.min.css';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {

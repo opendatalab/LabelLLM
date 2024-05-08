@@ -15,7 +15,7 @@ import { deleteTeamMember, ETeamAccess, getTeamMemberList, updateTeamMember } fr
 import { modal } from '@/components/StaticAnt';
 import type { IUserTeamInfo } from '@/apps/supplier/services/member';
 import { accessObj } from '@/apps/supplier/constant/access';
-import MemberInvite from '@/components/memberInvite';
+import MemberInvite from '@/components/MemberInvite';
 import { DEFAULT_TEAM } from '@/constant/team';
 
 import { memberKey } from '../../constant/query-key-factories';

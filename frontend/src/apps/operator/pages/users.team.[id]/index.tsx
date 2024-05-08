@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { ITeamMember, ITeamMemberParams } from '@/api/team';
 import { getTeamMemberList, deleteTeamMember } from '@/api/team';
 import { modal } from '@/components/StaticAnt';
-import MemberInvite from '@/components/memberInvite';
+import MemberInvite from '@/components/MemberInvite';
 import { DEFAULT_TEAM } from '@/constant/team';
 
 import { teamMemberKey } from '../../constant/query-key-factories';
