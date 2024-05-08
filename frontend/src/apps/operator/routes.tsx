@@ -6,7 +6,7 @@ import { ssoLoader } from '@/loaders/sso.loader';
 
 import MainLayout from './layouts/Main';
 import CheckChildRoute from './wrappers/CheckChildRoute';
-import { auditTaskLoader, labelTaskLoader } from './loaders/task.loader';
+import { labelTaskLoader } from './loaders/task.loader';
 import CheckUsersPagePermission from './wrappers/CheckUsersPagePermission';
 import { teamLoader } from './loaders/team.loader';
 import type { OperatorTask } from './services/task';
@@ -18,12 +18,9 @@ const moduleSpin = {
 
 const TaskLayout = loadable(() => import('./pages/task'), moduleSpin);
 const LabelTask = loadable(() => import('./pages/task.label'), moduleSpin);
-const AuditTask = loadable(() => import('./pages/task.audit'), moduleSpin);
 const UserTeam = loadable(() => import('./pages/users.team'), moduleSpin);
 const LabelTaskDetail = loadable(() => import('./pages/task.label.[id]'), moduleSpin);
-const AuditTaskDetail = loadable(() => import('./pages/task.audit.[id]'), moduleSpin);
 const CreateLabelTask = loadable(() => import('./pages/task.label.create'), moduleSpin);
-const CreateAuditTask = loadable(() => import('./pages/task.audit.create'), moduleSpin);
 const UsersTeamMember = loadable(() => import('./pages/users.team.[id]'), moduleSpin);
 const UsersOperator = loadable(() => import('./pages/users.operator'), moduleSpin);
 
@@ -94,61 +91,6 @@ export default [
                   {
                     path: 'edit',
                     element: <CreateLabelTask />,
-                    handle: {
-                      crumb: () => {
-                        return '编辑任务';
-                      },
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            path: 'audit',
-            id: 'auditTaskList',
-            element: (
-              <CheckChildRoute>
-                <AuditTask />
-              </CheckChildRoute>
-            ),
-            handle: {
-              crumb: () => {
-                return '审核';
-              },
-            },
-            children: [
-              {
-                path: 'create',
-                element: <CreateAuditTask />,
-                handle: {
-                  crumb: () => {
-                    return '新建任务';
-                  },
-                },
-              },
-              {
-                path: ':id',
-                loader: auditTaskLoader,
-                id: 'auditTask',
-                element: (
-                  <CheckChildRoute>
-                    <AuditTaskDetail />
-                  </CheckChildRoute>
-                ),
-                handle: {
-                  crumb: (data: OperatorTask) => {
-                    return data?.title;
-                  },
-                },
-                children: [
-                  {
-                    path: 'edit',
-                    element: (
-                      <CheckChildRoute>
-                        <CreateAuditTask />
-                      </CheckChildRoute>
-                    ),
                     handle: {
                       crumb: () => {
                         return '编辑任务';
