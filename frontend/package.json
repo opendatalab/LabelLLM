@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "llm web project",
   "scripts": {
-    "prepare": "cd .. && husky install web/.husky",
+    "prepare": "cd .. && husky install frontend/.husky",
     "analyze": "cross-env ANALYZE=true vite build",
     "start": "ts-node --esm ./scripts/guide.ts",
     "start:supplier": "ts-node --esm ./scripts/bootstrap.ts dev --path src/apps/supplier",
@@ -98,6 +98,7 @@
     "eslint": "8",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.34.1",
     "husky": "^8.0.3",
     "inquirer": "8.2.5",
     "lint-staged": "^13.2.2",

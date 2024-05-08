@@ -1,9 +1,6 @@
-const { stylelint } = require('@shlab/fabric');
-
 const prettierConfig = require('./.prettierrc');
 
 module.exports = {
-  ...stylelint,
   plugins: ['stylelint-prettier'],
   rules: {
     'at-rule-no-unknown': null,
