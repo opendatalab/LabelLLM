@@ -145,28 +145,6 @@ const dataColumns: ProDescriptionsProps['columns'] = [
       return record.progress?.total || 0;
     },
   },
-  {
-    title: '关联审核任务',
-    key: 'audit_tasks',
-    dataIndex: 'audit_tasks',
-    render: (value, record) => {
-      if (!record?.audit_tasks || !record?.audit_tasks.length) {
-        return '-';
-      }
-
-      return (
-        <div className="flex flex-col">
-          {record?.audit_tasks.map((task: AuditTask) => {
-            return (
-              <Link className="mb-2" key={task.task_id} to={`/task/audit/${task.task_id}`} target="_blank">
-                {task.title}
-              </Link>
-            );
-          })}
-        </div>
-      );
-    },
-  },
 ];
 
 const descriptionLabelStyle = { width: 96, flexShrink: 0 };

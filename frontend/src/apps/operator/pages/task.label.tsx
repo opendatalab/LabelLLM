@@ -198,7 +198,7 @@ export default function TaskList() {
       extra: (
         <Link className="hover:text-white" to="create">
           <Button type="primary" icon={<PlusOutlined />}>
-            新建标注任务
+            新建任务
           </Button>
         </Link>
       ),

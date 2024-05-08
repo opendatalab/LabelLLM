@@ -5,7 +5,50 @@
 #api
 
 /v1/team/member/edit 更新团队成员角色
+/**
+* 获取审核任务列表
+  */
+  export const getAuditTaskList = (body: TaskQueryBody): Promise<ListPayload<AuditTaskListItem>> => {
+  return request.post('/v1/operator/task/audit/list', body);
+  };
 
+/**
+* 获取审核任务详情
+  */
+  export const getAuditTaskDetail = (params: Record<string, unknown>, body: TaskDetailBody): Promise<AuditTaskDetail> => {
+  return request.post(`/v1/operator/task/audit/detail`, body, {
+  params,
+  });
+  };
+  /**
+* 更新进行中的审核任务的团队
+  */
+  export const updateAuditTaskTeams = (body: UpdateTeamPayload): Promise<{ task_id: string }> => {
+  return request.put(`/v1/operator/task/audit/flow/team/update`, body);
+  };
+
+/**
+* 删除审核任务
+  */
+  export const deleteAuditTask = (body: { task_id: string }): Promise<any> => {
+  return request.post(`/v1/operator/task/audit/delete`, body);
+  };
+
+/**
+* 导出审核任务数据
+* @param taskId 任务id
+  */
+  export const exportAuditTask = async (taskId: string) => {
+  downloadFromUrl(`/api/v1/operator/task/audit/data/export?task_id=${taskId}`);
+  };
+
+/**
+* 导出标注工作量
+* @param taskId 任务id
+  */
+  export const exportAuditTaskWorkload = async (taskId: string) => {
+  downloadFromUrl(`/api/v1/operator/task/audit/data/export_workload?task_id=${taskId}`);
+  };
 
 
 

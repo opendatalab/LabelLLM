@@ -42,14 +42,6 @@ export default function LabelersTable() {
 
   const columns = [
     {
-      title: '用户ID',
-      responsive: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
-      ellipsis: true,
-      render: (unused, record) => {
-        return record?.label_user?.user_id;
-      },
-    },
-    {
       title: '用户名',
       responsive: ['md', 'lg', 'xl', 'xxl'],
       render: (unused, record) => {
@@ -67,7 +59,7 @@ export default function LabelersTable() {
       title: (
         <div>
           未达标题数
-          <Help>审核任务中审核未达标（前提：开启自动打回）/运营手动打回</Help>
+          <Help>运营打回重做</Help>
         </div>
       ),
       dataIndex: 'discarded',
@@ -127,7 +119,7 @@ export default function LabelersTable() {
             已选 <span className="font-semibold">{selectedRecords.length}</span> 个标注员，是否确定全部打回？
             打回后题目将被标为未达标，同时生成一道新题，扔回题目池，由其他用户抢答。
           </p>
-          <p className="text-secondary">打回的题目范围：除了“未达标、关联审核任务确定达标”的剩余题目</p>
+          <p className="text-secondary">打回的题目范围：除了已标为未达标的题目</p>
         </div>
       ),
       onOk: async () => {

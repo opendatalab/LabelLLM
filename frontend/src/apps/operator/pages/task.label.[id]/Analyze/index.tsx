@@ -137,11 +137,7 @@ const Distributed = () => {
       <Radio.Group size="small" options={options} onChange={onChange} value={v} optionType="button" />
       <Alert
         className="my-4"
-        message={
-          <span>
-            仅支持选择题的统计分析，文本题、排序题不支持; 未达标（审核未达标/运营手动打回）的题目不在统计范围内
-          </span>
-        }
+        message={<span>仅支持选择题的统计分析，文本题、排序题不支持; 未达标 运营打回重做 的题目不在统计范围内</span>}
         type="info"
         showIcon
         icon={<InfoCircleOutlined />}
@@ -248,7 +244,7 @@ const Filter = () => {
       <Radio.Group size="small" options={filterOptions} onChange={onChange} value={v} optionType="button" />
       <Alert
         className="my-4"
-        message={<span>仅支持选择题的筛选统计；未达标（审核未达标/运营手动打回）的题目不在统计范围内</span>}
+        message={<span>仅支持选择题的筛选统计；未达标 运营打回重做 的题目不在统计范围内</span>}
         type="info"
         showIcon
         icon={<InfoCircleOutlined />}
