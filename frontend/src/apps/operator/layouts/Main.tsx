@@ -44,7 +44,7 @@ export default () => {
         children: [
           {
             path: 'team',
-            name: '执行团队',
+            name: '标注团队',
           },
           {
             path: 'operator',

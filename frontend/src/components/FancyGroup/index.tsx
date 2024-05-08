@@ -130,7 +130,7 @@ export const FancyGroup: React.FC<FancyGroupProps> = ({ group, disabled, value, 
           <Form.Item noStyle shouldUpdate dependencies={dependencies} key={someKey}>
             {() => {
               let input: React.ReactNode = (
-                <FancyInput {...itemConfig} {...antProps} disabled={disabled} fullField={finalName} />
+                <FancyInput {...itemConfig} {...antProps} disabled={disabled} fullField={finalName} key={someKey} />
               );
 
               if (typeof renderFormItem === 'function') {

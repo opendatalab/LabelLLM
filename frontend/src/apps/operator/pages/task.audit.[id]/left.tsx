@@ -223,7 +223,7 @@ export default function AuditDetailLeft() {
         },
       },
       {
-        title: '执行团队',
+        title: '标注团队',
         key: 'teams',
         dataIndex: 'teams',
         valueType: 'select',

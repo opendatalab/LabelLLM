@@ -351,12 +351,12 @@ export default function AuditDetailRight() {
                                 </Form.Item>
                                 <Form.Item
                                   className="mb-0"
-                                  label="执行团队"
+                                  label="标注团队"
                                   name={[idx, 'teams']}
                                   rules={[
                                     {
                                       required: true,
-                                      message: '请选择执行团队',
+                                      message: '请选择标注团队',
                                     },
                                   ]}
                                 >

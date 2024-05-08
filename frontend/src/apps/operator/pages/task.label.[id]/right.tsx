@@ -229,12 +229,12 @@ export default function LabelDetailRight() {
                       </Button>
                     </JsonlUpload>
                     <Link
-                      className="ml-4 text-[var(--color-text)]"
+                      className="ml-4 text-[var(--color-text)] text-error"
                       to="https://aicarrier.feishu.cn/docx/Wj5FdpLePo5UIbxMoC0c6D9TnDe "
                       target="_blank"
                     >
                       <Icon component={BookIcon} className="mr-1" />
-                      示例
+                      !!!todo更新链接 示例
                     </Link>
                   </div>
                 </div>
@@ -275,12 +275,12 @@ export default function LabelDetailRight() {
                     <FancyInput type="number" addonAfter="分钟" min={1} className="w-full" />
                   </Form.Item>
                   <Form.Item
-                    label="执行团队"
+                    label="标注团队"
                     name="teams"
                     rules={[
                       {
                         required: true,
-                        message: '请选择执行团队',
+                        message: '请选择标注团队',
                       },
                     ]}
                   >

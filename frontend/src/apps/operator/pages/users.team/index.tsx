@@ -81,7 +81,7 @@ export default function UsersTeam() {
   };
 
   return (
-    <CustomPageContainer title="执行团队">
+    <CustomPageContainer title="标注团队">
       <div className="text-right mb-4">
         <Button type="primary" icon={<PlusOutlined />} onClick={onCreate}>
           新建团队

@@ -168,7 +168,7 @@ export interface OperatorTaskDetail {
   tool_config: TaskToolConfig;
   /** Expire Time 过期时间/秒 */
   expire_time: number;
-  /** Teams 执行团队 */
+  /** Teams 标注团队 */
   teams: Team[];
   /** Progress 任务进度 */
   progress: LabelTaskProgress;
@@ -239,7 +239,7 @@ export interface OperatorTaskUpdatePayload {
   tool_config?: TaskToolConfig;
   /** Expire Time 过期时间/秒 */
   expire_time?: number;
-  /** Teams 执行团队 */
+  /** Teams 标注团队 */
   teams?: string[];
   /** 任务状态 */
   status?: TaskStatus;
@@ -374,7 +374,7 @@ export interface AuditTaskFlowForDetail {
   pass_audit_count: number;
   /** Flow Index 流程索引 */
   flow_index: number;
-  /** Teams 执行团队 */
+  /** Teams 标注团队 */
   teams: TeamWithName[];
 }
 
@@ -469,7 +469,7 @@ export interface AuditTaskFlow {
   max_audit_count: number;
   /** Pass Audit Count 达标所需审核次数 */
   pass_audit_count: number;
-  /** Teams 执行团队 */
+  /** Teams 标注团队 */
   teams: string[];
   /** 审核比例 */
   sample_ratio: number;

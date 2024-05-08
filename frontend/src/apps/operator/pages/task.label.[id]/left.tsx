@@ -218,7 +218,9 @@ export default function LabelDetailLeft() {
       message.success('团队已更新');
       revalidator.revalidate();
       setIsEditable(false);
-    } catch (error) {}
+    } catch (error) {
+      /* empty */
+    }
   };
 
   const taskColumns: ProDescriptionsProps['columns'] = [
@@ -234,7 +236,7 @@ export default function LabelDetailLeft() {
       },
     },
     {
-      title: '执行团队',
+      title: '标注团队',
       key: 'teams',
       dataIndex: 'teams',
       valueType: 'select',
@@ -312,12 +314,12 @@ export default function LabelDetailLeft() {
             extra={
               <div>
                 <Link
-                  className="text-[var(--color-text)]"
+                  className="text-[var(--color-text)] text-error"
                   to="https://aicarrier.feishu.cn/docx/Wj5FdpLePo5UIbxMoC0c6D9TnDe "
                   target="_blank"
                 >
                   <Icon component={BookIcon} className="mr-1" />
-                  示例
+                  todo链接更新 示例
                 </Link>
                 <JsonlUpload taskId={routeParams.id!} onFinish={handleJsonlFinished}>
                   <Button
