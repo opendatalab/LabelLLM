@@ -221,8 +221,12 @@ export function ToolConfigUpload({ onFinish, disabled, children }: React.PropsWi
             )}
           </Dragger>
           <div className="flex mt-2">
-            <Link target="_blank" to="https://aicarrier.feishu.cn/docx/Ieo7dYKPeoVixKxkUZacUAGlnDf?from=from_copylink">
-              查看示例
+            <Link
+              className="text-error"
+              target="_blank"
+              to="https://aicarrier.feishu.cn/docx/Ieo7dYKPeoVixKxkUZacUAGlnDf?from=from_copylink"
+            >
+              !!!!todo 更新链接地址 查看示例
             </Link>
           </div>
         </div>

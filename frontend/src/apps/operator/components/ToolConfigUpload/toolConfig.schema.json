@@ -185,28 +185,12 @@
       "title": "Plugin",
       "type": "object",
       "properties": {
-        "translator_enabled": {
+        "message_send_diff": {
           "type": "boolean",
-          "description": "开启翻译"
-        },
-        "grammar_checking_enabled": {
-          "type": "boolean",
-          "description": "开启语法校验"
-        },
-        "translate_from": {
-          "type": "string",
-          "description": "翻译源语言"
-        },
-        "translate_to": {
-          "type": "string",
-          "description": "翻译目标语言"
-        },
-        "grammar_checking_from": {
-          "type": "string",
-          "description": "语法检查语言"
+          "description": "针对对话中的提问 内容对比"
         }
       },
-      "required": ["translator_enabled", "grammar_checking_enabled"]
+      "required": ["message_send_diff"]
     }
   }
 }

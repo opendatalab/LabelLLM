@@ -27,34 +27,14 @@ export const fillDefaultPluginValues = (toolConfig: TaskToolConfig) => {
 
   if (!result.plugins) {
     result.plugins = {
-      content: {
-        translator_enabled: false,
-        grammar_checking_enabled: false,
-        google_translator_enabled: false,
-        google_grammar_checking_enabled: false,
-      },
+      content: {},
       conversation: {
-        translator_enabled: false,
-        grammar_checking_enabled: false,
-        google_translator_enabled: false,
-        google_grammar_checking_enabled: false,
+        message_send_diff: false,
       },
     };
   } else {
-    if (_.isNil(result.plugins.content.translator_enabled)) {
-      _.set(result, 'plugins.content.translator_enabled', false);
-    }
-
-    if (_.isNil(result.plugins.content.grammar_checking_enabled)) {
-      _.set(result, 'plugins.content.grammar_checking_enabled', false);
-    }
-
-    if (_.isNil(result.plugins.conversation.translator_enabled)) {
-      _.set(result, 'plugins.conversation.translator_enabled', false);
-    }
-
-    if (_.isNil(result.plugins.conversation.grammar_checking_enabled)) {
-      _.set(result, 'plugins.conversation.grammar_checking_enabled', false);
+    if (_.isNil(result.plugins.conversation.message_send_diff)) {
+      _.set(result, 'plugins.conversation.message_send_diff', false);
     }
   }
 

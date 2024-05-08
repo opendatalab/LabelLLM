@@ -48,15 +48,7 @@ export interface MessageConfig {
 }
 
 export interface PluginConfig {
-  translator_enabled: boolean;
-  grammar_checking_enabled: boolean;
-  translate_from?: string;
-  translate_to?: string;
-  google_translator_enabled: boolean;
-  google_grammar_checking_enabled: boolean;
-  google_translate_from?: string;
-  google_translate_to?: string;
-  grammar_checking_from?: string;
+  message_send_diff?: boolean;
 }
 
 export interface TaskToolConfig {
