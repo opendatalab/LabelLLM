@@ -36,13 +36,7 @@ export default ({ mutateAsync }: IProps) => {
       }}
     >
       <div className="m-6" />
-      <ProFormText
-        name="user_id"
-        label="账号"
-        placeholder="请输入用户id"
-        rules={[{ required: true }]}
-        extra={<div className="text-secondary">提示：请搜索登陆过此平台的用户，加入后默认为普通成员</div>}
-      />
+      <ProFormText name="user_id" label="用户名" placeholder="输入用户名添加成员" rules={[{ required: true }]} />
     </ModalForm>
   );
 };

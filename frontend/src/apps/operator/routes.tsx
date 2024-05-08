@@ -40,7 +40,7 @@ export default [
     loader: ssoLoader,
     handle: {
       crumb: () => {
-        return '冰山之下 - 任务管理';
+        return '任务管理';
       },
     },
     children: [

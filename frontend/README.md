@@ -2,6 +2,10 @@
 1. logo 更新
 2. 帮助中心
 
+#api
+
+/v1/team/member/edit 更新团队成员角色
+
 
 
 

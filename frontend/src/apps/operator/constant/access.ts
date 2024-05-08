@@ -25,8 +25,8 @@ const roleAccessMap: UserRoleMap = {
   },
   [EUserRole.admin]: {
     canReadPage: true,
-    canUsersPagePermission: false,
-    canReadUsersPage: false,
+    canUsersPagePermission: true,
+    canReadUsersPage: true,
   },
   [EUserRole.user]: {
     canReadPage: false,

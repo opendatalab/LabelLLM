@@ -28,7 +28,7 @@ const Invite = ({ teamId }: IProps) => {
         showIcon
         icon={<InfoCircleOutlined />}
       />
-      <div>操作方式：将链接发给成员，成员点击链接通过邀请，加入后默认为普通成员</div>
+      <div>操作方式：将链接发给成员，成员点击链接通过邀请加入团队</div>
       <Spin spinning={isFetching}>
         <div className="mt-2 bg-fill-tertiary rounded overflow-hidden flex h-11 items-center">
           <div className="truncate w-full overflow-hidden text-black px-3">{url}</div>

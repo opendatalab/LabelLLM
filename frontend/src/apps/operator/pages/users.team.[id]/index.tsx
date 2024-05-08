@@ -1,9 +1,9 @@
-import type { TablePaginationConfig } from 'antd';
-import { Button, Table, Modal, Alert } from 'antd';
+import { Alert, TablePaginationConfig } from 'antd';
+import { Button, Table, Modal } from 'antd';
 import { useParams } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { ProForm, ProFormText, ProFormSelect } from '@ant-design/pro-components';
+import { ProForm, ProFormText } from '@ant-design/pro-components';
 import React, { useRef } from 'react';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useBoolean } from 'react-use';
@@ -11,9 +11,8 @@ import useUrlState from '@ahooksjs/use-url-state';
 import { useQuery } from '@tanstack/react-query';
 
 import type { ITeamMember, ITeamMemberParams } from '@/api/team';
-import { getTeamMemberList, ETeamAccess, deleteTeamMember, updateTeamMember } from '@/api/team';
-import { teamAccessObj } from '@/apps/operator/constant/teamAccess';
-import { message, modal } from '@/components/StaticAnt';
+import { getTeamMemberList, deleteTeamMember } from '@/api/team';
+import { modal } from '@/components/StaticAnt';
 import MemberInvite from '@/components/memberInvite';
 import { DEFAULT_TEAM } from '@/constant/team';
 
@@ -32,81 +31,25 @@ export default function SupplierMember() {
     queryFn: async () => getTeamMemberList(sendData),
   });
 
-  // 获取超级管理员个数
-  const { data: adminData, refetch: refetchAdmin } = useQuery({
-    queryKey: teamMemberKey.list(ETeamAccess.super_admin),
-    queryFn: async () =>
-      getTeamMemberList({ team_id: params.team_id as string, role: ETeamAccess.super_admin, page: 1, page_size: 10 }),
-  });
-
-  const checkAdminNum = (userType: ETeamAccess) => {
-    return userType === ETeamAccess.super_admin && (adminData?.total ?? 0) <= 1;
-  };
-
-  const selectChange = (value: ETeamAccess, user: ITeamMember) => {
-    if (checkAdminNum(user.role)) {
-      message.error('请至少保留一个超级管理员');
-      return;
-    }
-    updateTeamMember({
-      team_id: params.team_id as string,
-      user_info: { ...user, role: value },
-    }).then(() => {
-      refetch?.();
-      refetchAdmin?.();
-    });
-  };
-
-  function remove(user_id: string, userType: ETeamAccess) {
-    if (checkAdminNum(userType)) {
-      message.error('请至少保留一个超级管理员');
-      return;
-    }
+  function remove(user_id: string) {
     modal.confirm({
       title: '移除',
       centered: true,
       content: '是否确定将此用户移除此团队',
       okText: '确定',
       cancelText: '取消',
-      onOk: () => {
-        return deleteTeamMember({ team_id: params.team_id as string, user_id }).then(() => {
-          refetch?.();
-          refetchAdmin?.();
-        });
+      onOk: async () => {
+        await deleteTeamMember({ team_id: params.team_id as string, user_id });
+        refetch?.();
       },
     });
   }
 
   const columns: ColumnsType<ITeamMember> = [
     {
-      title: '用户ID',
-      dataIndex: 'user_id',
-    },
-    {
       title: '用户名',
       dataIndex: 'name',
       render: (text) => text || '-',
-    },
-    {
-      title: '用户名',
-      dataIndex: 'role',
-      width: 200,
-      render: (text, record) => (
-        <ProFormSelect
-          noStyle
-          valueEnum={teamAccessObj}
-          fieldProps={{
-            style: {
-              width: 120,
-              marginLeft: -10,
-            },
-            allowClear: false,
-            value: text,
-            bordered: false,
-            onSelect: (value) => selectChange(value, record),
-          }}
-        />
-      ),
     },
     {
       title: '操作',
@@ -117,7 +60,7 @@ export default function SupplierMember() {
           className="!p-0"
           type="link"
           disabled={params.team_id === DEFAULT_TEAM}
-          onClick={() => remove(record.user_id, record.role)}
+          onClick={() => remove(record.user_id)}
         >
           移除
         </Button>
@@ -131,10 +74,10 @@ export default function SupplierMember() {
 
   return (
     <CustomPageContainer>
-      {adminData && adminData.total === 0 && (data?.total ?? 0) > 0 && (
+      {params.team_id === DEFAULT_TEAM && (data?.total ?? 0) > 0 && (
         <Alert
           className="mb-4"
-          message="请先设置此团队的超级管理员"
+          message="用户注册后默认加入标注团队中的“默认团队”，赋予标注员身份；加入其他团队后将自动退出此团队"
           type="info"
           showIcon
           icon={<InfoCircleOutlined />}

@@ -1,5 +1,5 @@
 import type { TablePaginationConfig } from 'antd';
-import { Select, Button, Table } from 'antd';
+import { Button, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { ProForm, ProFormText } from '@ant-design/pro-components';
@@ -16,18 +16,6 @@ import Invite from './invite';
 import { operatorTeamKey } from '../../constant/query-key-factories';
 import CustomPageContainer from '../../layouts/CustomPageContainer';
 
-/**
- * 团队成员管理
- * 这个地方的角色和全局不太一样 一下只是展示逻辑
- * supper_admin => 管理员
- * admin => 普通成员
- */
-const teamAccessMap = {
-  [ETeamAccess.super_admin]: '管理员',
-  [ETeamAccess.admin]: '普通成员',
-};
-const options = Object.entries(teamAccessMap).map(([key, value]) => ({ label: value, value: key }));
-
 export default function SupplierMember() {
   const [state, setState] = useUrlState({ page: 1, page_size: 10, user_name: undefined, is_operator: true });
   const formRef = useRef<ProFormInstance>();
@@ -37,7 +25,7 @@ export default function SupplierMember() {
     queryFn: async () => getOperateList(state as IOperatorItemParams),
   });
 
-  const { mutateAsync, isPending: isLoading } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: editOperator,
     onSuccess: () => {
       refetch?.();
@@ -46,47 +34,16 @@ export default function SupplierMember() {
 
   const columns: ColumnsType<IOperatorRes> = [
     {
-      title: '用户ID',
-      dataIndex: 'user_id',
-    },
-    {
       title: '用户名',
       dataIndex: 'name',
       render: (text) => text || '-',
-    },
-    {
-      title: '角色',
-      dataIndex: 'role',
-      width: 200,
-      render: (text, record) => (
-        <Select
-          style={{ width: 130, marginLeft: -14 }}
-          variant="borderless"
-          options={options}
-          loading={isLoading}
-          allowClear={false}
-          value={text}
-          size="small"
-          onChange={async (v) => {
-            await mutateAsync({ user_id: record.user_id, role: v });
-            message.success('修改成功');
-          }}
-        />
-      ),
-      // @ts-ignore
-      // render: (text) => teamAccessMap[text] || '-',
     },
     {
       title: '操作',
       key: 'action',
       width: 160,
       render: (_, record) => (
-        <Button
-          className="!p-0"
-          type="link"
-          disabled={record.role === ETeamAccess.super_admin}
-          onClick={() => remove(record.user_id)}
-        >
+        <Button className="!p-0" type="link" onClick={() => remove(record.user_id)}>
           移除
         </Button>
       ),
@@ -100,6 +57,7 @@ export default function SupplierMember() {
       okText: '确定',
       cancelText: '取消',
       onOk: () => {
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
           try {
             await mutateAsync({ user_id: user_id, role: ETeamAccess.user });
