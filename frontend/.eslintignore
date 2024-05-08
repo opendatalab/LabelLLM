@@ -14,3 +14,4 @@ cy-example
 **/*.test.ts
 **/*.test.tsx
 es
+.eslintrc.js

@@ -2,7 +2,7 @@ import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, PageContainer } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation, useRouteLoaderData, useMatches } from 'react-router-dom';
 import { ImportOutlined, UserOutlined, FileTextOutlined, MoreOutlined } from '@ant-design/icons';
-import { Avatar, Button, Popover, Tooltip } from 'antd';
+import { Avatar, Button, Popover } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import _ from 'lodash';
@@ -20,6 +20,7 @@ import logo from '../assets/logo.svg';
 import { ReactComponent as LabelingTitle } from '../assets/title.svg';
 
 import './index.css';
+import clsx from 'clsx';
 
 export default () => {
   const location = useLocation();
@@ -116,68 +117,21 @@ export default () => {
       // @ts-ignore
       ErrorBoundary={ErrorBoundary}
       location={location}
-      menuFooterRender={({ collapsed }: any) =>
-        collapsed ? (
-          <div className="flex flex-col gap-4 items-center p-2">
-            <Tooltip title="帮助中心" placement="right">
-              <a
-                href="https://aicarrier.feishu.cn/drive/folder/EXc9fYpWLlFKJ6dJx8Fch7j4nFE?from=from_copylink"
-                target="_blank"
-                className="text-color py-2"
-                rel="noreferrer"
-              >
-                <FileTextOutlined />
-              </a>
-            </Tooltip>
-
-            <Popover
-              key="userinfo"
-              arrow={false}
-              placement="rightTop"
-              content={
-                <div className="flex flex-col">
-                  <Button type="text" onClick={goSSO} icon={<UserOutlined className="text-icon" />}>
-                    个人中心
-                  </Button>
-                  <Button type="text" onClick={onLogout} icon={<ImportOutlined className="text-icon" />}>
-                    退出登录
-                  </Button>
-                  {import.meta.env.DEV && (
-                    <Button type="text" onClick={goAuth} icon={<ImportOutlined className="text-icon" />}>
-                      登录
-                    </Button>
-                  )}
-                </div>
-              }
-            >
-              <div className="flex items-center gap-2 justify-start rounded-sm p-2 hover:bg-slate-50">
-                <Avatar
-                  src={userInfo?.avatar}
-                  style={
-                    !userInfo?.avatar
-                      ? {
-                          background: 'var(--color-primary)',
-                        }
-                      : {}
-                  }
-                >
-                  {name?.[0]}
-                </Avatar>
-              </div>
-            </Popover>
-          </div>
-        ) : (
-          <div className="flex flex-col px-4 gap-2">
-            <div className="flex px-10 mb-4">
+      menuFooterRender={({ collapsed }: any) => {
+        return (
+          <div className="flex flex-col px-2 gap-2">
+            <div className={clsx(collapsed ? 'px-1' : 'flex px-10 mb-4')}>
               <Button
                 icon={<FileTextOutlined />}
                 shape="round"
-                block
-                href="https://aicarrier.feishu.cn/drive/folder/EXc9fYpWLlFKJ6dJx8Fch7j4nFE?from=from_copylink"
+                size="small"
+                block={!collapsed}
+                href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF"
                 target="_blank"
-                className="text-color h-[32px] py-[4px]"
+                className={clsx({ 'text-color h-[32px] py-[4px]': !collapsed })}
+                type={collapsed ? 'text' : 'default'}
               >
-                帮助中心
+                {!collapsed && '帮助中心'}
               </Button>
             </div>
             <Popover
@@ -201,27 +155,16 @@ export default () => {
               }
             >
               <div className="flex items-center justify-between rounded-sm p-2 hover:bg-slate-50">
-                <div className="flex items-center gap-2 justify-start">
-                  <Avatar
-                    src={userInfo?.avatar}
-                    style={
-                      !userInfo?.avatar
-                        ? {
-                            background: 'var(--color-primary)',
-                          }
-                        : {}
-                    }
-                  >
-                    {name?.[0]}
-                  </Avatar>
-                  <span className="text-color">{name}</span>
+                <div className="flex items-center justify-start">
+                  <Avatar className="bg-primary text-xl mr-2">{name?.[0]}</Avatar>
+                  <span className={clsx('text-color', { hidden: collapsed })}>{name}</span>
                 </div>
-                <MoreOutlined className="text-color" />
+                <MoreOutlined className={clsx('text-color', { hidden: collapsed })} />
               </div>
             </Popover>
           </div>
-        )
-      }
+        );
+      }}
       onMenuHeaderClick={() => navigate('/')}
       menuItemRender={(item: MenuDataItem, dom: ReactNode) => (
         <span

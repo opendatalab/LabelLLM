@@ -132,16 +132,6 @@ const Task: React.FC<PropsWithChildren<IProps>> = () => {
           </>
         )}
       </Spin>
-      <div className="text-center">
-        <a
-          href="https://beian.miit.gov.cn/#/Integrated/index"
-          className="text-secondary text-sm"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ©2023 shlab. All Rights Reserved 沪ICP备2021009351号-3
-        </a>
-      </div>
       <WeChatPopover />
     </CustomPageContainer>
   );

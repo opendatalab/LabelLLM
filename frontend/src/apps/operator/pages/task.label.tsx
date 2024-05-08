@@ -230,16 +230,6 @@ export default function TaskList() {
         tableProps={tableProps}
         emptyDescription={_.isEmpty(location.search) ? '还没有任务，快去新建吧！' : '没有找到相关内容'}
       />
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-1">
-        <a
-          href="https://beian.miit.gov.cn/#/Integrated/index"
-          className="text-secondary text-sm"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ©2023 shlab. All Rights Reserved 沪ICP备2021009351号-3
-        </a>
-      </div>
     </>
   );
 }
