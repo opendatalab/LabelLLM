@@ -1,9 +1,9 @@
-import { QuestionCircleOutlined, SwapOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ProFormDependency, ProFormRadio, ProFormSwitch } from '@ant-design/pro-components';
 import { useMutation } from '@tanstack/react-query';
 import { useSessionStorage } from 'react-use';
 import type { CollapseProps, FormProps } from 'antd';
-import { Button, Card, Checkbox, Collapse, Form, Popover, Space } from 'antd';
+import { Button, Card, Checkbox, Collapse, Form, Popover } from 'antd';
 import _ from 'lodash';
 import { pick } from 'lodash/fp';
 import { useContext } from 'react';
@@ -11,13 +11,11 @@ import { useNavigate, useParams, useRevalidator, useRouteLoaderData } from 'reac
 import { styled } from 'styled-components';
 
 import { FancyGroup } from '@/components/FancyGroup';
-import FancyInput, { add } from '@/components/FancyInput';
+import { add } from '@/components/FancyInput';
 import type { FancyInputParams } from '@/components/FancyInput/types';
 import { message, modal } from '@/components/StaticAnt';
 
 import demoConversation from '../../assets/demo-conversation@2x.png';
-import demoContentPlugin from '../../assets/demo-plugin-content@2x.png';
-import demoConversationPlugin from '../../assets/demo-plugin-conversation@2x.png';
 import demoQuestion from '../../assets/demo-question@2x.png';
 import demoReply from '../../assets/demo-reply@2x.png';
 import diff from '../../assets/diff.png';
@@ -121,216 +119,6 @@ const messageFormTemplate: FancyInputParams[] = [
     },
   },
 ];
-// google 翻译语言列表
-const googleTranslateOptions = [
-  { label: '英文', value: 'en' },
-  { label: '中文', value: 'zh' },
-  { label: '阿拉伯语', value: 'ar' },
-  { label: '捷克语', value: 'cs' },
-  { label: '匈牙利语', value: 'hu' },
-  { label: '塞尔维亚语', value: 'sr' },
-  { label: '俄语', value: 'ru' },
-  { label: '韩语', value: 'ko' },
-  { label: '越南语', value: 'vi' },
-  { label: '泰语', value: 'th' },
-  { label: '德语', value: 'de' },
-  { label: '法语', value: 'fr' },
-  { label: '日语', value: 'ja' },
-];
-
-const getPluginFormTemplate = (name: string[]): FancyInputParams[] => [
-  {
-    type: 'boolean',
-    label: <span className="w-20 text-left">Google 翻译</span>,
-    field: 'google_translator_enabled',
-    key: 'google_translator_enabled',
-  },
-  {
-    type: 'group',
-    field: '',
-    key: 'google_translator',
-    dependencies: [...name, 'google_translator_enabled'],
-    renderGroup({ children, disabled }, form, fullField) {
-      const translator_enabled = form.getFieldValue([
-        ...(fullField as any[]).slice(0, -1),
-        'google_translator_enabled',
-      ]);
-
-      if (!translator_enabled) {
-        return null;
-      }
-
-      return (
-        <Space.Compact className="ml-24">
-          <FancyGroup name={name} disabled={disabled} group={children!} />
-        </Space.Compact>
-      );
-    },
-    children: [
-      {
-        type: 'enum',
-        label: '原文',
-        field: 'google_translate_from',
-        key: 'google_translate_from',
-        fieldProps: {
-          rules: [{ required: true, message: '请选择原文语言' }],
-        },
-        antProps: {
-          style: {
-            width: 120,
-          },
-          placeholder: '请选择',
-          options: googleTranslateOptions,
-        },
-      },
-      {
-        type: 'enum',
-        label: (
-          <span className="ml-4">
-            <SwapOutlined className="mr-2" /> 译文
-          </span>
-        ),
-        field: 'google_translate_to',
-        key: 'google_translate_to',
-        fieldProps: {
-          rules: [{ required: true, message: '请选择译文语言' }],
-        },
-        antProps: {
-          style: {
-            width: 120,
-          },
-          placeholder: '请选择',
-          options: googleTranslateOptions,
-        },
-      },
-    ],
-  },
-  {
-    type: 'boolean',
-    label: <span className="w-20 text-left">Deepl 翻译</span>,
-    field: 'translator_enabled',
-    key: 'translator_enabled',
-  },
-  {
-    type: 'group',
-    field: '',
-    key: 'translator',
-    dependencies: [...name, 'translator_enabled'],
-    renderGroup({ children, disabled }, form, fullField) {
-      const translator_enabled = form.getFieldValue([...(fullField as any[]).slice(0, -1), 'translator_enabled']);
-
-      if (!translator_enabled) {
-        return null;
-      }
-
-      return (
-        <Space.Compact className="ml-24">
-          <FancyGroup name={name} disabled={disabled} group={children!} />
-        </Space.Compact>
-      );
-    },
-    children: [
-      {
-        type: 'enum',
-        label: '原文',
-        field: 'translate_from',
-        key: 'translate_from',
-        fieldProps: {
-          rules: [{ required: true, message: '请选择原文语言' }],
-        },
-        antProps: {
-          style: {
-            width: 120,
-          },
-          placeholder: '请选择',
-          options: [
-            {
-              label: '英文',
-              value: 'EN',
-            },
-            {
-              label: '中文',
-              value: 'ZH',
-            },
-          ],
-        },
-      },
-      {
-        type: 'enum',
-        label: (
-          <span className="ml-4">
-            <SwapOutlined className="mr-2" /> 译文
-          </span>
-        ),
-        field: 'translate_to',
-        key: 'translate_to',
-        fieldProps: {
-          rules: [{ required: true, message: '请选择译文语言' }],
-        },
-        antProps: {
-          style: {
-            width: 120,
-          },
-          placeholder: '请选择',
-          options: [
-            {
-              label: '中文',
-              value: 'ZH',
-            },
-            {
-              label: '英文',
-              value: 'EN-GB',
-            },
-            {
-              label: '美式英文',
-              value: 'EN-US',
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    label: <span className="w-20 text-left">语法校验</span>,
-    type: 'boolean',
-    field: 'grammar_checking_enabled',
-    key: 'grammar_checking_enabled',
-  },
-  {
-    type: 'enum',
-    label: <span className="ml-24">校验语言</span>,
-    field: 'grammar_checking_from',
-    dependencies: [...name, 'grammar_checking_enabled'],
-    key: 'grammar_checking_from',
-    renderFormItem({ antProps, ...props }, form, fullField) {
-      const grammar_checking_enabled = form.getFieldValue([
-        ...(fullField as any[]).slice(0, -1),
-        'grammar_checking_enabled',
-      ]);
-
-      if (!grammar_checking_enabled) {
-        return null;
-      }
-
-      return <FancyInput {...props} {...antProps} />;
-    },
-    fieldProps: {
-      rules: [{ required: true, message: '请选择校验的语言' }],
-    },
-    antProps: {
-      style: {
-        width: 120,
-      },
-      placeholder: '请选择',
-      options: [
-        {
-          label: '英文',
-          value: 'en-US',
-        },
-      ],
-    },
-  },
-];
 
 interface PartialProps {
   onStepChange: (step: number) => void;
@@ -423,33 +211,6 @@ export default function TaskTool({ onStepChange }: PartialProps) {
       forceRender: true,
       children: (
         <div>
-          <Card className="mb-4">
-            <h4 className="mb-4">
-              针对提示（prompt）
-              <Popover placement="bottom" content={<img width={752} src={demoContentPlugin} />}>
-                <QuestionCircleOutlined className="ml-2 text-[var(--color-text-tertiary)] cursor-help" />
-              </Popover>
-            </h4>
-            <FancyGroup
-              disabled={toolsDisabled}
-              group={getPluginFormTemplate(['plugins', 'content'])}
-              name={['plugins', 'content']}
-            />
-          </Card>
-          <Card className="mb-4">
-            <h4 className="mb-4">
-              针对对话（messages）
-              <Popover placement="bottom" content={<img width={752} src={demoConversationPlugin} />}>
-                <QuestionCircleOutlined className="ml-2 text-[var(--color-text-tertiary)] cursor-help" />
-              </Popover>
-            </h4>
-            <FancyGroup
-              disabled={toolsDisabled}
-              group={getPluginFormTemplate(['plugins', 'conversation'])}
-              name={['plugins', 'conversation']}
-            />
-          </Card>
-
           <Card className="mb-4">
             <h4 className="mb-4">
               针对对话中的提问（message_type: send）
