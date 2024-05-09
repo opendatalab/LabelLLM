@@ -3,25 +3,12 @@ import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-compone
 import { useToggle } from 'react-use';
 
 import type { ILoginParams } from '@/api/user';
-import { EUserRole, login } from '@/api/user';
 import bg from './bg.png';
-import { message } from '@/components/StaticAnt';
 
 export default () => {
   const [on, toggle] = useToggle(true);
 
-  const onFinish = async (values: ILoginParams) => {
-    try {
-      const { role } = await login(values);
-      if (role === EUserRole.visitor) {
-        window.location.href = '/frontend';
-        return;
-      }
-      window.location.href = '/datasets';
-    } catch (e) {
-      message.error('用户名或密码错误');
-    }
-  };
+  const onFinish = async (values: ILoginParams) => {};
 
   return (
     <div className="w-screen h-screen !bg-cover relative" style={{ background: `url(${bg})` }}>
@@ -36,7 +23,7 @@ export default () => {
               showCount: true,
               prefix: <UserOutlined className={'prefixIcon'} />,
             }}
-            placeholder="账号"
+            placeholder="请输入用户名"
             rules={[
               {
                 required: true,

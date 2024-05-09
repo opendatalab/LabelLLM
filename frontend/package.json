@@ -16,7 +16,8 @@
     "build:scripts": "rollup --config rollup.config.ts --bundleConfigAsCjs",
     "build:js": "node ./scripts/bootstrap.js build",
     "lint": "eslint src --fix --ext .js,.jsx,.ts,.tsx",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "lint:script": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./src"
   },
   "repository": {
     "type": "git",
@@ -95,13 +96,13 @@
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
     "cross-env": "^7.0.3",
-    "eslint": "8",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.34.1",
     "husky": "^8.0.3",
     "inquirer": "8.2.5",
-    "lint-staged": "^13.2.2",
+    "lint-staged": "^15.2.2",
     "minimist": "^1.2.8",
     "mockjs": "^1.1.0",
     "node-fetch": "2.6.11",
@@ -125,10 +126,9 @@
     "**/*.css": [
       "stylelint --fix"
     ],
-    "**/*.{ts,tsx}": "bash -c tsc --project tsconfig.json --pretty --noEmit",
-    "**/*.{js,jsx,ts,tsx,json,css,less,md}": [
-      "prettier --check --write"
-    ],
-    "**/*.{js,ts,jsx,tsx}": "eslint --fix"
+    "**/*.{js,jsx,tsx,ts}": [
+      "npm run lint:script",
+      "git add ."
+    ]
   }
 }

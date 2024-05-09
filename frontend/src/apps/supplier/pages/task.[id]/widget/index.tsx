@@ -145,7 +145,7 @@ const Widget: React.FC<PropsWithChildren<IProps>> = (props) => {
     <Form.Item noStyle shouldUpdate>
       {({ getFieldValue, setFieldValue }) => {
         // 题目可见性条件，有条件存在时，默认不可见，当条件满足时才可见
-        if (!!conditions?.length) {
+        if (conditions?.length) {
           let shouldShow = false;
 
           // 兼容旧版本无分组的条件

@@ -17,7 +17,6 @@ export default function LabelTaskDetail() {
   const routeParams = useParams();
   const revalidator = useRevalidator();
   const navigate = useNavigate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const taskInfo = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
   const update = useMutation({
     mutationFn: updateLabelTask,
@@ -77,7 +76,9 @@ export default function LabelTaskDetail() {
 
           message.success('任务已结束');
           revalidator.revalidate();
-        } catch (error) {}
+        } catch (error) {
+          /* empty */
+        }
       },
       okText: '确定',
       cancelText: '取消',

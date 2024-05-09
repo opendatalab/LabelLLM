@@ -108,7 +108,7 @@ export default function UsersTeam() {
         open={open}
         onCancel={onCreate}
         onUpdate={() => {
-          if (!!teamInfo) {
+          if (teamInfo) {
             refetch?.();
           } else {
             const isPage = state.page > 1;

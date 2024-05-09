@@ -86,7 +86,6 @@ export default function Condition({ value, disabled, onChange, parentField, inde
     conditionForm.resetFields();
     setOpen(!open);
   }, [conditionForm, open]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const questions: QuestionItem[] = useMemo(() => form.getFieldValue(parentField) || [], [form, parentField, open]);
   const currentQuestion = useMemo(() => questions[index], [questions, index]);
 

@@ -71,7 +71,7 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
     const sortValues: any[] = [];
     getQuestionRobotMessages()?.forEach((item) => {
       const sort = formRef?.current?.getFieldValue(['message_evaluation', item.message_id, 'sort']);
-      if (!!sort) {
+      if (sort) {
         sortValues.push(sort);
       }
     });
@@ -117,7 +117,7 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
     if (questionDetail) {
       const robotsLen = getQuestionRobotMessages()?.length;
 
-      if (!!robotsLen) {
+      if (robotsLen) {
         setSortOptions(
           Array.from({ length: robotsLen }, (v, k) => ({
             value: k + 1,

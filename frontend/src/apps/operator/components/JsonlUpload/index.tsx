@@ -39,7 +39,7 @@ function uuidValidator(_core: Draft, _schema: JSONSchema, value: unknown, pointe
     };
   }
 
-  const uuidRegex = /^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-4[0-9a-fA-F]{3}\-(8|9|a|b)[0-9a-fA-F]{3}\-[0-9a-fA-F]{12}$/;
+  const uuidRegex = /^[a-f\d]{4}(?:[a-f\d]{4}-){4}[a-f\d]{12}$/i;
   if (value && typeof value === 'string' && !uuidRegex.test(value)) {
     return {
       name: 'uuid',

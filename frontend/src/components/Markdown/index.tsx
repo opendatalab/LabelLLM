@@ -58,10 +58,6 @@ const Markdown: React.FC<PropsWithChildren<IProps>> = ({ value, className }) => 
           }
           // 检验图片是否为s3地址 如果是则替换成要转换的地址
           if (node.tagName === 'img') {
-            const s3Reg = /^s3a?:\/\/([^\/]+)(?:\/(.*))?$/g;
-            if (s3Reg.test(node.properties.src)) {
-              node.properties.src = `https://data-asset.idc.shlab.tech/api/v1/s3/file_preview?path=${node.properties.src}`;
-            }
             // 解析图片格式 如果是mp3格式的音频文件则解析成audio标签 如果是mp4格式的视频文件则解析成video标签
             if (isUrlMedia(node.properties.src, 'mp3')) {
               node.tagName = 'audio';
@@ -72,7 +68,6 @@ const Markdown: React.FC<PropsWithChildren<IProps>> = ({ value, className }) => 
               node.properties.controls = true;
               node.properties.style = 'max-width: 100%';
             }
-            console.log(node.properties.src);
           }
         }}
       />

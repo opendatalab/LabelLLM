@@ -69,7 +69,6 @@ function QueryForm(
     });
 
     return _initialParams;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

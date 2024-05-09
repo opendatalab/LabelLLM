@@ -85,7 +85,6 @@ export default function LabelDetailRight() {
   const routeParams = useParams();
   const revalidator = useRevalidator();
   const { clearAll } = useStoreIds();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const taskInfo = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
   const [form] = Form.useForm();
   const [stepStatus, setStepStatus] = useState<Record<string, 'processing' | 'finish'>>({
@@ -143,7 +142,9 @@ export default function LabelDetailRight() {
       });
       message.success('任务已开始');
       revalidator.revalidate();
-    } catch (error) {}
+    } catch (error) {
+      /* empty */
+    }
   };
 
   const handleJsonlFinished: JsonlUploadProps['onFinish'] = (values) => {
@@ -184,7 +185,9 @@ export default function LabelDetailRight() {
       }));
 
       revalidator.revalidate();
-    } catch (error) {}
+    } catch (error) {
+      /* empty */
+    }
   };
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {

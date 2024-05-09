@@ -20,7 +20,7 @@ export async function ssoLoader({ request }: LoaderFunctionArgs) {
       // 处理登陆过来url是否携带code
       await login({ code } as LoginParams);
       // 替换basename
-      const path = `${location.pathname.replace(/^\/([^\/]+)/g, '')}${stringify(
+      const path = `${location.pathname.replace(/^\/([^/]+)/g, '')}${stringify(
         { ...query, clientId: undefined },
         {
           addQueryPrefix: true,
