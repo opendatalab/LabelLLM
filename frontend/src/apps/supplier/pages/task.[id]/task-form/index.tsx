@@ -127,7 +127,6 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionDetail]);
 
   const onSubmit = async () => {

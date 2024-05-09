@@ -3,5 +3,3 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 "$(pwd)/frontend/node_modules/.bin/lint-staged" --cwd ./frontend
-
-npx --no -- lint-staged

@@ -41,7 +41,6 @@ const ResetFormItem = ({
     return () => {
       setFieldValue(names, undefined);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <span className="block mb-3 last:mb-0" />;
 };
