@@ -126,10 +126,7 @@
     "**/*.css": [
       "stylelint --fix"
     ],
-    "**/*.{js,jsx,tsx,ts}": [
-      "npm run lint:script",
-      "git add ."
-    ]
+    "**/*.{js,ts,jsx,tsx}": "eslint --fix"
   },
   "engines": {
     "node": ">=18.0.0"
