@@ -10,9 +10,6 @@ export default function FancyInput({
   rules,
   tooltip,
   dependencies,
-  fieldProps,
-  fullField,
-  antProps,
   ...props
 }: FancyInputProps) {
   const Input = inputs[type];
@@ -22,7 +19,7 @@ export default function FancyInput({
     return <>Not supported yet</>;
   }
 
-  return <Input {...props} />;
+  return <Input fieldProps={{ name: field, key, label, rules, tooltip, hidden, dependencies }} {...props} />;
 }
 
 export { add, remove };

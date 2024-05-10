@@ -50,7 +50,6 @@ const AuditInfo: React.FC<PropsWithChildren<IProps>> = ({ dataId, questionnaire_
       show: [ERouterTaskType.reviewTask, ERouterTaskType.review].includes(type),
       text: label_user ? (
         <div className="break-all">
-          <span className="mr-4">用户ID：{label_user?.user_id}</span>
           <span>用户名：{label_user?.username || '-'}</span>
         </div>
       ) : (
@@ -63,7 +62,6 @@ const AuditInfo: React.FC<PropsWithChildren<IProps>> = ({ dataId, questionnaire_
       show: type === ERouterTaskType.reviewAudit && label_user?.user_id,
       text: label_user ? (
         <div className="break-all">
-          <span className="mr-4">用户ID：{label_user?.user_id}</span>
           <span>用户名：{label_user?.username || '-'}</span>
         </div>
       ) : (

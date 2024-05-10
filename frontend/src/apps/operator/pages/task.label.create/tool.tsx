@@ -191,7 +191,7 @@ export default function TaskTool({ onStepChange }: PartialProps) {
       setTimeout(() => {
         modalInstance.destroy();
         revalidator.revalidate();
-        navigate(`/task/label/${routeParams.id || createdResponse!.task_id}`);
+        navigate(`/task/${routeParams.id || createdResponse!.task_id}`);
       }, 1000);
     });
   };

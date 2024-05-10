@@ -48,6 +48,11 @@ export default [
             <LabelTask />
           </CheckChildRoute>
         ),
+        handle: {
+          crumb: () => {
+            return '标注任务';
+          },
+        },
         children: [
           {
             path: 'create',

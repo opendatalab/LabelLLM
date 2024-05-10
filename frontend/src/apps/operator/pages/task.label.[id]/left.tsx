@@ -266,7 +266,7 @@ export default function LabelDetailLeft() {
         title="任务信息"
         labelStyle={descriptionLabelStyle}
         extra={
-          <Link to={`/task/label/${routeParams.id}/edit#basic`}>
+          <Link to={`/task/${routeParams.id}/edit#basic`}>
             <Button type="link" className="pr-0" icon={<EditOutlined />}>
               编辑任务
             </Button>

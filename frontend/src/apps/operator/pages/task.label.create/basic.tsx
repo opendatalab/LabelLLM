@@ -49,11 +49,11 @@ export default function TaskBasic({ onStepChange }: PartialProps) {
 
   const handleCancel = () => {
     if (routeParams.id) {
-      navigate(`/task/label/${routeParams.id}`, { replace: true });
+      navigate(`/task/${routeParams.id}`, { replace: true });
       return;
     }
 
-    navigate('/task/label', { replace: true });
+    navigate('/task', { replace: true });
   };
 
   return (

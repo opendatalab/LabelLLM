@@ -114,7 +114,7 @@ export default function TaskList() {
         width: 340,
         render: (text: string, record: OperatorTask) => {
           return (
-            <Link title={text} to={`/task/label/${record.task_id}`} key="detail">
+            <Link title={text} to={`/task/${record.task_id}`} key="detail">
               {text}
             </Link>
           );
@@ -173,7 +173,7 @@ export default function TaskList() {
         width: 120,
         responsive: ['lg', 'xl', 'xxl'],
         render: (text: string, record: OperatorTask) => [
-          <Link to={`/task/label/${record.task_id}`} key="detail">
+          <Link to={`/task/${record.task_id}`} key="detail">
             查看
           </Link>,
         ],

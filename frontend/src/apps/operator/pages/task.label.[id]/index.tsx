@@ -51,7 +51,7 @@ export default function LabelTaskDetail() {
           onOk: async () => {
             await deleteLabelTask({ task_id: routeParams.id! });
             message.success('任务已删除');
-            navigate('/task/label', { replace: true });
+            navigate('/task', { replace: true });
           },
           okText: '确定',
           cancelText: '取消',

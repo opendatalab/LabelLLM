@@ -9,6 +9,8 @@ import { gid } from '@/utils/gid';
 
 export interface FancyEnumProps extends SelectProps {
   fieldProps: FormItemProps;
+  antProps?: any;
+  fullField?: any;
   queryFn?: (
     filterValue: string,
     refs: { totalRef: React.Ref<number>; pageNoRef: React.Ref<number> },
@@ -16,7 +18,7 @@ export interface FancyEnumProps extends SelectProps {
 }
 
 export function FancyEnum(props: FancyEnumProps) {
-  const { queryFn, onSearch, options, ...rest } = props;
+  const { queryFn, onSearch, options, fieldProps, fullField, antProps, ...rest } = props;
   const [value, setValue] = useState<string>('');
   const totalRef = useRef<number>(0);
   const pageNoRef = useRef<number>(1);
