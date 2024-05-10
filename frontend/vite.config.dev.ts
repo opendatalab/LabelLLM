@@ -6,35 +6,23 @@ import svgr from 'vite-plugin-svgr';
 import { ViteEjsPlugin } from 'vite-plugin-ejs';
 import { viteMockServe } from 'vite-plugin-mock';
 
-import apiUrls from './config/apiUrls';
-
-const appDir = process.env.APP_DIR || 'src/apps/chat';
-const appName = appDir.split('/').pop();
+const appDir = process.env.APP_DIR || 'src/apps/login';
 // 开启mock后，proxy将失效
-const useMock = process.env.MOCK ? true : false;
-const apiUrl = apiUrls[appName!];
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
   publicDir: resolve(__dirname, 'public'),
-  server: useMock
-    ? {}
-    : {
-        host: true,
-        port: 3000,
-        proxy: {
-          '/api/ws': {
-            target: 'https://languagetool.shlab.tech/',
-            changeOrigin: true,
-            rewrite: (path) => path.replace(/^\/api\/ws/, ''),
-          },
-          '/api': {
-            target: apiUrl,
-            changeOrigin: true,
-          },
-        },
+  server: {
+    host: true,
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://10.6.16.145:16666/',
+        changeOrigin: true,
       },
+    },
+  },
 
   optimizeDeps: {
     include: ['react/jsx-runtime'],
@@ -50,10 +38,6 @@ export default defineConfig({
     svgr(),
     ViteEjsPlugin({
       root: resolve(__dirname, appDir),
-    }),
-    viteMockServe({
-      mockPath: 'mock',
-      enable: useMock,
     }),
   ].filter(Boolean),
 

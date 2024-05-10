@@ -1,73 +1,74 @@
 import request from './request';
 import type { ETeamAccess } from './team';
 
-export interface ILoginParams {
-  code: string;
-}
-interface ILoginRes {
-  access_token: string;
-  token_type: string;
-}
-
-export interface FakeLoginParams {
-  email: string;
-  password: string;
-}
-
-export interface FakeRegisterParams {
-  email: string;
-  password: string;
-}
-
 export enum EUserRole {
-  super_admin = 'super_admin', // 管理员
   admin = 'admin', // 管理员
   user = 'user', // 普通用户
 }
 
-// export const userRoleMap = {
-//   [EUserRole.admin]: '超级管理员',
-//   [EUserRole.admin]: '管理员',
-//   [EUserRole.user]: '普通成员',
-// };
-
-interface ITeam {
-  user_id?: string;
-  name?: string;
-  role?: ETeamAccess;
+/**
+ * 用户注册 username password
+ * */
+export interface ICreate {
+  username: string;
+  password: string;
+  password2?: string;
 }
+export const create = (params: ICreate): Promise<void> => {
+  return request.post('/v1/user/create', params);
+};
 
 export interface IUserInfo {
-  sso_uid: string;
-  email: string;
-  phone: string;
-  github_account: string;
-  wechat: string;
-  wechat_name: string;
-  avatar: string;
-  username: string;
-  nickname: string;
-  user_id: string;
+  user_id: number;
+  name: string;
   role: EUserRole;
-  teams: ITeam[];
+  teams?: IUserInfo[];
 }
+
 /**
  * 用户登录
  * */
-export const login = (params: ILoginParams): Promise<ILoginRes> => {
-  return request.post('/v1/auth/token', params);
-};
-
-/**
- * 获取用户信息
- */
-export const getUserInfo = async (): Promise<IUserInfo> => {
-  return request.post('/v1/auth/me');
+export const login = (params: ICreate): Promise<IUserInfo> => {
+  return request.post('/v1/user/login', params);
 };
 
 /**
  * 退出登录
  */
 export const logout = (): Promise<void> => {
-  return request.post('/v1/auth/logout');
+  return request.post('/v1/user/logout');
+};
+
+/**
+ * 获取用户信息
+ */
+export const getUserInfo = async (): Promise<IUserInfo> => {
+  return request.get('/v1/user/me');
+};
+
+/**
+ * 获取用户列表
+ */
+interface IUserListParams {
+  page?: number;
+  page_size?: number;
+  username?: string;
+  role?: EUserRole;
+}
+export const getUserList = async (params: IUserListParams): Promise<{ list: IUserInfo[]; total: number }> => {
+  return request.post('/v1/user/list', params);
+};
+
+/**
+ * 更新用户
+ */
+export const updateUser = (params: Pick<IUserInfo, 'user_id' | 'role'>) => {
+  return request.post('/v1/user/edit', params);
+};
+
+/**
+ * 获取用户所在的团队信息
+ */
+export const getUserTeamInfo = async (): Promise<IUserInfo> => {
+  return request.post('/v1/user/team/list').then((res: any) => res?.list?.[0]);
 };

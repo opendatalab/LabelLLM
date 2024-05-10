@@ -7,32 +7,34 @@ import { useRef } from 'react';
 import useUrlState from '@ahooksjs/use-url-state';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import type { IOperatorItemParams, IOperatorRes } from '@/apps/operator/services/team';
-import { editOperator, getOperateList } from '@/apps/operator/services/team';
+import { editOperator } from '@/apps/operator/services/team';
 import { ETeamAccess } from '@/api/team';
 import { message, modal } from '@/components/StaticAnt';
 
 import Invite from './Invite';
 import { operatorTeamKey } from '../../constant/query-key-factories';
 import CustomPageContainer from '../../layouts/CustomPageContainer';
+import { EUserRole, getUserList, IUserInfo, updateUser } from '@/api/user';
+import { useRouteLoaderData } from 'react-router-dom';
 
 export default function SupplierMember() {
-  const [state, setState] = useUrlState({ page: 1, page_size: 10, user_name: undefined, is_operator: true });
+  const [state, setState] = useUrlState({ page: 1, page_size: 10, name: undefined, role: EUserRole.admin });
   const formRef = useRef<ProFormInstance>();
+  const userInfo = useRouteLoaderData('root') as IUserInfo;
 
   const { data, isFetching, refetch } = useQuery({
     queryKey: operatorTeamKey.list(state),
-    queryFn: async () => getOperateList(state as IOperatorItemParams),
+    queryFn: async () => getUserList(state),
   });
 
   const { mutateAsync } = useMutation({
-    mutationFn: editOperator,
+    mutationFn: updateUser,
     onSuccess: () => {
       refetch?.();
     },
   });
 
-  const columns: ColumnsType<IOperatorRes> = [
+  const columns: ColumnsType<IUserInfo> = [
     {
       title: '用户名',
       dataIndex: 'name',
@@ -43,13 +45,18 @@ export default function SupplierMember() {
       key: 'action',
       width: 160,
       render: (_, record) => (
-        <Button className="!p-0" type="link" onClick={() => remove(record.user_id)}>
+        <Button
+          className="!p-0"
+          type="link"
+          disabled={record.user_id === userInfo.user_id}
+          onClick={() => remove(record)}
+        >
           移除
         </Button>
       ),
     },
   ];
-  function remove(user_id: string) {
+  function remove(user: IUserInfo) {
     modal.confirm({
       title: '移除',
       centered: true,
@@ -60,7 +67,7 @@ export default function SupplierMember() {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
           try {
-            await mutateAsync({ user_id: user_id, role: ETeamAccess.user });
+            await mutateAsync({ user_id: user.user_id, role: EUserRole.user });
             message.success('移除成功');
             resolve(true);
           } catch (e) {
@@ -83,7 +90,7 @@ export default function SupplierMember() {
           autoFocusFirstInput={false}
           formRef={formRef}
           onFinish={async (values) => {
-            setState({ user_name: values.name || undefined, page: undefined, page_size: undefined });
+            setState({ name: values.name || undefined, page: undefined, page_size: undefined });
             return true;
           }}
           submitter={{

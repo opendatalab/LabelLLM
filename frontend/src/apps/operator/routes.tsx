@@ -16,8 +16,7 @@ const moduleSpin = {
   fallback: <Spin className="w-full mt-[30vh]" />,
 };
 
-const TaskLayout = loadable(() => import('./pages/task'), moduleSpin);
-const LabelTask = loadable(() => import('./pages/task.label'), moduleSpin);
+const LabelTask = loadable(() => import('./pages/task'), moduleSpin);
 const UserTeam = loadable(() => import('./pages/users.team'), moduleSpin);
 const LabelTaskDetail = loadable(() => import('./pages/task.label.[id]'), moduleSpin);
 const CreateLabelTask = loadable(() => import('./pages/task.label.create'), moduleSpin);
@@ -43,56 +42,45 @@ export default [
     children: [
       {
         path: 'task',
-        element: <TaskLayout />,
-        handle: {
-          crumb: () => {
-            return '任务管理';
-          },
-        },
+        id: 'labelTaskList',
+        element: (
+          <CheckChildRoute>
+            <LabelTask />
+          </CheckChildRoute>
+        ),
         children: [
           {
-            path: 'label',
-            id: 'labelTaskList',
+            path: 'create',
+            element: <CreateLabelTask />,
+            handle: {
+              crumb: () => {
+                return '新建任务';
+              },
+            },
+          },
+          {
+            path: ':id',
+            loader: labelTaskLoader,
+            id: 'labelTask',
             element: (
               <CheckChildRoute>
-                <LabelTask />
+                <LabelTaskDetail />
               </CheckChildRoute>
             ),
+            handle: {
+              crumb: (data: OperatorTask) => {
+                return data?.title;
+              },
+            },
             children: [
               {
-                path: 'create',
+                path: 'edit',
                 element: <CreateLabelTask />,
                 handle: {
                   crumb: () => {
-                    return '新建任务';
+                    return '编辑任务';
                   },
                 },
-              },
-              {
-                path: ':id',
-                loader: labelTaskLoader,
-                id: 'labelTask',
-                element: (
-                  <CheckChildRoute>
-                    <LabelTaskDetail />
-                  </CheckChildRoute>
-                ),
-                handle: {
-                  crumb: (data: OperatorTask) => {
-                    return data?.title;
-                  },
-                },
-                children: [
-                  {
-                    path: 'edit',
-                    element: <CreateLabelTask />,
-                    handle: {
-                      crumb: () => {
-                        return '编辑任务';
-                      },
-                    },
-                  },
-                ],
               },
             ],
           },

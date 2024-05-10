@@ -1,7 +1,7 @@
 import type { IUserInfo } from '@/api/user';
 import { EUserRole } from '@/api/user';
 import queryClient from '@/constant/queryClient';
-import { ssoUserInfoKey } from '@/constant/query-key-factories';
+import { userInfoKey } from '@/constant/query-key-factories';
 import { ETeamAccess } from '@/api/team';
 
 export interface IAccessValue {
@@ -36,7 +36,7 @@ const roleAccessMap: UserRoleMap = {
 
 // 校验当前用户的团队权限
 export function hasPermission(permission: keyof IAccessValue) {
-  const user = queryClient.getQueryData<IUserInfo>(ssoUserInfoKey.all);
+  const user = queryClient.getQueryData<IUserInfo>(userInfoKey.all);
   const role = user?.teams?.[0]?.role || ETeamAccess.user;
   return roleAccessMap[role][permission];
 }

@@ -1,7 +1,7 @@
 import type { IUserInfo } from '@/api/user';
 import { EUserRole } from '@/api/user';
 import queryClient from '@/constant/queryClient';
-import { ssoUserInfoKey } from '@/constant/query-key-factories';
+import { userInfoKey } from '@/constant/query-key-factories';
 
 export interface IAccessValue {
   canReadPage: boolean; // 是否能访问页面
@@ -18,11 +18,6 @@ type UserRoleMap = Record<EUserRole, IAccessValue>;
  */
 
 const roleAccessMap: UserRoleMap = {
-  [EUserRole.super_admin]: {
-    canReadPage: true,
-    canUsersPagePermission: true,
-    canReadUsersPage: true,
-  },
   [EUserRole.admin]: {
     canReadPage: true,
     canUsersPagePermission: true,
@@ -36,7 +31,7 @@ const roleAccessMap: UserRoleMap = {
 };
 
 export function hasPermission(permission: keyof IAccessValue) {
-  const user = queryClient.getQueryData<IUserInfo>(ssoUserInfoKey.all);
+  const user = queryClient.getQueryData<IUserInfo>(userInfoKey.all);
   if (!user?.role) return false;
   return roleAccessMap[user?.role][permission];
 }

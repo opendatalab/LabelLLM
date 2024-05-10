@@ -5,7 +5,7 @@
 import { Spin } from 'antd';
 import React, { useMemo } from 'react';
 import _ from 'lodash';
-import DocumentTitle from 'react-document-title';
+import { useTitle } from 'react-use';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, useMatches } from 'react-router-dom';
 
@@ -24,12 +24,9 @@ function RouteWithTitle({ children }: { children: React.ReactNode }) {
     .last()
     .value() as string;
 
-  return (
-    // TODO：默认标题可配置（环境变量 or 常量）
-    <DocumentTitle title={title || '上海人工智能实验室'}>
-      <>{children}</>
-    </DocumentTitle>
-  );
+  useTitle(title || '标注平台');
+
+  return <>{children}</>;
 }
 
 function mapRoutes(

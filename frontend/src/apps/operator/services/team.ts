@@ -65,10 +65,6 @@ export interface IOperatorRes {
   role: ETeamAccess; // 用户角色
   name?: string; // 用户名
 }
-export const getOperateList = (params: IOperatorItemParams): Promise<{ list: IOperatorRes[]; total: number }> => {
-  return request.post('/v1/user/list', params);
-};
-
 /**
  * 添加运营人员 删除运营人员
  * */

@@ -1,7 +1,7 @@
 import type { IUserInfo } from '@/api/user';
 import { EUserRole } from '@/api/user';
 import queryClient from '@/constant/queryClient';
-import { ssoUserInfoKey } from '@/constant/query-key-factories';
+import { userInfoKey } from '@/constant/query-key-factories';
 
 // 运营权限
 export interface IAccessValue {
@@ -12,10 +12,6 @@ export interface IAccessValue {
 type UserRoleMap = Record<EUserRole, IAccessValue>;
 
 const roleAccessMap: UserRoleMap = {
-  [EUserRole.super_admin]: {
-    canReadPage: true,
-    canReadPreview: true,
-  },
   [EUserRole.admin]: {
     canReadPage: true,
     canReadPreview: true,
@@ -28,7 +24,7 @@ const roleAccessMap: UserRoleMap = {
 
 // 权限验证
 export function hasPermission(permission: keyof IAccessValue) {
-  const user = queryClient.getQueryData<IUserInfo>(ssoUserInfoKey.all);
+  const user = queryClient.getQueryData<IUserInfo>(userInfoKey.all);
   if (!user?.role) return false;
   return roleAccessMap[user?.role][permission];
 }

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import type { AxiosError, AxiosResponse } from 'axios';
 import axios from 'axios';
 
-import { goAuth } from '@/utils/sso';
+import { goLogin } from '@/utils/sso';
 import { message } from '@/components/StaticAnt';
 
 import { EECode, ECode } from './errorCode';
@@ -49,7 +49,7 @@ function errorHandler(error: AxiosError) {
 const authorizationBearerFailed = (error: any) => {
   // 401一秒后跳转到登录页
   if (error?.response?.status === 401 && !import.meta.env.DEV) {
-    goAuth();
+    goLogin();
   }
   // 特殊状态码 没有具体code
   if (error?.response?.status === 422) {

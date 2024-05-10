@@ -2,17 +2,16 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ModalForm, ProFormText } from '@ant-design/pro-components';
 import { Button, Form, message } from 'antd';
 
-import type { IOperatorRes } from '@/apps/operator/services/team';
-import { ETeamAccess } from '@/api/team';
+import { EUserRole, IUserInfo } from '@/api/user';
 
 interface IProps {
-  mutateAsync: (d: IOperatorRes) => Promise<any>;
+  mutateAsync: (d: IUserInfo) => Promise<any>;
 }
 
 export default ({ mutateAsync }: IProps) => {
-  const [form] = Form.useForm<IOperatorRes>();
+  const [form] = Form.useForm<IUserInfo>();
   return (
-    <ModalForm<IOperatorRes>
+    <ModalForm<IUserInfo>
       title="添加成员"
       layout="horizontal"
       trigger={
@@ -28,15 +27,14 @@ export default ({ mutateAsync }: IProps) => {
         destroyOnClose: true,
         onCancel: () => console.log('run'),
       }}
-      submitTimeout={2000}
       onFinish={async (values) => {
-        await mutateAsync({ ...values, role: ETeamAccess.admin });
+        await mutateAsync({ ...values, role: EUserRole.admin });
         message.success('添加成功');
         return true;
       }}
     >
       <div className="m-6" />
-      <ProFormText name="user_id" label="用户名" placeholder="输入用户名添加成员" rules={[{ required: true }]} />
+      <ProFormText name="name" label="用户名" placeholder="输入用户名" rules={[{ required: true }]} />
     </ModalForm>
   );
 };

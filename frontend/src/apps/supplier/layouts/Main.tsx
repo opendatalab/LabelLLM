@@ -5,9 +5,8 @@ import { ProfileOutlined, MoreOutlined, ImportOutlined, UserOutlined, UsergroupA
 import { Button, Popover } from 'antd';
 import { type ReactNode } from 'react';
 
-import type { SSOUserInfo } from '@/api/sso';
-import { logout } from '@/api/sso';
-import { goAuth, goLogin, goSSO } from '@/utils/sso';
+import { IUserInfo, logout } from '@/api/user';
+import { goLogin } from '@/utils/sso';
 import { hasPermission } from '@/apps/supplier/constant/access';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -18,7 +17,7 @@ import './index.css';
 export default () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const userInfo = useRouteLoaderData('root') as SSOUserInfo;
+  const userInfo = useRouteLoaderData('root') as IUserInfo;
   const { isPreview } = useTaskParams();
 
   // 导航菜单，不从 routes 文件读取，单独在此定义
@@ -52,7 +51,7 @@ export default () => {
     goLogin();
   };
 
-  const name = userInfo?.username || userInfo?.nickname;
+  const name = userInfo?.name;
   return (
     <ProLayout
       className="layout-wrapper"
@@ -82,14 +81,11 @@ export default () => {
       ErrorBoundary={ErrorBoundary}
       location={location}
       avatarProps={{
-        src: userInfo?.avatar,
         icon: <span className="flex items-center h-full justify-center">{name?.[0]}</span>,
         title: name,
-        style: !userInfo?.avatar
-          ? {
-              background: 'var(--color-primary)',
-            }
-          : {},
+        style: {
+          background: 'var(--color-primary)',
+        },
       }}
       actionsRender={() => [
         <Popover
@@ -98,17 +94,9 @@ export default () => {
           placement="rightTop"
           content={
             <div className="flex flex-col">
-              <Button type="text" onClick={goSSO} icon={<UserOutlined className="text-icon" />}>
-                个人中心
-              </Button>
               <Button type="text" onClick={onLogout} icon={<ImportOutlined className="text-icon" />}>
                 退出登录
               </Button>
-              {import.meta.env.DEV && (
-                <Button type="text" onClick={goAuth} icon={<ImportOutlined className="text-icon" />}>
-                  登录
-                </Button>
-              )}
             </div>
           }
         >

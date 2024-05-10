@@ -1,15 +1,14 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, PageContainer } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation, useRouteLoaderData, useMatches } from 'react-router-dom';
-import { ImportOutlined, UserOutlined, FileTextOutlined, MoreOutlined } from '@ant-design/icons';
+import { ImportOutlined, FileTextOutlined, MoreOutlined } from '@ant-design/icons';
 import { Avatar, Button, Popover } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import _ from 'lodash';
 
-import type { SSOUserInfo } from '@/api/sso';
-import { logout } from '@/api/sso';
-import { goAuth, goLogin, goSSO } from '@/utils/sso';
+import { logout, IUserInfo } from '@/api/user';
+import { goLogin } from '@/utils/sso';
 import type { Match } from '@/components/Breadcrumb';
 import { hasPermission } from '@/apps/operator/constant/access';
 import NoAuth from '@/apps/operator/components/NoAuth';
@@ -25,7 +24,7 @@ import clsx from 'clsx';
 export default () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const userInfo = useRouteLoaderData('root') as SSOUserInfo;
+  const userInfo = useRouteLoaderData('root') as IUserInfo;
 
   // 导航菜单，不从 routes 文件读取，单独在此定义
   const route = {
@@ -74,7 +73,7 @@ export default () => {
     goLogin();
   };
 
-  const name = userInfo?.username || userInfo?.nickname;
+  const name = userInfo?.name;
 
   const isRead = hasPermission('canReadPage');
 
@@ -140,14 +139,11 @@ export default () => {
               placement="rightTop"
               content={
                 <div className="flex flex-col">
-                  <Button type="text" onClick={goSSO} icon={<UserOutlined className="text-icon" />}>
-                    个人中心
-                  </Button>
                   <Button type="text" onClick={onLogout} icon={<ImportOutlined className="text-icon" />}>
                     退出登录
                   </Button>
                   {import.meta.env.DEV && (
-                    <Button type="text" onClick={goAuth} icon={<ImportOutlined className="text-icon" />}>
+                    <Button type="text" onClick={goLogin} icon={<ImportOutlined className="text-icon" />}>
                       登录
                     </Button>
                   )}

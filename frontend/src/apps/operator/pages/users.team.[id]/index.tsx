@@ -73,7 +73,7 @@ export default function SupplierMember() {
   };
 
   return (
-    <CustomPageContainer>
+    <CustomPageContainer bodyClassName="pt-0">
       {params.team_id === DEFAULT_TEAM && (data?.total ?? 0) > 0 && (
         <Alert
           className="mb-4"
@@ -83,7 +83,6 @@ export default function SupplierMember() {
           icon={<InfoCircleOutlined />}
         />
       )}
-
       <div className="flex justify-between mb-4">
         <ProForm
           layout="inline"

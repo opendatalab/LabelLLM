@@ -1,6 +1,6 @@
 import queryClient from '@/constant/queryClient';
 
-import { getUserTeamInfo } from '../services/member';
+import { getUserTeamInfo } from '@/api/user';
 
 export async function userTeamInfoLoader() {
   try {

@@ -10,14 +10,14 @@ import type { IMessage, IMessageQuestion, IQuestion } from '@/apps/supplier/serv
 import { EMessageType, translate, googleTranslate } from '@/apps/supplier/services/task';
 import MessageBox from '@/components/MessageBox';
 import Copy from '@/apps/supplier/components/copy';
-import { ssoUserInfoKey } from '@/constant/query-key-factories';
-import type { SSOUserInfo } from '@/api/sso';
+import { userInfoKey } from '@/constant/query-key-factories';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
 import GrammarCheck from '@/apps/supplier/pages/task.[id]/grammar-check';
 import { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
 import Translate from '@/apps/supplier/pages/task.[id]/translate';
 
 import Widget, { WidgetBox } from '../widget';
+import { IUserInfo } from '@/api/user';
 
 type IProps = HTMLAttributes<HTMLDivElement> & {
   id: string;
@@ -224,7 +224,7 @@ const ChatBox: React.FC<PropsWithChildren<IProps>> = ({
   userQuestions,
 }) => {
   const queryClient = useQueryClient();
-  const userInfo = queryClient.getQueryData<SSOUserInfo>(ssoUserInfoKey.all);
+  const userInfo = queryClient.getQueryData<IUserInfo>(userInfoKey.all);
   const { pluginConfig, plugins } = useDatasetsContext();
 
   return (
@@ -286,8 +286,7 @@ const ChatBox: React.FC<PropsWithChildren<IProps>> = ({
                 {item.message_type === EMessageType.send ? (
                   <UserMessage
                     type={grid > 1 ? 'secondary' : 'default'}
-                    name={userInfo?.username || userInfo?.nickname}
-                    avatar={userInfo?.avatar}
+                    name={userInfo?.name}
                     message={item}
                     userQuestions={userQuestions}
                   />
