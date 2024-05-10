@@ -84,7 +84,7 @@ export default function TaskList() {
             }).then((res) => {
               totalRef.current = res.total;
               pageNoRef.current += 1;
-              return res.data.map((item) => ({ label: item.username, value: item.id }));
+              return res.list.map((item) => ({ label: item.name, value: item.user_id }));
             });
           },
           placeholder: '创建人',
