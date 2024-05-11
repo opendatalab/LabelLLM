@@ -120,7 +120,7 @@ export default ({ conversation }: { conversation: IMessage[] }) => {
             onClick={() => setOpen(!open)}
             className="fixed cursor-pointer flex justify-center items-center right-0 top-20 z-10 w-8 h-7 border border-fill-secondary border-solid rounded-l-full hover:bg-fill-tertiary"
           >
-            <IconFont rotate={180} className="text-xl font-bold" type="icon-cebianchoutishouqi" />
+            <IconFont className="text-xl font-bold rotate-180" type="icon-cebianchoutishouqi" />
           </span>
         </Tooltip>
       }

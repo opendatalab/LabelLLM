@@ -6,7 +6,6 @@ import type { ERecordStatus } from '@/apps/supplier/services/task';
 
 /**
  * type 当前任务类型
- * isAudit 是否是审核任务
  * taskId 任务id
  * isPreview 是否是预览任务
  * flow_index 审核任务的流程index

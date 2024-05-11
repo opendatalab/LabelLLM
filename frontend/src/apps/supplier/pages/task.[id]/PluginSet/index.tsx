@@ -8,12 +8,6 @@ import IconFont from '@/components/IconFont';
 type IProps = HTMLAttributes<HTMLDivElement>;
 
 export enum EPlugin {
-  promptTranslate = 'promptTranslate', // 针对提示（prompt） 翻译 deepl
-  messagesTranslate = 'messagesTranslate', // 针对对话（messages） 翻译
-  promptGoogleTranslate = 'promptGoogleTranslate', // 针对提示（prompt） 翻译 deepl
-  googleMessagesTranslate = 'googleMessagesTranslate', // 针对对话（messages） 翻译
-  messagesGrammarCheck = 'messagesGrammarCheck', // 针对对话（messages） 语法校验
-  promptGrammarCheck = 'promptGrammarCheck', // 针对提示（prompt） 语法校验
   messagesSendDiff = 'messagesSendDiff', // 针对对话（messages） 对比
 }
 
@@ -29,54 +23,6 @@ const PluginSet: React.FC<PropsWithChildren<IProps>> = () => {
   };
 
   const pluginList = [
-    {
-      title: '针对提示',
-      show:
-        pluginConfig?.content?.grammar_checking_enabled ||
-        pluginConfig?.content?.translator_enabled ||
-        pluginConfig?.content?.google_translator_enabled,
-      options: [
-        {
-          text: 'Google 翻译',
-          value: EPlugin.promptGoogleTranslate,
-          show: pluginConfig?.content?.google_translator_enabled,
-        },
-        {
-          text: 'Deepl 翻译',
-          value: EPlugin.promptTranslate,
-          show: pluginConfig?.content?.translator_enabled,
-        },
-        {
-          text: '语法校验',
-          value: EPlugin.promptGrammarCheck,
-          show: pluginConfig?.content?.grammar_checking_enabled,
-        },
-      ],
-    },
-    {
-      title: '针对对话',
-      show:
-        pluginConfig?.conversation?.translator_enabled ||
-        pluginConfig?.conversation?.grammar_checking_enabled ||
-        pluginConfig?.conversation?.google_translator_enabled,
-      options: [
-        {
-          text: 'Google 翻译',
-          value: EPlugin.googleMessagesTranslate,
-          show: pluginConfig?.conversation?.google_translator_enabled,
-        },
-        {
-          text: 'Deepl 翻译',
-          value: EPlugin.messagesTranslate,
-          show: pluginConfig?.conversation?.translator_enabled,
-        },
-        {
-          text: '语法校验',
-          value: EPlugin.messagesGrammarCheck,
-          show: pluginConfig?.conversation?.grammar_checking_enabled,
-        },
-      ],
-    },
     {
       title: '针对对话中的提问',
       show: pluginConfig?.conversation?.message_send_diff,

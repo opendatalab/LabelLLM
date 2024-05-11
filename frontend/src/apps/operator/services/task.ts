@@ -376,20 +376,6 @@ export const getLabelTaskUserStatistics = (body: LabelTaskStatisticsBody): Promi
   return request.post(`/v1/operator/task/label/record/group/user`, body);
 };
 
-export interface AuditTaskStatisticsBody {
-  /** Task Id 任务id */
-  task_id: string;
-  /** Flow Index 流程索引 */
-  flow_index: number;
-}
-
-/**
- * 审核-数据统计-用户维度
- */
-export const getAuditTaskUserStatistics = (body: AuditTaskStatisticsBody): Promise<RespGroupRecordByUser> => {
-  return request.post(`/v1/operator/task/audit/record/group/user`, body);
-};
-
 /**
  * 任务-统计分析-数据分布
  */

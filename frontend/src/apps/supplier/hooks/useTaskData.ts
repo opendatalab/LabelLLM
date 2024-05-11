@@ -60,17 +60,7 @@ export const useTaskDetail = ({ setPlugins }: { setPlugins: (data: EPlugin[]) =>
   useEffect(() => {
     if (query.isSuccess) {
       const plugins = query.data.label_tool_config?.plugins;
-      setPlugins(
-        [
-          plugins?.content?.translator_enabled && EPlugin.promptTranslate,
-          plugins?.conversation?.translator_enabled && EPlugin.messagesTranslate,
-          plugins?.content?.google_translator_enabled && EPlugin.promptGoogleTranslate,
-          plugins?.conversation?.google_translator_enabled && EPlugin.googleMessagesTranslate,
-          plugins?.content?.grammar_checking_enabled && EPlugin.promptGrammarCheck,
-          plugins?.conversation?.grammar_checking_enabled && EPlugin.messagesGrammarCheck,
-          plugins?.conversation?.message_send_diff && EPlugin.messagesSendDiff,
-        ].filter(Boolean) as EPlugin[],
-      );
+      setPlugins([plugins?.conversation?.message_send_diff && EPlugin.messagesSendDiff].filter(Boolean) as EPlugin[]);
     }
   }, [query.data, query.isSuccess, setPlugins]);
   return query;

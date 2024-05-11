@@ -1,5 +1,4 @@
 import request from './request';
-import type { ETeamAccess } from './team';
 
 export enum EUserRole {
   admin = 'admin', // 管理员
@@ -64,11 +63,4 @@ export const getUserList = async (params: IUserListParams): Promise<{ list: IUse
  */
 export const updateUser = (params: Pick<IUserInfo, 'user_id' | 'role'>) => {
   return request.post('/v1/user/edit', params);
-};
-
-/**
- * 获取用户所在的团队信息
- */
-export const getUserTeamInfo = async (): Promise<IUserInfo> => {
-  return request.post('/v1/user/team/list').then((res: any) => res?.list?.[0]);
 };

@@ -29,13 +29,6 @@ export const getTaskLabelList = async (params: IPagination): Promise<{ list: ITa
 };
 
 /**
- * 获取审核任务列表
- */
-export const getAuditTaskList = async (params: IPagination): Promise<{ list: ITaskItem[]; total: number }> => {
-  return request.post('/v1/task/audit/list', params);
-};
-
-/**
  * 获取任务详情
  */
 // 问题类型
@@ -120,14 +113,6 @@ export interface IMessageQuestion {
 
 // 插件配置
 export interface IPlugin {
-  grammar_checking_enabled: boolean; // 是否开启语法检查
-  translator_enabled: boolean; // 是否开启翻译 默认 deepl
-  translate_from: string; // 翻译源语言
-  translate_to: string; // 翻译目标语言
-  google_translator_enabled: boolean; // google 翻译
-  google_translate_from: string; //google 翻译源语言
-  google_translate_to: string; // google 翻译目标语言
-  grammar_checking_from: string; // 语法检查源语言
   message_send_diff: boolean;
 }
 
@@ -184,12 +169,6 @@ export const getPreviewTaskDetail = (params: { task_id: string }): Promise<ITask
     return { ...res, label_tool_config: res.tool_config };
   });
 };
-// 预览审核任务详情
-export const getPreviewAuditDetail = (params: { task_id: string }): Promise<ITaskRes> => {
-  return request.post('/v1/operator/task/audit/detail', params).then((res: any) => {
-    return { ...res, label_tool_config: res.target_task?.tool_config, audit_tool_config: res?.tool_config };
-  });
-};
 
 /**
  * 获取标注数据
@@ -232,10 +211,7 @@ export interface ILabelData {
 export const getLabelData = (params: IQuestionParams): Promise<ILabelData> => {
   return request.post('/v1/task/label/data/get', params);
 };
-// 获取审核任务数据
-export const getAuditData = (params: IQuestionParams): Promise<ILabelData> => {
-  return request.post('/v1/task/audit/data/get', params);
-};
+
 // 获取预览数据
 export const getPreviewData = (params: IQuestionParams): Promise<ILabelData> => {
   return request.post('/v1/operator/task/label/data/preview', params);
@@ -244,10 +220,7 @@ export const getPreviewData = (params: IQuestionParams): Promise<ILabelData> => 
 export const getLabelDataByUserId = (params: IQuestionParams): Promise<ILabelData> => {
   return request.post('/v1/operator/task/label/record/preview', params);
 };
-// 获取某个标注员的审核数据
-export const getAuditDataByUserId = (params: IQuestionParams): Promise<ILabelData> => {
-  return request.post('/v1/operator/task/audit/record/preview', params);
-};
+
 // 获取预览数据id
 export interface IPreviewIdParams {
   task_id: string;
@@ -277,9 +250,6 @@ export const getTaskDataIds = (params: { questionnaire_id?: string; task_id: str
 export const releaseLabelData = (params: { data_id: string }): Promise<void> => {
   return request.post('/v1/task/label/data/release', params);
 };
-export const releaseAuditData = (params: { data_id: string; flow_index?: string }): Promise<void> => {
-  return request.post('/v1/task/audit/data/release', params);
-};
 
 /**
  * 提交问题结果
@@ -302,19 +272,6 @@ export const submitLabelData = (params: IAnswer): Promise<void> => {
 };
 
 /**
- * 提交审核问题结果
- */
-export interface IAuditAnswer {
-  data_id: string;
-  is_pass: boolean;
-  flow_index: string;
-  data_evaluation?: Record<string, any>;
-}
-export const submitAuditData = (params: IAuditAnswer): Promise<void> => {
-  return request.put('/v1/task/audit/data/commit', params);
-};
-
-/**
  * 获取标注记录
  */
 export interface ILabelRecordParams {
@@ -327,10 +284,6 @@ export interface ILabelRecordParams {
 }
 export const getLabelRecord = (params: ILabelRecordParams): Promise<{ total: number }> => {
   return request.post('/v1/operator/task/label/record/list', params);
-};
-// 获取审核记录
-export const getAuditRecord = (params: ILabelRecordParams): Promise<{ total: number }> => {
-  return request.post('/v1/operator/task/audit/record/list', params);
 };
 
 /**
@@ -348,56 +301,4 @@ export interface IUploadRes {
 }
 export const getUploadUrl = (params: IUploadParams): Promise<IUploadRes> => {
   return request.post('/v1/file/create', params);
-};
-
-/**
- * 语法校验
- */
-interface ICheckParams {
-  language: string;
-  text: string;
-}
-export enum ECheckGrammarType {
-  Other = 'Other', // 其他 黄色
-  Hint = 'Hint', // 提示 蓝色
-  UnknownWord = 'UnknownWord', // 拼写错误  红色
-}
-export interface IMatche {
-  shortMessage: string; // 短消息
-  message: string; // 消息
-  offset: number; // 偏移量
-  length: number; // 长度
-  type: {
-    typeName: ECheckGrammarType;
-  };
-}
-
-export const grammarCheck = (params: ICheckParams): Promise<{ matches: IMatche[] }> => {
-  return request.post('/ws/v2/check', params, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  });
-};
-
-/**
- * 翻译
- */
-
-export interface ITranslateParams {
-  text: string;
-  source: string; // 源语言
-  target: string; // 目标语言
-}
-
-export interface ITranslateRes {
-  text: string;
-}
-// Deepl 翻译
-export const translate = (params: ITranslateParams): Promise<ITranslateRes> => {
-  return request.post('/v1/tool/translate', params);
-};
-// Google 翻译
-export const googleTranslate = (params: ITranslateParams): Promise<ITranslateRes> => {
-  return request.post('/v1/tool/google_translate', params);
 };

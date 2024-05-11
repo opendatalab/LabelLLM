@@ -7,17 +7,15 @@ import { ProFormSelect, ProFormText } from '@ant-design/pro-components';
 import clsx from 'clsx';
 
 import type { IMessage, IMessageQuestion, IQuestion } from '@/apps/supplier/services/task';
-import { EMessageType, translate, googleTranslate } from '@/apps/supplier/services/task';
+import { EMessageType } from '@/apps/supplier/services/task';
 import MessageBox from '@/components/MessageBox';
 import Copy from '@/apps/supplier/components/Copy';
 import { userInfoKey } from '@/constant/query-key-factories';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
-import GrammarCheck from '@/apps/supplier/pages/task.[id]/GrammarCheck';
-import { EPlugin } from '@/apps/supplier/pages/task.[id]/PluginSet';
-import Translate from '@/apps/supplier/pages/task.[id]/translate';
 
 import Widget, { WidgetBox } from '../Widget';
 import { IUserInfo } from '@/api/user';
+import Markdown from '@/components/Markdown';
 
 type IProps = HTMLAttributes<HTMLDivElement> & {
   id: string;
@@ -38,60 +36,17 @@ const UserMessage: React.FC<
     userQuestions?: IQuestion[];
   }>
 > = ({ message, avatar, name, type, userQuestions }) => {
-  const { pluginConfig, plugins } = useDatasetsContext();
   return (
     <div className="flex justify-end relative">
       <div className="flex min-w-0 w-full items-end flex-col">
         <MessageBox type={type} className="relative group max-w-full">
           <>
-            <GrammarCheck
-              showOriginalText={true}
-              className="text-right"
-              value={message.content}
-              language={pluginConfig?.conversation?.grammar_checking_from}
-              plugin={EPlugin.messagesGrammarCheck}
-            />
+            <div className="whitespace-pre-wrap break-words leading-[1.75]">{message.content}</div>
             <div className="absolute pr-1.5 pb-4 left-1 top-1 hidden group-hover:block">
               <Copy val={message.content} />
             </div>
           </>
         </MessageBox>
-        {/* Google 翻译 */}
-        {plugins?.includes(EPlugin.googleMessagesTranslate) && (
-          <MessageBox type={type} className="relative group max-w-full mt-2">
-            <Translate
-              api={googleTranslate}
-              tool="Google"
-              showOriginalText={true}
-              value={message.content}
-              from={pluginConfig?.conversation?.google_translate_from as string}
-              to={pluginConfig?.conversation?.google_translate_to as string}
-              render={(value: string) => (
-                <div className="absolute pr-1.5 pb-4 left-1 top-1 hidden group-hover:block">
-                  <Copy val={value} />
-                </div>
-              )}
-            />
-          </MessageBox>
-        )}
-        {/* Deepl 翻译 */}
-        {plugins?.includes(EPlugin.messagesTranslate) && (
-          <MessageBox type={type} className="relative group max-w-full mt-2">
-            <Translate
-              tool="Deepl"
-              showOriginalText={true}
-              api={translate}
-              value={message.content}
-              from={pluginConfig?.conversation?.translate_from as string}
-              to={pluginConfig?.conversation?.translate_to as string}
-              render={(value: string) => (
-                <div className="absolute pr-1.5 pb-4 left-1 top-1 hidden group-hover:block">
-                  <Copy val={value} />
-                </div>
-              )}
-            />
-          </MessageBox>
-        )}
         <div className="w-full">
           {!!userQuestions?.length && (
             <ProFormText
@@ -125,7 +80,6 @@ const BotMessage: React.FC<PropsWithChildren<{ message: IMessage; messageQuestio
   messageQuestion,
 }) => {
   const { sortOptions, setSortOptionsHandle } = useDatasetsContext();
-  const { pluginConfig, plugins } = useDatasetsContext();
 
   return (
     <div className="flex relative">
@@ -133,52 +87,12 @@ const BotMessage: React.FC<PropsWithChildren<{ message: IMessage; messageQuestio
       <div className="flex min-w-0 w-full items-start flex-col">
         <MessageBox type="primary" className="relative group max-w-full">
           <>
-            <GrammarCheck
-              className="text-right"
-              value={message.content}
-              language={pluginConfig?.conversation?.grammar_checking_from}
-              plugin={EPlugin.messagesGrammarCheck}
-            />
+            <Markdown value={message.content} />
             <div className="absolute pl-1.5 pb-4 right-1 top-1 hidden group-hover:block">
               <Copy val={message.content} />
             </div>
           </>
         </MessageBox>
-
-        {/* Google 翻译 */}
-        {plugins?.includes(EPlugin.googleMessagesTranslate) && (
-          <MessageBox type="primary" className="relative group max-w-full mt-2">
-            <Translate
-              tool="Google"
-              api={googleTranslate}
-              value={message.content}
-              from={pluginConfig?.conversation?.google_translate_from as string}
-              to={pluginConfig?.conversation?.google_translate_to as string}
-              render={(value: string) => (
-                <div className="absolute pl-1.5 pb-4 right-1 top-1 hidden group-hover:block">
-                  <Copy val={value} />
-                </div>
-              )}
-            />
-          </MessageBox>
-        )}
-        {/* Deepl 翻译 */}
-        {plugins?.includes(EPlugin.messagesTranslate) && (
-          <MessageBox type="primary" className="relative group max-w-full mt-2">
-            <Translate
-              tool="Deepl"
-              api={translate}
-              value={message.content}
-              from={pluginConfig?.conversation?.translate_from as string}
-              to={pluginConfig?.conversation?.translate_to as string}
-              render={(value: string) => (
-                <div className="absolute pl-1.5 pb-4 right-1 top-1 hidden group-hover:block">
-                  <Copy val={value} />
-                </div>
-              )}
-            />
-          </MessageBox>
-        )}
 
         <div className="w-full">
           {messageQuestion?.is_sortable ? (
@@ -225,43 +139,13 @@ const ChatBox: React.FC<PropsWithChildren<IProps>> = ({
 }) => {
   const queryClient = useQueryClient();
   const userInfo = queryClient.getQueryData<IUserInfo>(userInfoKey.all);
-  const { pluginConfig, plugins } = useDatasetsContext();
 
   return (
     <div className="text-color">
       {!!prompt && (
         <div className="rounded-md p-8 max-h-[700px] mb-4 overflow-y-auto task-box-bg relative group">
-          <GrammarCheck
-            className="text-right"
-            value={prompt}
-            language={pluginConfig?.content?.grammar_checking_from}
-            plugin={EPlugin.promptGrammarCheck}
-          />
+          <Markdown value={prompt} />
           <Copy val={prompt} className="absolute right-1.5 top-1.5 opacity-0 group-hover:opacity-100" />
-          {plugins?.includes(EPlugin.promptGoogleTranslate) && (
-            <div className="relative border-0 border-t border-solid border-fill-secondary mt-2 pt-4">
-              <Translate
-                tool="Google"
-                api={googleTranslate}
-                value={prompt}
-                from={pluginConfig?.content?.google_translate_from as string}
-                to={pluginConfig?.content?.google_translate_to as string}
-                render={(v) => <Copy val={v} className="absolute -right-6 top-1 opacity-0 group-hover:opacity-100" />}
-              />
-            </div>
-          )}
-          {plugins?.includes(EPlugin.promptTranslate) && (
-            <div className="relative border-0 border-t border-solid border-fill-secondary mt-2 pt-4">
-              <Translate
-                tool="Deepl"
-                api={translate}
-                value={prompt}
-                from={pluginConfig?.content?.translate_from as string}
-                to={pluginConfig?.content?.translate_to as string}
-                render={(v) => <Copy val={v} className="absolute -right-6 top-1 opacity-0 group-hover:opacity-100" />}
-              />
-            </div>
-          )}
         </div>
       )}
       {!!messages?.length && (
