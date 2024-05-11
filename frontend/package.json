@@ -92,6 +92,7 @@
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
     "cross-env": "^7.0.3",
@@ -126,7 +127,10 @@
     "**/*.css": [
       "stylelint --fix"
     ],
-    "**/*.{js,ts,jsx,tsx}": "eslint --fix"
+    "**/*.{js,jsx,tsx,ts}": [
+      "npm run lint:script",
+      "git add ."
+    ]
   },
   "engines": {
     "node": ">=18.0.0"

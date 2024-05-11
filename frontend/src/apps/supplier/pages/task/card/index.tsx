@@ -11,7 +11,6 @@ import style from './index.module.css';
 const { Text, Paragraph } = Typography;
 
 interface IProps extends Omit<ITaskItem, 'task_id'> {
-  isAudit?: boolean;
   onClick?: () => void;
 }
 

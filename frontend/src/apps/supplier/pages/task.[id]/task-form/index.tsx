@@ -45,7 +45,7 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
 
   const [sortOptions, setSortOptions] = useState<any[]>([]);
 
-  const { isAudit, type } = useTaskParams();
+  const { type } = useTaskParams();
 
   const { mutateAsync: submit, isPending: isLoading } = useMutation({
     mutationFn: submitLabelData,
@@ -153,12 +153,7 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
     <DatasetsDetailContext.Provider value={{ sortOptions, setSortOptionsHandle, ...parentContext }}>
       <div className="relative">
         <ProForm
-          disabled={[
-            ERouterTaskType.audit,
-            ERouterTaskType.reviewAudit,
-            ERouterTaskType.reviewTask,
-            ERouterTaskType.review,
-          ].includes(type)}
+          disabled={[ERouterTaskType.reviewTask, ERouterTaskType.review].includes(type)}
           formRef={formRef}
           name="validateOnly"
           validateTrigger={false}
@@ -221,20 +216,12 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
               messageQuestion={taskDetail?.label_tool_config?.message}
               userQuestions={taskDetail?.label_tool_config?.question?.questions}
             />
-            <CheckTaskType
-              types={[
-                ERouterTaskType.audit,
-                ERouterTaskType.review,
-                ERouterTaskType.reviewTask,
-                ERouterTaskType.reviewAudit,
-              ]}
-            >
+            <CheckTaskType types={[ERouterTaskType.review, ERouterTaskType.reviewTask]}>
               {!!taskDetail?.label_tool_config?.conversation?.questions?.length && (
                 <div className="mt-4 font-bold text-base mb-2">标注结果</div>
               )}
             </CheckTaskType>
             <Answer
-              className={clsx(isAudit && '!mt-0')}
               name="conversation_evaluation"
               conversation={taskDetail?.label_tool_config?.conversation?.questions}
             />

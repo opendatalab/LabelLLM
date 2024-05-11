@@ -4,32 +4,21 @@ import { useEffect } from 'react';
 
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import {
-  getAuditData,
-  getAuditDataByUserId,
-  getAuditTaskDetail,
   getLabelData,
   getLabelDataByUserId,
-  getPreviewAuditDetail,
   getPreviewData,
   getPreviewTaskDetail,
   getTaskDetail,
-  releaseAuditData,
   releaseLabelData,
 } from '@/apps/supplier/services/task';
-import { auditQuestionKey, auditTaskKey, questionKey, taskKey } from '@/apps/supplier/constant/query-key-factories';
+import { questionKey, taskKey } from '@/apps/supplier/constant/query-key-factories';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { message } from '@/components/StaticAnt';
 import { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
 
 export const apiMap = {
   [ERouterTaskType.task]: { getLabelData, getTaskDetail, releaseLabelData, taskKey: taskKey, questionKey: questionKey },
-  [ERouterTaskType.audit]: {
-    getTaskDetail: getAuditTaskDetail,
-    getLabelData: getAuditData,
-    releaseLabelData: releaseAuditData,
-    taskKey: auditTaskKey,
-    questionKey: auditQuestionKey,
-  },
+
   [ERouterTaskType.preview]: {
     getTaskDetail: getPreviewTaskDetail,
     getLabelData: getPreviewData,
@@ -47,13 +36,6 @@ export const apiMap = {
   [ERouterTaskType.reviewTask]: {
     getTaskDetail: getPreviewTaskDetail,
     getLabelData: getLabelDataByUserId,
-    releaseLabelData,
-    taskKey: taskKey,
-    questionKey: questionKey,
-  },
-  [ERouterTaskType.reviewAudit]: {
-    getTaskDetail: getPreviewAuditDetail,
-    getLabelData: getAuditDataByUserId,
     releaseLabelData,
     taskKey: taskKey,
     questionKey: questionKey,
@@ -99,12 +81,7 @@ export const useTaskQuestion = ({ messageRef }: { messageRef: any }) => {
   const navigate = useNavigate();
   const { type, taskId, flow_index, urlState } = useTaskParams();
 
-  const isView = [
-    ERouterTaskType.preview,
-    ERouterTaskType.review,
-    ERouterTaskType.reviewTask,
-    ERouterTaskType.reviewAudit,
-  ].includes(type);
+  const isView = [ERouterTaskType.preview, ERouterTaskType.review, ERouterTaskType.reviewTask].includes(type);
 
   const sendData = {
     task_id: taskId as string,

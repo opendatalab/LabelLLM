@@ -11,12 +11,6 @@ export interface IAccessValue {
 
 type UserRoleMap = Record<EUserRole, IAccessValue>;
 
-/**
- * 后台管理可以看着只有两个角色，管理员和普通用户
- * 管理员 ---> 超级管理员 EUserRole.super_admin
- * 普通成员  ---> 管理员 EUserRole.admin
- */
-
 const roleAccessMap: UserRoleMap = {
   [EUserRole.admin]: {
     canReadPage: true,
@@ -24,9 +18,9 @@ const roleAccessMap: UserRoleMap = {
     canReadUsersPage: true,
   },
   [EUserRole.user]: {
-    canReadPage: false,
-    canUsersPagePermission: false,
-    canReadUsersPage: false,
+    canReadPage: true,
+    canUsersPagePermission: true,
+    canReadUsersPage: true,
   },
 };
 

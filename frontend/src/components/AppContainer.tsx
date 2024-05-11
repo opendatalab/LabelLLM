@@ -9,7 +9,7 @@ interface AppProps extends ConfigProviderProps {
   className?: string;
 }
 
-const AppContainer: React.FC<AppProps> = ({ children, className, ...rest }) => {
+const AppContainer: React.FC<AppProps> = ({ children, className, ...rest }: AppProps) => {
   return (
     <ConfigProvider theme={themeToken} {...rest}>
       <AntApp className={className}>

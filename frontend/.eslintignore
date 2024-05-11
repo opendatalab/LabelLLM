@@ -15,3 +15,4 @@ cy-example
 **/*.test.tsx
 es
 .eslintrc.js
+rollup.config.ts

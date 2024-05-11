@@ -58,13 +58,7 @@ export const useTaskParams = () => {
   return {
     type,
     taskId: params.id,
-    isAudit: [ERouterTaskType.audit, ERouterTaskType.reviewAudit].includes(type),
-    isPreview: [
-      ERouterTaskType.preview,
-      ERouterTaskType.review,
-      ERouterTaskType.reviewTask,
-      ERouterTaskType.reviewAudit,
-    ].includes(type),
+    isPreview: [ERouterTaskType.preview, ERouterTaskType.review, ERouterTaskType.reviewTask].includes(type),
     flow_index: urlState.flow_index,
     urlState,
     setUrlState,

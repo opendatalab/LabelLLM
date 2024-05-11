@@ -1,5 +1,5 @@
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { Alert, Spin } from 'antd';
+import { Spin } from 'antd';
 import type { HTMLAttributes, PropsWithChildren } from 'react';
 import React, { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
@@ -11,7 +11,6 @@ import QuestionnaireSelect from '@/apps/supplier/pages/task.[id]/questionnaire-s
 
 import { ERouterTaskType } from '../../constant/task';
 import { useSkipQuestion, useTaskDetail, useTaskQuestion } from '../../hooks/useTaskData';
-import AuditForm from './audit-form';
 import CheckTaskType from './check-task-type';
 import { DatasetsDetailContext } from './context';
 import DiffModal from './diff-modal';
@@ -34,7 +33,7 @@ type IProps = HTMLAttributes<HTMLDivElement>;
 const TaskDetail: React.FC<PropsWithChildren<IProps>> = () => {
   const navigate = useNavigate();
   const formRef = useRef<ProFormInstance>();
-  const { type, isAudit, flow_index } = useTaskParams();
+  const { type, flow_index } = useTaskParams();
   const messageRef = useRef<string>();
 
   const [plugins, setPlugins] = useState<EPlugin[]>([]);
@@ -75,7 +74,7 @@ const TaskDetail: React.FC<PropsWithChildren<IProps>> = () => {
   // 跳过题目
   const skipQuestionHandle = async (isQuit?: boolean) => {
     try {
-      await releaseLabelDataMutate({ data_id: questionDetail?.data_id as string, flow_index });
+      await releaseLabelDataMutate({ data_id: questionDetail?.data_id as string });
       messageRef.current = '';
       if (!isQuit) {
         onChangeTheQuestion('skip');
@@ -110,24 +109,6 @@ const TaskDetail: React.FC<PropsWithChildren<IProps>> = () => {
               id="task-content"
             >
               <div className="flex items-end justify-between mb-2">
-                <div className="text-base mb-3 flex items-center grow">
-                  <span>
-                    {isAudit || type === ERouterTaskType.reviewAudit ? (
-                      <span className="font-bold">题目</span>
-                    ) : (
-                      taskDetail?.description
-                    )}
-                  </span>
-                  {questionDetail?.evaluation?.questionnaire_evaluation?.is_invalid_questionnaire && (
-                    <CheckTaskType types={[ERouterTaskType.audit]}>
-                      <Alert
-                        className="border-0 ml-2 shrink-0"
-                        type="error"
-                        message={<span className="text-error break-normal">此题被标记为：存在问题，无法作答</span>}
-                      />
-                    </CheckTaskType>
-                  )}
-                </div>
                 <CheckTaskType types={[ERouterTaskType.review]}>
                   <div className="shrink-0">
                     <QuestionnaireSelect
@@ -152,17 +133,6 @@ const TaskDetail: React.FC<PropsWithChildren<IProps>> = () => {
                 showModalInfo={showModalInfo}
               />
             </div>
-            <CheckTaskType types={[ERouterTaskType.audit, ERouterTaskType.reviewAudit]}>
-              <AuditForm
-                loading={skipLoading}
-                key={questionDetail?.data_id}
-                taskDetail={taskDetail}
-                questionDetail={questionDetail}
-                skipQuestionHandle={skipQuestionHandle}
-                showModalInfo={showModalInfo}
-                onChangeTheQuestion={onChangeTheQuestion}
-              />
-            </CheckTaskType>
           </div>
         </div>
       </DatasetsDetailContext.Provider>

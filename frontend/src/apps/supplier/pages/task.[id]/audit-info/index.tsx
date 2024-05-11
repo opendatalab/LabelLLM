@@ -56,18 +56,6 @@ const AuditInfo: React.FC<PropsWithChildren<IProps>> = ({ dataId, questionnaire_
         '无'
       ),
     },
-    {
-      name: '审核员',
-      icon: 'icon-gerenzhongxin',
-      show: type === ERouterTaskType.reviewAudit && label_user?.user_id,
-      text: label_user ? (
-        <div className="break-all">
-          <span>用户名：{label_user?.username || '-'}</span>
-        </div>
-      ) : (
-        '无'
-      ),
-    },
   ].filter((item) => item.show);
 
   return (

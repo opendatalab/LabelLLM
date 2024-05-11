@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 
 interface IProps {
   className?: string;
-  title: string | React.ReactNode;
+  title?: string | React.ReactNode;
   bodyClassName?: string;
 }
 

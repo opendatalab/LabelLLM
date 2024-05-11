@@ -7,9 +7,9 @@ import { type ReactNode } from 'react';
 
 import { IUserInfo, logout } from '@/api/user';
 import { goLogin } from '@/utils/sso';
-import { hasPermission } from '@/apps/supplier/constant/access';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { ReactComponent as TitleLogo } from '@/apps/supplier/assets/title.svg';
 
 import logo from '../assets/logo.svg';
 import './index.css';
@@ -32,18 +32,9 @@ export default () => {
           {
             path: '/task',
           },
-          {
-            path: '/audit',
-          },
         ],
       },
-      {
-        path: '/member',
-        name: '成员管理',
-        hide: !hasPermission('canReadMember'),
-        icon: <UsergroupAddOutlined />,
-      },
-    ].filter((item) => !item.hide),
+    ],
   };
 
   const onLogout = async () => {
@@ -57,7 +48,7 @@ export default () => {
       className="layout-wrapper"
       logo={logo}
       // @ts-ignore
-      title={<span className="text-primary ml-2 text-xl">冰山之下</span>}
+      title={<TitleLogo className="ml-2 -mt-1" />}
       pageTitleRender={() => ''}
       defaultCollapsed={true}
       breakpoint={false}

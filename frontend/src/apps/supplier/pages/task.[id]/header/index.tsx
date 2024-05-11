@@ -8,7 +8,7 @@ import { EKind, EQueryQuestionType, useTaskParams } from '@/apps/supplier/hooks/
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import CheckTaskType from '@/apps/supplier/pages/task.[id]/check-task-type';
 import type { IPreviewIdParams, IPreviewIdRRes } from '@/apps/supplier/services/task';
-import { ERecordStatus, getAuditRecord, getLabelRecord, getPreviewId } from '@/apps/supplier/services/task';
+import { ERecordStatus, getLabelRecord, getPreviewId } from '@/apps/supplier/services/task';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
 import CustomizeQuestion from '@/apps/supplier/pages/task.[id]/customize-question';
 import { useStoreIds } from '@/hooks/useStoreIds';
@@ -41,11 +41,10 @@ const HeaderWrapper: React.FC<PropsWithChildren<any>> = ({ children }) => {
   );
 };
 
-const tagText: any = {
+const tagText: Record<string, string> = {
   [ERouterTaskType.preview]: '预览',
   [ERouterTaskType.review]: '单题查看模式',
   [ERouterTaskType.reviewTask]: '查看',
-  [ERouterTaskType.reviewAudit]: '查看',
 };
 
 const Title: React.FC<PropsWithChildren<{ title: string; type: ERouterTaskType; tag?: string | false }>> = ({
@@ -156,9 +155,8 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
       if (type === ERouterTaskType.reviewTask) {
         return await getLabelRecord(sendData);
       }
-      return await getAuditRecord(sendData);
     },
-    enabled: [ERouterTaskType.reviewAudit, ERouterTaskType.reviewTask].includes(type),
+    enabled: [ERouterTaskType.reviewTask].includes(type),
   });
 
   const onSearch = (key: string, value?: string | number) => {
@@ -217,8 +215,8 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
   // 是否开启插件
   const isPlugin = !!plugins?.length;
 
-  // 1.任务预览-某个标注员做得题目   3.审核预览-某个审核员做得题目
-  if ([ERouterTaskType.reviewTask, ERouterTaskType.reviewAudit].includes(type) && urlState.user_id) {
+  // 1.任务预览-某个标注员做得题目
+  if ([ERouterTaskType.reviewTask].includes(type) && urlState.user_id) {
     return (
       <HeaderWrapper>
         <div className="flex items-center">
@@ -242,10 +240,6 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
                   >
                     <CheckTaskType types={[ERouterTaskType.reviewTask]}>
                       <span>仅查看未达标</span>
-                    </CheckTaskType>
-
-                    <CheckTaskType types={[ERouterTaskType.reviewAudit]}>
-                      <span>仅查看未采纳</span>
                     </CheckTaskType>
                   </Tooltip>
                 ),

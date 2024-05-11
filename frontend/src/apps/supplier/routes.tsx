@@ -4,12 +4,10 @@ import { Navigate } from 'react-router';
 
 import { ssoLoader } from '@/loaders/sso.loader';
 import RequireSSO from '@/wrappers/RequireSSO';
-import CheckMemberAuth from '@/apps/supplier/wrappers/CheckMemberAuth';
 import CheckTaskRouter from '@/apps/supplier/wrappers/CheckTaskRouter';
 
 import MainLayout from './layouts/Main';
 import CheckPreviewAuth from './wrappers/CheckPreviewAuth';
-import { userTeamInfoLoader } from './loaders/userTeamInfo.loader';
 
 const moduleSpin = {
   fallback: <Spin className="w-full mt-[30vh]" />,
@@ -18,7 +16,6 @@ const moduleSpin = {
 const Task = loadable(() => import('./pages/task'), moduleSpin);
 const TaskDetail = loadable(() => import('./pages/task.[id]'), moduleSpin);
 const Join = loadable(() => import('./pages/join-team'), moduleSpin);
-const Member = loadable(() => import('./pages/member'), moduleSpin);
 const NotFound = loadable(() => import('./pages/404'), moduleSpin);
 
 export default [
@@ -34,7 +31,7 @@ export default [
     id: 'root',
     handle: {
       crumb: () => {
-        return '冰山之下 - 数据贡献';
+        return '标注';
       },
     },
     children: [
@@ -43,7 +40,7 @@ export default [
         element: <Navigate to="/task" />,
         handle: {
           crumb: () => {
-            return '冰山之下 - 数据贡献';
+            return '标注';
           },
         },
       },
@@ -56,7 +53,7 @@ export default [
         ),
         handle: {
           crumb: () => {
-            return '任务 - 冰山之下';
+            return '任务';
           },
         },
       },
@@ -73,21 +70,7 @@ export default [
         hideInMenu: true,
         handle: {
           crumb: () => {
-            return '任务详情 - 冰山之下';
-          },
-        },
-      },
-      {
-        path: 'member',
-        loader: userTeamInfoLoader,
-        element: (
-          <CheckMemberAuth>
-            <Member />
-          </CheckMemberAuth>
-        ),
-        handle: {
-          crumb: () => {
-            return '成员管理';
+            return '任务详情';
           },
         },
       },
