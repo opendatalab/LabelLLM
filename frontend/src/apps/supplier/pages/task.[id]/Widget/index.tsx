@@ -8,7 +8,7 @@ import type { FormInstance } from 'antd/lib/form';
 import type { ConditionContent, ConditionItem, IQuestion } from '@/apps/supplier/services/task';
 import { EQuestionType } from '@/apps/supplier/services/task';
 
-import CustomizeTextarea from '../customize-textarea';
+import CustomizeTextarea from '../CustomizeTextarea';
 
 interface IWidgetBoxProps extends HTMLAttributes<HTMLDivElement> {
   label: string;

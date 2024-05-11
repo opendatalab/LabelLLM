@@ -6,7 +6,7 @@ import type { HTMLAttributes, PropsWithChildren } from 'react';
 import React, { useEffect, useState } from 'react';
 import { useKeyPressEvent } from 'react-use';
 
-import Empty from '@/apps/supplier/components/empty';
+import Empty from '@/apps/supplier/components/Empty';
 import type { IMessage } from '@/apps/supplier/services/task';
 import { EMessageType } from '@/apps/supplier/services/task';
 import IconFont from '@/components/IconFont';

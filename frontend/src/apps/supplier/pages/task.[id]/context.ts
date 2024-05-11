@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
+import type { EPlugin } from '@/apps/supplier/pages/task.[id]/PluginSet';
 import type { IPluginConfig } from '@/apps/supplier/services/task';
 
 interface IOptions {

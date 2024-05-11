@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 
 import type { IQuestion } from '@/apps/supplier/services/task';
 
-import Widget from '../widget';
+import Widget from '../Widget';
 
 type IProps = HTMLAttributes<HTMLDivElement> & {
   name: string;

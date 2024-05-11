@@ -7,16 +7,16 @@ import { useNavigate } from 'react-router-dom';
 
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { message, modal } from '@/components/StaticAnt';
-import QuestionnaireSelect from '@/apps/supplier/pages/task.[id]/questionnaire-select';
+import QuestionnaireSelect from '@/apps/supplier/pages/task.[id]/QuestionnaireSelect';
 
 import { ERouterTaskType } from '../../constant/task';
 import { useSkipQuestion, useTaskDetail, useTaskQuestion } from '../../hooks/useTaskData';
-import CheckTaskType from './check-task-type';
+import CheckTaskType from './CheckTaskType';
 import { DatasetsDetailContext } from './context';
-import DiffModal from './diff-modal';
-import Header from './header';
-import { EPlugin } from './pluginSet';
-import TaskForm from './task-form';
+import DiffModal from './DiffModal';
+import Header from './Header';
+import { EPlugin } from './PluginSet';
+import TaskForm from './TaskForm';
 
 import './index.css';
 

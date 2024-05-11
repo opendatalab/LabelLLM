@@ -7,12 +7,12 @@ import { useMutation } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useNavigate } from 'react-router-dom';
 
-import AuditInfo from '@/apps/supplier/pages/task.[id]/audit-info';
-import CheckTaskType from '@/apps/supplier/pages/task.[id]/check-task-type';
+import AuditInfo from '@/apps/supplier/pages/task.[id]/AuditInfo';
+import CheckTaskType from '@/apps/supplier/pages/task.[id]/CheckTaskType';
 import { message } from '@/components/StaticAnt';
-import ChatBox from '@/apps/supplier/pages/task.[id]/chat-box';
-import Answer from '@/apps/supplier/pages/task.[id]/answer';
-import Countdown from '@/apps/supplier/pages/task.[id]/countdown';
+import ChatBox from '@/apps/supplier/pages/task.[id]/ChatBox';
+import Answer from '@/apps/supplier/pages/task.[id]/Answer';
+import Countdown from '@/apps/supplier/pages/task.[id]/Countdown';
 import type { IAnswer, ILabelData, ITaskRes } from '@/apps/supplier/services/task';
 import { EMessageType, submitLabelData } from '@/apps/supplier/services/task';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';

@@ -6,7 +6,7 @@ import type { HTMLAttributes, PropsWithChildren } from 'react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Empty from '@/apps/supplier/components/empty';
+import Empty from '@/apps/supplier/components/Empty';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import CustomPageContainer from '@/apps/supplier/layouts/CustomPageContainer';
 import { ETaskStatus, getTaskLabelList } from '@/apps/supplier/services/task';
@@ -14,7 +14,7 @@ import { message } from '@/components/StaticAnt';
 import { useStoreIds } from '@/hooks/useStoreIds';
 
 import { questionKey, taskKey } from '../../constant/query-key-factories';
-import Card from './card';
+import Card from './Card';
 
 type IProps = HTMLAttributes<HTMLDivElement>;
 const Task: React.FC<PropsWithChildren<IProps>> = () => {

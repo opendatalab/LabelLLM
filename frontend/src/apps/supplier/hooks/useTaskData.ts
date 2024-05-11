@@ -14,7 +14,7 @@ import {
 import { questionKey, taskKey } from '@/apps/supplier/constant/query-key-factories';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { message } from '@/components/StaticAnt';
-import { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
+import { EPlugin } from '@/apps/supplier/pages/task.[id]/PluginSet';
 
 export const apiMap = {
   [ERouterTaskType.task]: { getLabelData, getTaskDetail, releaseLabelData, taskKey: taskKey, questionKey: questionKey },

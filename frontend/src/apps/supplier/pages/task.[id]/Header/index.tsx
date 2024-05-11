@@ -6,15 +6,15 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 
 import { EKind, EQueryQuestionType, useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
-import CheckTaskType from '@/apps/supplier/pages/task.[id]/check-task-type';
+import CheckTaskType from '@/apps/supplier/pages/task.[id]/CheckTaskType';
 import type { IPreviewIdParams, IPreviewIdRRes } from '@/apps/supplier/services/task';
 import { ERecordStatus, getLabelRecord, getPreviewId } from '@/apps/supplier/services/task';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
-import CustomizeQuestion from '@/apps/supplier/pages/task.[id]/customize-question';
+import CustomizeQuestion from '@/apps/supplier/pages/task.[id]/CustomizeQuestion';
 import { useStoreIds } from '@/hooks/useStoreIds';
 import { message } from '@/components/StaticAnt';
 
-import PluginSet from '../pluginSet';
+import PluginSet from '../PluginSet';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   title: string;

@@ -9,14 +9,14 @@ import clsx from 'clsx';
 import type { IMessage, IMessageQuestion, IQuestion } from '@/apps/supplier/services/task';
 import { EMessageType, translate, googleTranslate } from '@/apps/supplier/services/task';
 import MessageBox from '@/components/MessageBox';
-import Copy from '@/apps/supplier/components/copy';
+import Copy from '@/apps/supplier/components/Copy';
 import { userInfoKey } from '@/constant/query-key-factories';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
-import GrammarCheck from '@/apps/supplier/pages/task.[id]/grammar-check';
-import { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
+import GrammarCheck from '@/apps/supplier/pages/task.[id]/GrammarCheck';
+import { EPlugin } from '@/apps/supplier/pages/task.[id]/PluginSet';
 import Translate from '@/apps/supplier/pages/task.[id]/translate';
 
-import Widget, { WidgetBox } from '../widget';
+import Widget, { WidgetBox } from '../Widget';
 import { IUserInfo } from '@/api/user';
 
 type IProps = HTMLAttributes<HTMLDivElement> & {

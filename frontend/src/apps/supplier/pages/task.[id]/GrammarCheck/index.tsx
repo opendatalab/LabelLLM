@@ -4,13 +4,13 @@ import { Spin } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 
-import type { EPlugin } from '@/apps/supplier/pages/task.[id]/pluginSet';
+import type { EPlugin } from '@/apps/supplier/pages/task.[id]/PluginSet';
 import EventGrammarCheck from '@/apps/supplier/components/eventGrammarCheck';
 import Markdown from '@/components/Markdown';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
 import { grammarCheck } from '@/apps/supplier/services/task';
 import { addSpanTags } from '@/apps/supplier/utils/addSpanTags';
-import NumOfCharacters from '@/apps/supplier/pages/task.[id]/numOfCharacters';
+import NumOfCharacters from '@/apps/supplier/pages/task.[id]/NumOfCharacters';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   plugin: EPlugin;
