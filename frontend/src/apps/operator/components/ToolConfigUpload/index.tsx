@@ -222,11 +222,10 @@ export function ToolConfigUpload({ onFinish, disabled, children }: React.PropsWi
           </Dragger>
           <div className="flex mt-2">
             <Link
-              className="text-error"
               target="_blank"
-              to="https://aicarrier.feishu.cn/docx/Ieo7dYKPeoVixKxkUZacUAGlnDf?from=from_copylink"
+              to="https://github.com/opendatalab/LabelLLM/wiki/%E4%BB%BB%E5%8A%A1%E9%85%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F"
             >
-              !!!!todo 更新链接地址 查看示例
+              查看示例
             </Link>
           </div>
         </div>

@@ -19,7 +19,7 @@ const options = [
       },
       {
         key: 'login',
-        name: '启动登录页',
+        name: '启动登录页（login）',
         value: 'start:login',
       },
       {

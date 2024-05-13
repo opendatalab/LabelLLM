@@ -292,12 +292,12 @@ export default function LabelDetailLeft() {
             extra={
               <div>
                 <Link
-                  className="text-[var(--color-text)] text-error"
-                  to="https://aicarrier.feishu.cn/docx/Wj5FdpLePo5UIbxMoC0c6D9TnDe "
+                  className="text-[var(--color-text)]"
+                  to="https://github.com/opendatalab/LabelLLM/wiki/%E6%95%B0%E6%8D%AE%E4%B8%8A%E4%BC%A0%E6%A0%BC%E5%BC%8F"
                   target="_blank"
                 >
                   <Icon component={BookIcon} className="mr-1" />
-                  todo链接更新 示例
+                  示例
                 </Link>
                 <JsonlUpload taskId={routeParams.id!} onFinish={handleJsonlFinished}>
                   <Button

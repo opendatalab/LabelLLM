@@ -1,14 +1,7 @@
-import React from 'react';
-import { clsx } from 'clsx';
+import { createFromIconfontCN } from '@ant-design/icons';
 
-interface IProps {
-  type: string;
-  rotate?: number;
-  className?: string;
-}
-
-const IconFont = ({ type, rotate, className }: IProps) => {
-  return <span className={clsx('icon iconfont', type, className)}></span>;
-};
+const IconFont = createFromIconfontCN({
+  scriptUrl: `/iconfont_3732290.js`,
+});
 
 export default IconFont;

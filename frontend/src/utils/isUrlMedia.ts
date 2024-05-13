@@ -1,5 +1,6 @@
 export function isUrlMedia(url: string, type: 'mp3' | 'mp4' | 'mov') {
-  const urlWithoutQuery = url.split('?')[0];
-  const extension = urlWithoutQuery.split('.').pop();
+  const search = new URL(url);
+  const path = search.searchParams.get('path') || '';
+  const extension = path.split('.').pop();
   return extension?.toLowerCase() === type;
 }
