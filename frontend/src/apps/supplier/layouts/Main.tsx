@@ -1,8 +1,15 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, PageContainer } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation, useRouteLoaderData } from 'react-router-dom';
-import { ProfileOutlined, MoreOutlined, ImportOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
-import { Button, Popover } from 'antd';
+import {
+  ProfileOutlined,
+  MoreOutlined,
+  ImportOutlined,
+  UserOutlined,
+  UsergroupAddOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Popover } from 'antd';
 import { type ReactNode } from 'react';
 
 import { IUserInfo, logout } from '@/api/user';
@@ -72,10 +79,20 @@ export default () => {
       ErrorBoundary={ErrorBoundary}
       location={location}
       avatarProps={{
-        icon: <span className="flex items-center h-full justify-center">{name?.[0]}</span>,
+        icon: name?.[0],
+        size: 'small',
         title: name,
-        style: {
-          background: 'var(--color-primary)',
+        className: 'bg-primary',
+        render: (props, dom) => {
+          return (
+            <Dropdown
+              menu={{
+                items: [],
+              }}
+            >
+              {dom}
+            </Dropdown>
+          );
         },
       }}
       actionsRender={() => [

@@ -1,8 +1,15 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, PageContainer } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation, useRouteLoaderData, useMatches } from 'react-router-dom';
-import { ImportOutlined, FileTextOutlined, MoreOutlined } from '@ant-design/icons';
-import { Avatar, Button, Popover } from 'antd';
+import {
+  ImportOutlined,
+  FileTextOutlined,
+  MoreOutlined,
+  InfoCircleFilled,
+  QuestionCircleFilled,
+  GithubFilled,
+} from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Popover, Space } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
 import _ from 'lodash';
@@ -142,11 +149,6 @@ export default () => {
                   <Button type="text" onClick={onLogout} icon={<ImportOutlined className="text-icon" />}>
                     退出登录
                   </Button>
-                  {import.meta.env.DEV && (
-                    <Button type="text" onClick={goLogin} icon={<ImportOutlined className="text-icon" />}>
-                      登录
-                    </Button>
-                  )}
                 </div>
               }
             >
