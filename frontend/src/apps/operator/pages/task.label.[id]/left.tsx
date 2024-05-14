@@ -14,7 +14,7 @@ import { message } from '@/components/StaticAnt';
 
 import downloadFromUrl from '../../utils/downloadFromUrl';
 import { TaskStatus, TaskStatusMapping, updateLabelTask } from '../../services/task';
-import type { AuditTask, OperatorTaskDetail, TaskToolConfig } from '../../services/task';
+import type { OperatorTaskDetail, TaskToolConfig } from '../../services/task';
 import type { JsonlUploadProps } from '../../components/JsonlUpload';
 import JsonlUpload from '../../components/JsonlUpload';
 import { ReactComponent as BookIcon } from '../../assets/book.svg';

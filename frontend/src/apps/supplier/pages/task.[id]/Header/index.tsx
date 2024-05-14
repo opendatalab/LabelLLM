@@ -27,8 +27,6 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
  *
  * 任务预览  1. 全部题目 2.某个标注员做得题目
  *
- * 审核预览 1. 某个标注员做的题目
- *
  * */
 
 const { Search } = Input;

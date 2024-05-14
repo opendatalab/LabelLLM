@@ -24,42 +24,20 @@ export default function LabelTaskDetail() {
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key === 'delete') {
-      // 如果存在审核任务，需要先去删除审核任务
-      if (taskInfo.audit_tasks && taskInfo.audit_tasks.length > 0) {
-        modal.warning({
-          title: '存在审核任务',
-          content: (
-            <div>
-              请先删除关联审核任务{' '}
-              <a
-                className="mb-2"
-                key={taskInfo.audit_tasks[0].task_id}
-                href={`/operator/task/audit/${taskInfo.audit_tasks[0].task_id}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {taskInfo.audit_tasks[0].title}
-              </a>
-            </div>
-          ),
-          okText: '知道了',
-        });
-      } else {
-        modal.confirm({
-          title: '确认删除此内容？',
-          content: '是否确认删除任务？删除后不可恢复',
-          onOk: async () => {
-            await deleteLabelTask({ task_id: routeParams.id! });
-            message.success('任务已删除');
-            navigate('/task', { replace: true });
-          },
-          okText: '确定',
-          cancelText: '取消',
-          okButtonProps: {
-            danger: true,
-          },
-        });
-      }
+      modal.confirm({
+        title: '确认删除此内容？',
+        content: '是否确认删除任务？删除后不可恢复',
+        onOk: async () => {
+          await deleteLabelTask({ task_id: routeParams.id! });
+          message.success('任务已删除');
+          navigate('/task', { replace: true });
+        },
+        okText: '确定',
+        cancelText: '取消',
+        okButtonProps: {
+          danger: true,
+        },
+      });
     }
   };
 

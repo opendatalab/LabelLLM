@@ -144,27 +144,15 @@ export interface ITaskRes {
       grid: number; // 布局设置 grid 布局的列数
     };
   };
-  // 审核任务配置
-  audit_tool_config?: {
-    // 针对整个对话的配置
-    conversation: {
-      questions: IQuestion[];
-    };
-    // 针对每条回复的配置
-    message: IMessageQuestion;
-  };
 }
 
 // 标注任务
 export const getTaskDetail = (params: { task_id: string }): Promise<ITaskRes> => {
   return request.post('/v1/task/label/detail', params);
 };
-// 审核任务详情
-export const getAuditTaskDetail = (params: { task_id: string }): Promise<ITaskRes> => {
-  return request.post('/v1/task/audit/detail', params);
-};
+
 // 预览任务详情
-export const getPreviewTaskDetail = (params: { task_id: string }): Promise<ITaskRes> => {
+export const getPreviewTaskDetail = async (params: { task_id: string }): Promise<ITaskRes> => {
   return request.post('/v1/operator/task/label/detail', params).then((res: any) => {
     return { ...res, label_tool_config: res.tool_config };
   });
@@ -181,7 +169,6 @@ export enum ERecordStatus {
 
 export interface IQuestionParams {
   task_id: string;
-  // 审核任务需要的字段 放在url的query里
   flow_index?: string;
 
   // -----------------以下字段都在预览场景下使用--------------------------

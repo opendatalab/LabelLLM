@@ -8,7 +8,6 @@ import type { ERecordStatus } from '@/apps/supplier/services/task';
  * type 当前任务类型
  * taskId 任务id
  * isPreview 是否是预览任务
- * flow_index 审核任务的流程index
  * */
 
 export enum EQueryQuestionType {
@@ -25,7 +24,6 @@ interface IQuery {
   user_id?: string;
   // 全部题目 未达标的题录
   record_status?: ERecordStatus;
-  // 审核任务的流程index
   flow_index?: string;
   // 是否是搜索
   is_search?: string;
@@ -39,7 +37,6 @@ interface IQuery {
 // 预览任务 https://labelu-llm-dev.shlab.tech/supplier/preview/beebc1fa-9b7f-406a-b498-194dab40d673;
 // 查看题目 https://labelu-llm-dev.shlab.tech/supplier/review/beebc1fa-9b7f-406a-b498-194dab40d673;
 // 查看标注员标注任务 https://labelu-llm-dev.shlab.tech/supplier/review_task/beebc1fa-9b7f-406a-b498-194dab40d673?user_id=1011;
-// 查看标注员审核任务 https://labelu-llm-dev.shlab.tech/supplier/review_audit/beebc1fa-9b7f-406a-b498-194dab40d673?user_id=1101;
 
 export const useTaskParams = () => {
   const params = useParams<{ type: ERouterTaskType; id: string }>();

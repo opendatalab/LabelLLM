@@ -172,8 +172,6 @@ export interface OperatorTaskDetail {
   teams: Team[];
   /** Progress 任务进度 */
   progress: LabelTaskProgress;
-  /** Audit Tasks 配置的审核任务们 */
-  audit_tasks: AuditTargetTask[];
 }
 
 export interface OperatorTaskCreatePayload {
@@ -293,45 +291,6 @@ export const exportLabelRecord = async (taskId: string) => {
 export const exportLabelTaskWorkload = async (taskId: string) => {
   downloadFromUrl(`/api/v1/operator/task/label/data/export_workload?task_id=${taskId}`);
 };
-
-// ----------------- 审核任务 -----------------
-
-export interface AuditTargetTask {
-  /** Task Id 任务id */
-  task_id: string;
-  /** Title 任务标题 */
-  title: string;
-  /** Description 任务描述 */
-  description: string;
-  /** Tool Config 工具配置 */
-  tool_config: TaskToolConfig;
-  status: TaskStatus;
-}
-
-export interface AuditTask {
-  /** Task Id 任务id */
-  task_id: string;
-  /** Title 任务标题 */
-  title: string;
-  /** 任务状态 */
-  status: TaskStatus;
-  /** Created Time 创建时间/秒 */
-  created_time: number;
-  /** Creator 创建人 */
-  creator: string;
-  /** Completed Count 已完成数据量 */
-  completed_count: number;
-  total_count: number;
-  progress: {
-    /** Total Count 总数据量 */
-    total: number;
-    /** Completed Count 已完成数据量 */
-    completed: number;
-    pending: number;
-    labeling: number;
-    labeled: number;
-  };
-}
 
 // ----------------------------- 标注任务统计相关数据 -----------------------------
 
