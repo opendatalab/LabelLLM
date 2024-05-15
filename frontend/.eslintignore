@@ -16,3 +16,5 @@ cy-example
 es
 .eslintrc.js
 rollup.config.ts
+tsconfig.json
+tailwind.config.js
