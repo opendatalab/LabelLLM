@@ -16,16 +16,20 @@ Ensuring the highest standards of quality and efficiency, LabelLLM features an a
 LabelLLM supports pre-annotation loading, which can be refined and adjusted by users according to actual needs. This feature improves the efficiency and accuracy of annotation.
 
 ## Product Characteristics
-**Versatility:** With LabelLLM, users gain access to an extensive suite of data annotation tools, designed to cater to a wide array of task
+**Versatility:** With LabelLLM, users gain access to an extensive suite of data annotation tools, designed to cater to a wide array of task without compromising on the efficacy or precision of annotations.
 
-# 快速上手
+**User-Friendly:** Beyond its robust capabilities, LabelLLM places a strong emphasis on user experience, offering intuitive configurations and workflow processes that streamline the setup and distribution of data annotation tasks. 
+
+**Efficiency Enhanced:** By incorporating AI-assisted annotations, LabelLLM dramatically increases annotation efficiency. 
+
+# Getting Strated
 
 -  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF">
-    <button>使用手册-运营端</button>
+    <button>User Manual-Operation Side</button>
 </a>
 
 -  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E6%A0%87%E6%B3%A8%E5%91%98-%E5%AE%A1%E6%A0%B8%E5%91%98">
-    <button>使用手册-标注员 审核员</button>
+    <button>User Mannual-Labeler/Auditor</button>
 </a>
 
 
