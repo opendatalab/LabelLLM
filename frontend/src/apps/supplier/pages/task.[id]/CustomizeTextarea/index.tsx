@@ -46,6 +46,7 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
     // 支持格式：图片（png、jpg、jpeg、gif）、视频（mp4、mov）、音频（mp3）；单个文件大小不超过50M
     accept: mediaType.join(','),
     showUploadList: false,
+    action: '/api/v1/file/file_upload',
     beforeUpload(file) {
       if (!mediaType.includes(file.type)) {
         message.error('文件格式错误');
@@ -55,10 +56,17 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
         message.error('文件大小请控制在50以内M');
         return false;
       }
-      opUpload(file).then((res) => {
-        setFieldValue(names, `${mdValue} ![${file.name}](${res})`);
-      });
-      return false;
+      return true;
+    },
+    onChange(info) {
+      const { response, name } = info.file || {};
+      if (response) {
+        if (response.get_path) {
+          setFieldValue(names, `${mdValue} ![${name}](${response.get_path})`);
+        } else {
+          message.error('上传失败');
+        }
+      }
     },
   };
 
