@@ -1,44 +1,46 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from fastapi.routing import APIRoute
-from tortoise import Tortoise
-from tortoise.connection import connections
-from starlette.middleware.cors import CORSMiddleware
 
 from app.api.router import router
 from app.core.config import settings
-from app.core.db import TORTOISE_ORM
+from app.db.init_db import close_db, init_db
+from app.logger.logger import init_logger
+from app.scheduler.init_scheduler import scheduler
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await Tortoise.init(config=TORTOISE_ORM)
-    await Tortoise.generate_schemas()
+    try:
+        # 初始化日志
+        init_logger()
+        # 初始化数据库
+        await init_db()
+        # 初始化定时任务
+        scheduler.start(paused=True)
+    except Exception as e:
+        raise e
     yield
-    await connections.close_all()
+    # 关闭定时任务
+    scheduler.shutdown()
+    # 关闭数据库
+    await close_db()
 
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    debug=settings.DEBUG,
     lifespan=lifespan,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    docs_url="/docs" if settings.DEBUG else None,
+    redoc_url="/redoc" if settings.DEBUG else None,
+    openapi_url="/api/openapi.json" if settings.DEBUG else None,
 )
 
-# Set all CORS enabled origins
-if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[
-            str(origin).strip("/") for origin in settings.BACKEND_CORS_ORIGINS
-        ],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
-app.include_router(router, prefix=settings.API_V1_STR)
+app.include_router(router, prefix=settings.API_STR)
+
 
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=16888)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

@@ -28,5 +28,10 @@ AI 辅助标注，支持载入预标注结果并可在此基础上自行微调�
     <button>使用手册-标注员 审核员</button>
 </a>
 
+# 一键启动
 
+* 使用 Docker Compose 启动：
 
+```bash
+docker compose up
+```
