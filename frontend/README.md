@@ -1,8 +1,3 @@
-# todo
-1. logo 更新
-2. 帮助中心
-
-
 大语言模型平台-Web 端
 
 ## 开始
@@ -21,7 +16,8 @@ npm start
 # pnpm start
 
 ? 请选择要执行的命令 (Use arrow keys)
-❯ 启动供应商端（supplier）
+❯ 启动登录页（login）
+  启动供应商端（supplier）
   启动运营端（operator）
   打包供应商端（supplier）
   打包运营端（operator）
@@ -54,13 +50,6 @@ npm run build
 ```bash
 npm run analyze
 # pnpm analyze
-```
-
-### Mock 方式启动
-
-```bash
-MOCK=true npm run start:mock
-# MOCK=true pnpm start:chat
 ```
 
 ## 配置和约定
