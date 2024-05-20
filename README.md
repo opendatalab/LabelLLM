@@ -37,11 +37,11 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 
 # Getting Strated
 
--  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E8%BF%90%E8%90%A5%E7%AB%AF-EN">
+-  <a href="https://github.com/opendatalab/LabelLLM/wiki/User-Manual%E2%80%90Operation-Side">
     <button>User Manual-Operation Side</button>
 </a>
 
--  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E6%A0%87%E6%B3%A8%E5%91%98-%E5%AE%A1%E6%A0%B8%E5%91%98">
+-  <a href="https://github.com/opendatalab/LabelLLM/wiki/User-Mannual%E2%80%90Labeler-Auditor">
     <button>User Mannual-Labeler/Auditor</button>
 </a>
 
