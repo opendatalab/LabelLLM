@@ -1,5 +1,5 @@
 # LabelLLM: The Open-Source Data Annotation Platform
-（English| <a href="[https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF](https://github.com/opendatalab/LabelLLM.wiki.git)">
+（English| <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF">
     <button>中文版</button>
 </a>）
 ## Product Introduction
