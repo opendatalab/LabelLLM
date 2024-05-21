@@ -57,8 +57,8 @@ npm run analyze
 ### 约定
 
 - 仅 `app` 中使用到的组件放在对应 `app` 的 `components` 目录下；
-- `app` 和 `app` 之间的代码不要相互引用，存在这种情况时，将代码提升到 web 下的其他目录如
-  - `web/components`
-  - `web/layouts`
-  - `web/utils`
+- `app` 和 `app` 之间的代码不要相互引用，存在这种情况时，将代码提升到 frontend 下的其他目录如
+  - `frontend/components`
+  - `frontend/layouts`
+  - `frontend/utils`
   - ...
