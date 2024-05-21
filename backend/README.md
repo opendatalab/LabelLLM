@@ -83,3 +83,30 @@ root@7f2607af31c3:/app#
 ```
 
 这意味着你在容器内的 `bash` 会话中，作为 `root` 用户，在 `/app` 目录下，这个目录内有另一个名为 "app" 的目录，这就是你的代码在容器内的位置：`/app/app`。
+
+### .env 配置说明
+
+```yaml
+# .env
+# General settings
+DEBUG = True # Enable debugging mode (set to False in production)
+ENVIRONMENT=local # App environment (e.g., local, staging, production)
+
+# MinIO storage configuration
+MINIO_ACCESS_KEY_ID = MekKrisWUnFFtsEk # Access key ID for MinIO authentication
+MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C # Access key secret for MinIO authentication
+MINIO_ENDPOINT = localhost:9000 # Public MinIO service endpoint
+MINIO_INTERNAL_ENDPOINT = minio:9000 # Internal network MinIO service endpoint
+MINIO_BUCKET = label-llm-test # Default MinIO bucket for storing data
+
+# MongoDB configuration
+MongoDB_DSN = mongodb://root:mypassword@mongo:27017 # MongoDB connection string with authentication
+MongoDB_DB_NAME = label_llm # Database name for the application
+
+# Redis configuration
+REDIS_DSN = redis://redis:6379/11 # Redis connection string, pointing to the instance and database index
+
+# Security settings
+SECRET_KEY="?*hsbRq5c9gpjBp~:oHU+7s8,I.67ewohfsib1=17dw@.q9r4Iidop:Oi_5oIYgw" # Secret key for signing and security purposes
+
+```

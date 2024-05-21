@@ -35,3 +35,6 @@ AI 辅助标注，支持载入预标注结果并可在此基础上自行微调�
 ```bash
 docker compose up
 ```
+> 配置 MINIO Localhost:9001
+* MINIO_ACCESS_KEY=your_access_key
+* MINIO_SECRET_KEY=your_secret_key

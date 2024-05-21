@@ -11,8 +11,6 @@ class Settings(BaseSettings):
     API_STR: str = "/api"
     ENVIRONMENT: str = "local"
 
-    BACKEND_ENDPOINT: str = "http://localhost:8086"
-
     # MongoDB Config
     MongoDB_DSN: str = ""
     MongoDB_DB_NAME: str = ""
