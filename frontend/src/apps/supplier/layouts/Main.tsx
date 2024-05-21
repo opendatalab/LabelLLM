@@ -9,10 +9,9 @@ import { IUserInfo, logout } from '@/api/user';
 import { goLogin } from '@/utils/sso';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { ReactComponent as TitleLogo } from '@/apps/supplier/assets/title.svg';
 
 import logo from '../assets/logo.svg';
-import { ReactComponent as Logo1 } from '@/apps/supplier/assets/logo1.svg';
+import { ReactComponent as Title } from '@/apps/supplier/assets/title.svg';
 import './index.css';
 
 export default () => {
@@ -49,7 +48,7 @@ export default () => {
       className="layout-wrapper"
       logo={logo}
       // @ts-ignore
-      title={<span className="font-bold text-xl text-primary">Label LLM</span>}
+      title={<Title className={'mt-1'} />}
       pageTitleRender={() => ''}
       defaultCollapsed={true}
       breakpoint={false}
