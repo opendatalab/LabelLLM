@@ -28,6 +28,19 @@ AI 辅助标注，支持载入预标注结果并可在此基础上自行微调�
     <button>使用手册-标注员 审核员</button>
 </a>
 
+# 配置详情
+
+后端文档 [配置文件](backend/README.md)
+
+前端文档 [配置文件](frontend/README.md)
+
+## page url
+
+* http://localhost:8086/login
+* http://localhost:8086/supplier 标注端
+* http://localhost:8086/operator 管理端
+
+
 # 一键启动
 
 * 使用 Docker Compose 启动：

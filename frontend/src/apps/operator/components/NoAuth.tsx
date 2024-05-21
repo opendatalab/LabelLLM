@@ -17,7 +17,7 @@ const NoAuth: React.FC<PropsWithChildren<IProps>> = () => {
         description={
           <div>
             <div className="text-base">您无相关页面操作权限，请联系运营开通</div>
-            <div className="text-secondary mt-2">您的账户信息 用户名：{data?.name})</div>
+            <div className="text-secondary mt-2">您的账户信息 - 用户名：{data?.name}</div>
           </div>
         }
       />
