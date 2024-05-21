@@ -131,7 +131,7 @@ const basicInfoColumns: ProDescriptionsProps['columns'] = [
     key: 'created_time',
     dataIndex: 'created_time',
     render: (text) => {
-      return dayjs(text as string).format('YYYY-MM-DD HH:mm:ss');
+      return dayjs((text as number) * 1000).format('YYYY-MM-DD HH:mm:ss');
     },
   },
 ];

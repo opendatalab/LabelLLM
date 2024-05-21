@@ -5,7 +5,6 @@ import request from './request';
  * */
 
 export enum ETeamAccess {
-  super_admin = 'super_admin', // 超级管理员
   admin = 'admin', // 管理员
   user = 'user', // 普通用户
 }

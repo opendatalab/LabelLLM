@@ -1,15 +1,8 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, PageContainer } from '@ant-design/pro-components';
 import { Outlet, useNavigate, useLocation, useRouteLoaderData } from 'react-router-dom';
-import {
-  ProfileOutlined,
-  MoreOutlined,
-  ImportOutlined,
-  UserOutlined,
-  UsergroupAddOutlined,
-  LogoutOutlined,
-} from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Popover } from 'antd';
+import { ProfileOutlined, MoreOutlined, ImportOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Popover } from 'antd';
 import { type ReactNode } from 'react';
 
 import { IUserInfo, logout } from '@/api/user';
@@ -19,6 +12,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { ReactComponent as TitleLogo } from '@/apps/supplier/assets/title.svg';
 
 import logo from '../assets/logo.svg';
+import { ReactComponent as Logo1 } from '@/apps/supplier/assets/logo1.svg';
 import './index.css';
 
 export default () => {
@@ -55,7 +49,7 @@ export default () => {
       className="layout-wrapper"
       logo={logo}
       // @ts-ignore
-      title={<TitleLogo className="ml-2 -mt-1" />}
+      title={<span className="font-bold text-xl text-primary">Label LLM</span>}
       pageTitleRender={() => ''}
       defaultCollapsed={true}
       breakpoint={false}
@@ -112,7 +106,7 @@ export default () => {
         </Popover>,
       ]}
       onMenuHeaderClick={() => {
-        window.location.href = '/';
+        window.location.href = '/supplier';
       }}
       menuItemRender={(item: MenuDataItem, dom: ReactNode) => (
         <span

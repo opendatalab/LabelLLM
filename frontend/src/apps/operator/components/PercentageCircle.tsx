@@ -35,16 +35,16 @@ export default function PercentageCircle({
       <StyledSvg className="circular-progress" width={size} height={size}>
         <defs>
           <linearGradient x1="1" y1="0" x2="0" y2="0" id="gradient1">
-            <stop offset="0%" stopColor="var(--geekblue-1)" />
-            <stop offset="100%" stopColor="var(--geekblue-5)" />
+            <stop offset="0%" stopColor="#f0f5ff" />
+            <stop offset="100%" stopColor="#597ef7" />
           </linearGradient>
           <linearGradient x1="1" y1="0" x2="0" y2="0" id="gradient2">
-            <stop offset="0%" stopColor="var(--geekblue-5)" />
-            <stop offset="100%" stopColor="var(--color-primary)" />
+            <stop offset="0%" stopColor="#597ef7" />
+            <stop offset="100%" stopColor="#2126c0" />
           </linearGradient>
           <linearGradient x1="1" y1="0" x2="0" y2="0" id="gradient4">
-            <stop offset="0%" stopColor="var(--geekblue-5)" />
-            <stop offset="100%" stopColor="var(--color-primary)" />
+            <stop offset="0%" stopColor="#597ef7" />
+            <stop offset="100%" stopColor="#2126c0" />
           </linearGradient>
         </defs>
         <g>

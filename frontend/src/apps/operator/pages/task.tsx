@@ -164,8 +164,8 @@ export default function TaskList() {
         key: 'created_time',
         responsive: ['lg', 'xl', 'xxl'],
         width: 200,
-        render: (text: string) => {
-          return dayjs(text).format('YYYY-MM-DD HH:mm:ss');
+        render: (text: number) => {
+          return dayjs(text * 1000).format('YYYY-MM-DD HH:mm:ss');
         },
       },
       {
@@ -223,7 +223,7 @@ export default function TaskList() {
   );
 
   return (
-    <CustomPageContainer bodyClassName="flex flex-col flex-1" title="标注任务">
+    <CustomPageContainer bodyClassName="flex flex-col flex-1" title="任务列表">
       <QueryBlock
         formProps={formProps}
         onSearch={handleSearch}

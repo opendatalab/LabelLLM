@@ -54,10 +54,6 @@ npm run analyze
 
 ## 配置和约定
 
-### 配置
-
-- 接口服务的 url 在[`config/apiUrls.ts`](./config/apiUrls.ts)中配置；
-
 ### 约定
 
 - 仅 `app` 中使用到的组件放在对应 `app` 的 `components` 目录下；
