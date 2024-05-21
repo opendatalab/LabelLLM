@@ -468,8 +468,11 @@ async def delete_label_task(
                         )
 
             fp.seek(0)
-            minio.internal_client.put_object(
-                f"{settings.ENVIRONMENT}/task_backup/{req.task_id}.zip", fp
+            minio.minio.client.put_object(
+                settings.ENVIRONMENT,
+                f"/task_backup/{req.task_id}.zip",
+                fp,
+                length=fp.tell(),
             )
 
     await crud.label_task.remove(task.id)
@@ -620,7 +623,12 @@ async def export_data(
         index = 0
         async for data in crud.data.query(task_id=task_id):
             index += 1
-            datas += schemas.data.DoData.parse_obj(data).json(ensure_ascii=False) + "\n"
+            datas += (
+                schemas.data.DoData.parse_obj(data).json(
+                    ensure_ascii=False, exclude={"evaluation": {"data_evaluation"}}
+                )
+                + "\n"
+            )
 
             if index % 100 == 0:
                 yield datas
@@ -686,7 +694,7 @@ async def export_record(
         async for record in crud.record.query(task_id=task_id, is_submit=True):
             index += 1
             do_record = schemas.record.DoRecord.parse_obj(record)
-            record_dict = do_record.dict()
+            record_dict = do_record.dict(exclude={"evaluation": {"data_evaluation"}})
             record_dict["creator"] = user_name_map[do_record.creator_id]
             records += orjson.dumps(record_dict).decode("utf-8") + "\n"
 
