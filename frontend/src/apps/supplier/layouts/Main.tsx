@@ -48,7 +48,7 @@ export default () => {
       className="layout-wrapper"
       logo={logo}
       // @ts-ignore
-      title={<Title className={'mt-1'} />}
+      title={<Title className="ml-2 mt-1" />}
       pageTitleRender={() => ''}
       defaultCollapsed={true}
       breakpoint={false}
