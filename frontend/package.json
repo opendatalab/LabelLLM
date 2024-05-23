@@ -117,6 +117,7 @@
     "stylelint-prettier": "^2.0.0",
     "tailwindcss": "^3.3.1",
     "ts-node": "^10.9.1",
+    "tslib": "^2.6.2",
     "typescript": "^5.0.4",
     "vite": "^4.2.1",
     "vite-plugin-ejs": "^1.7.0",

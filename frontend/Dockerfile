@@ -7,12 +7,12 @@ ARG VITE_APP_VERSION
 ARG SENTRY_AUTH_TOKEN_WEB
 
 # install pnpm
-# RUN npm install -g pnpm
+RUN npm install -g pnpm
 
 COPY . .
 
 # install dependencies
-RUN npm install --legacy-peer-deps
+RUN pnpm install
 
 # build app
 RUN npm run build:js
