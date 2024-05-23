@@ -1,32 +1,51 @@
-# 简介
+# LabelLLM: The Open-Source Data Annotation Platform
+（English| <a href="https://github.com/opendatalab/LabelLLM/wiki/README%E2%80%90zh">
+    <button>中文版</button>
+</a>）
+## Product Introduction
+LabelLLM introduces an innovative, open-source platform dedicated to optimizing the data annotation process integral to the development of LLM. Engineered with a vision to be a powerful tool for independent developers and small to medium-sized research teams to improve annotation efficiency. At its core, LabelLLM commits to facilitating the data annatation processes of model training with simplicity and efficiency by providing comprehensive task management solutions and versatile multimodal data support.
+## Key Features
 
-LLM标注平台提供先进的数据标注平台，以及全方位任务管理与多模态数据支持，致力于赋能大模型的预训练、微调和评测的全流程。
+**Flexible Configuration:** 
 
-覆盖丰富的任务类型，提供灵活多元的工具配置，轻松适配各类任务。
+LabelLLM is distinguished by its adaptable framework, offering an array of task-specific tools that are customizable to meet the diverse needs of data annotation projects. This flexibility allows for seamless integration into a variety of task parameters, making it an invaluable asset in the preparation of data for model training.
 
-多模态的数据支持，全面兼容音频、图像、视频等多种数据模态。
+**Multimodal Data Support:**  
 
-全方位的任务管理，完整追踪任务执行全过程，实时监控标注质量与进度。
+Recognizing the importance of diversity in data, LabelLLM extends its capabilities to encompass a wide range of data modalities, including audio, images, and video. This holistic approach ensures that users can undertake complex annotation projects involving multiple types of data, under a single unified platform.
 
-AI 辅助标注，支持载入预标注结果并可在此基础上自行微调，显著提高标注效率，缩短模型迭代周期
+**Comprehensive Task Management:**  
 
-# 特性
+Ensuring the highest standards of quality and efficiency, LabelLLM features an all-encompassing task management system. This system offers real-time monitoring of annotation progress and quality control, thereby guaranteeing the integrity and timeliness of the data preparation phase for all projects.
 
-灵活，多种任务工具配置可自由搭配，满足绝大部分数据标注需求
+**Artificial Intelligence Assisted Annotation:**  
 
-易用，提供多种数据标注工具，简单配置后即可完成数据标注任务的设置与分发
+LabelLLM supports pre-annotation loading, which can be refined and adjusted by users according to actual needs. This feature improves the efficiency and accuracy of annotation.
 
-高效，支持载入预标注数据，显著提高标注效率
+## Product Characteristics
+**Versatility:** 
 
-# 快速上手
+With LabelLLM, users gain access to an extensive suite of data annotation tools, designed to cater to a wide array of task without compromising on the efficacy or precision of annotations.
 
--  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF">
-    <button>使用手册-运营端</button>
+**User-Friendly:** 
+
+Beyond its robust capabilities, LabelLLM places a strong emphasis on user experience, offering intuitive configurations and workflow processes that streamline the setup and distribution of data annotation tasks. 
+
+**Efficiency Enhanced:** 
+
+By incorporating AI-assisted annotations, LabelLLM dramatically increases annotation efficiency. 
+
+# Getting Strated
+
+-  <a href="https://github.com/opendatalab/LabelLLM/wiki/User-Manual%E2%80%90Operation-Side">
+    <button>User Manual-Operation Side</button>
 </a>
 
--  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E6%A0%87%E6%B3%A8%E5%91%98-%E5%AE%A1%E6%A0%B8%E5%91%98">
-    <button>使用手册-标注员 审核员</button>
+-  <a href="https://github.com/opendatalab/LabelLLM/wiki/User-Mannual%E2%80%90Labeler-Auditor">
+    <button>User Mannual-Labeler/Auditor</button>
 </a>
+
+
 
 # 配置详情
 
