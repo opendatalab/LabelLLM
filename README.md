@@ -46,27 +46,51 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 </a>
 
 
+# Local Deployment
 
-# 配置详情
+1. Clone the project locally or download the project code zip.
 
-后端文档 [配置文件](backend/README.md)
+2. Install Docker, select the corresponding operating system type and download and install it.
 
-前端文档 [配置文件](frontend/README.md)
+3. Under the file address of the corresponding project, run the command:
 
-## page url
-
-* http://localhost:8086/login
-* http://localhost:8086/supplier 标注端
-* http://localhost:8086/operator 管理端
-
-
-# 一键启动
-
-* 使用 Docker Compose 启动：
-
-```bash
+```
 docker compose up
 ```
-> 配置 MINIO Localhost:9001
-* MINIO_ACCESS_KEY=your_access_key
-* MINIO_SECRET_KEY=your_secret_key
+> Note: The initial installation may take some time, so please be patient and make sure you have a good internet connection.
+
+4. Open a browser and access Localhost:9001.
+> username: user password: password
+
+5. Modify the Access key to:
+MINIO_ACCESS_KEY_ID = MekKrisWUnFFtsEk
+MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
+
+6. Open your browser and visit the following address to access it:
+
+    http://localhost:8086/supplier Labeling
+
+    http://localhost:8086/operator admin
+
+> Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
+
+# Technical Communication
+
+Welcome to join Opendatalab official weibo group!
+
+<p align="center">
+<img style="width: 400px" src="https://user-images.githubusercontent.com/25022954/208374419-2dffb701-321a-4091-944d-5d913de79a15.jpg" </p
+</p
+
+# Links
+- [LabelU](https://github.com/opendatalab/labelU) (another multimodal labeling artifact from Opendatalab)
+
+Translated with www.DeepL.com/Translator (free version)
+
+# Configuration details
+
+Backend Documentation [Configuration File](backend/README.md)
+
+Frontend Documentation [Configuration File](frontend/README.md)
+
+
