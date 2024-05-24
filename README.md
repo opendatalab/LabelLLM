@@ -79,8 +79,8 @@ MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
 Welcome to join Opendatalab official weibo group!
 
 <p align="center">
-<img style="width: 400px" src="https://user-images.githubusercontent.com/25022954/208374419-2dffb701-321a-4091-944d-5d913de79a15.jpg" </p
-</p
+<img style="width: 400px" src="https://user-images.githubusercontent.com/25022954/208374419-2dffb701-321a-4091-944d-5d913de79a15.jpg" </p>
+
 
 # Links
 - [LabelU](https://github.com/opendatalab/labelU) (another multimodal labeling artifact from Opendatalab)
