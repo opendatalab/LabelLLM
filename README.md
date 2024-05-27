@@ -1,7 +1,17 @@
+<div align="center">
+
 # LabelLLM: The Open-Source Data Annotation Platform
-（English| <a href="https://github.com/opendatalab/LabelLLM/wiki/README%E2%80%90zh">
-    <button>中文版</button>
-</a>）
+    
+<article style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+ <p align="center"><img width="400" alt="LOGO(1)" src="https://github.com/opendatalab/LabelLLM/assets/154008929/86cf7026-c0d6-4cad-8be5-82ae541f9813"></p>
+<h1 style="width: 100%; text-align: center;"></h1>
+    <p align="center">
+        English | <a href="https://github.com/opendatalab/LabelLLM/wiki/README%E2%80%90zh" >简体中文</a>
+    </p>
+</article>
+
+</div>
+
 ## Product Introduction
 LabelLLM introduces an innovative, open-source platform dedicated to optimizing the data annotation process integral to the development of LLM. Engineered with a vision to be a powerful tool for independent developers and small to medium-sized research teams to improve annotation efficiency. At its core, LabelLLM commits to facilitating the data annatation processes of model training with simplicity and efficiency by providing comprehensive task management solutions and versatile multimodal data support.
 ## Key Features
