@@ -81,17 +81,20 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 
 3. Under the file address of the corresponding project, run the command:
 
-```
-docker compose up
-```
-> Note: The initial installation may take some time, so please be patient and make sure you have a good internet connection.
+    ```
+    docker compose up
+    ```
+    > Note: The initial installation may take some time, so please be patient and make sure you have a good internet connection.
 
 4. Open a browser and access Localhost:9001.
-> username: user password: password
+    > username: user password: password
 
 5. Modify the Access key to:
-MINIO_ACCESS_KEY_ID = MekKrisWUnFFtsEk
-MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
+
+    ```
+    MINIO_ACCESS_KEY_ID = MekKrisWUnFFtsEk
+    MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
+    ```
 
 6. Open your browser and visit the following address to access it:
 
@@ -99,7 +102,7 @@ MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
 
     http://localhost:8086/operator admin
 
-> Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
+    > Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
 
 ## Technical Communication
 
