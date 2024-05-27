@@ -45,7 +45,7 @@ Beyond its robust capabilities, LabelLLM places a strong emphasis on user experi
 
 By incorporating AI-assisted annotations, LabelLLM dramatically increases annotation efficiency. 
 
-# Getting Strated
+## Getting Strated
 
 -  <a href="https://github.com/opendatalab/LabelLLM/wiki/User-Manual%E2%80%90Operation-Side">
     <button>User Manual-Operation Side</button>
@@ -56,7 +56,7 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 </a>
 
 
-# Local Deployment
+## Local Deployment
 
 1. Clone the project locally or download the project code zip.
 
@@ -84,7 +84,7 @@ MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
 
 > Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
 
-# Technical Communication
+## Technical Communication
 
 Welcome to join Opendatalab official weibo group!
 
@@ -92,11 +92,11 @@ Welcome to join Opendatalab official weibo group!
 <img style="width: 200px" src="https://user-images.githubusercontent.com/25022954/208374419-2dffb701-321a-4091-944d-5d913de79a15.jpg" </p>
 
 
-# Links
+## Links
 - [LabelU](https://github.com/opendatalab/labelU) (another multimodal labeling artifact from Opendatalab)
 
 
-# Configuration details
+## Configuration details
 
 Backend Documentation [Configuration File](backend/README.md)
 
