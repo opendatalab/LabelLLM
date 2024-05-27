@@ -20,13 +20,30 @@ LabelLLM introduces an innovative, open-source platform dedicated to optimizing 
 
 LabelLLM is distinguished by its adaptable framework, offering an array of task-specific tools that are customizable to meet the diverse needs of data annotation projects. This flexibility allows for seamless integration into a variety of task parameters, making it an invaluable asset in the preparation of data for model training.
 
+<div align="center">
+ <img width="30%" src="https://github.com/opendatalab/LabelLLM/assets/154008929/14bd269d-ce72-4c6f-987f-dc1230dc5aaa">
+</img>
+</div>
+
+
 **Multimodal Data Support**  
 
 Recognizing the importance of diversity in data, LabelLLM extends its capabilities to encompass a wide range of data modalities, including audio, images, and video. This holistic approach ensures that users can undertake complex annotation projects involving multiple types of data, under a single unified platform.
 
+<div align="center">
+ <img width="30%" src="https://github.com/opendatalab/LabelLLM/assets/154008929/d6b48bb3-6fed-423c-a5f9-5dbcc7874efd">
+</img>
+</div>
+
+
 **Comprehensive Task Management**  
 
 Ensuring the highest standards of quality and efficiency, LabelLLM features an all-encompassing task management system. This system offers real-time monitoring of annotation progress and quality control, thereby guaranteeing the integrity and timeliness of the data preparation phase for all projects.
+
+<div align="center">
+ <img width="30%" src="https://github.com/opendatalab/LabelLLM/assets/154008929/637c5da9-d86f-46b1-8356-e6febdb1ca26">
+</img>
+</div>
 
 **Artificial Intelligence Assisted Annotation**  
 
