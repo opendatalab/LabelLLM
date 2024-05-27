@@ -76,7 +76,7 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 
 1. Clone the project locally or download the project code zip.
 
-> Recommended to run on Linux, if you encounter problems with the installation you can refer to  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">  <button>FAQ </button></a>
+    > Recommended to run on Linux, if you encounter problems with the installation you can refer to  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">  <button>FAQ </button></a>
 
 2. Install Docker, select the corresponding operating system type and download and install it.
 
