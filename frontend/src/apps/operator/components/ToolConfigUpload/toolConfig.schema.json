@@ -1,0 +1,196 @@
+{
+  "title": "ToolConfig",
+  "type": "object",
+  "properties": {
+    "conversation": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Question" }
+        }
+      },
+      "required": ["questions"]
+    },
+    "message": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Question" }
+        },
+        "is_sortable": {
+          "type": "boolean"
+        },
+        "is_sn_unique": {
+          "type": "boolean"
+        }
+      },
+      "required": ["questions", "is_sortable"]
+    },
+    "question": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Question" }
+        }
+      },
+      "required": ["questions"]
+    },
+    "plugins": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "object",
+          "$ref": "#/definitions/Plugin"
+        },
+        "conversation": {
+          "type": "object",
+          "$ref": "#/definitions/Plugin"
+        }
+      }
+    }
+  },
+  "required": ["conversation", "message"],
+  "definitions": {
+    "Question": {
+      "title": "Question",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "问题唯一ID"
+        },
+        "label": {
+          "type": "string",
+          "description": "问题内容"
+        },
+        "value": {
+          "type": "string",
+          "description": "问题保存字段名"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "enum", "array"],
+          "description": "问题类型"
+        },
+        "max_length": {
+          "type": "integer",
+          "description": "最大长度"
+        },
+        "default_value": {
+          "type": "string",
+          "description": "默认值"
+        },
+        "is_preview_expanded": {
+          "type": "boolean",
+          "description": "默认预览展开"
+        },
+        "is_upload_available": {
+          "type": "boolean",
+          "description": "是否可以上传附件"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "是否必填"
+        },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Condition" },
+          "description": "显隐性条件设置"
+        },
+        "options": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Option" },
+          "description": "选项配置"
+        }
+      },
+      "required": ["id", "label", "value", "type"]
+    },
+    "Option": {
+      "title": "Option",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "选项唯一ID"
+        },
+        "label": {
+          "type": "string",
+          "description": "选项内容"
+        },
+        "value": {
+          "type": "string",
+          "description": "选项保存字段名"
+        },
+        "is_default": {
+          "type": "boolean",
+          "description": "是否默认选中"
+        }
+      },
+      "required": ["id", "label", "value"]
+    },
+    "Condition": {
+      "title": "Condition",
+      "type": "object",
+      "properties": {
+        "connector": {
+          "type": "string",
+          "enum": ["and", "or"],
+          "description": "条件连接符"
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Condition" },
+          "description": "子条件"
+        },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ConditionItem" },
+          "description": "条件项"
+        }
+      },
+      "required": ["connector", "items"]
+    },
+    "ConditionItem": {
+      "title": "ConditionItem",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "条件值"
+        },
+        "field": {
+          "type": "string",
+          "description": "条件字段"
+        },
+        "option_id": {
+          "type": "string",
+          "description": "条件选项ID"
+        },
+        "question_id": {
+          "type": "string",
+          "description": "条件问题ID"
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["eq", "neq", "in", "nin"],
+          "description": "条件运算符"
+        }
+      },
+      "required": ["value", "field", "option_id", "question_id", "operator"]
+    },
+    "Plugin": {
+      "title": "Plugin",
+      "type": "object",
+      "properties": {
+        "message_send_diff": {
+          "type": "boolean",
+          "description": "针对对话中的提问 内容对比"
+        }
+      },
+      "required": ["message_send_diff"]
+    }
+  }
+}

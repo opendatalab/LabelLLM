@@ -1,0 +1,57 @@
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "black>=23.3.0",
+    "flake8>=6.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.2.0",
+    "types-redis>=4.5.5.2",
+]
+
+[project]
+name = "svc"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Suven", email = "suchenlin@pjlab.org.cn"},
+]
+dependencies = [
+    "fastapi[all]>=0.95.1",
+    "uvicorn[standard]>=0.21.1",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "motor>=3.1.2",
+    "beanie>=1.18.0",
+    "cryptography==38.0.4",
+    "gunicorn>=20.1.0",
+    "apscheduler>=3.10.1",
+    "loguru>=0.7.0",
+    "redis[hiredis]>=4.5.5",
+    "pytz>=2023.3",
+    "openpyxl>=3.1.2",
+    "requests>=2.31.0",
+    "oss2>=2.18.0",
+    "sentry-sdk[fastapi]>=1.28.1",
+    "deepl>=1.15.0",
+    "google-api-python-client>=2.123.0",
+    "minio>=7.2.7",
+    "python-magic>=0.4.27",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 88
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm.scripts]
+
+app.cmd = "python app/main.py"
+app.env_file = ".env"

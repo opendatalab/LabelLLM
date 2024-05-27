@@ -1,0 +1,128 @@
+/* 引用iconfont.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --header-height: 64px;
+}
+
+body {
+  @apply text-color;
+}
+
+/* 修改 markdown 的背景颜色 */
+.chat-markdown,
+.wmde-markdown {
+  line-height: 1.75 !important;
+  @apply bg-transparent !important;
+}
+
+.chat-markdown a {
+  @apply !text-primary;
+}
+
+.task-box-bg {
+  background: url('../assets/bg.png') no-repeat left top fixed;
+  @apply bg-cover;
+}
+
+/* 聊天背景色 */
+.chat-primary {
+  background: rgb(39 45 230 / 10%);
+}
+
+/* send 浅色背景色 */
+.chat-secondary {
+  background: rgb(39 45 229 / 5%);
+}
+
+/* 设计强制去除 button 按钮的光晕 */
+.ant-btn .ant-wave {
+  display: none !important;
+}
+
+/* 设计强制去除 input 的光晕 */
+.ant-input:focus,
+.ant-select-selector {
+  box-shadow: none !important;
+}
+
+/* 自定义按钮的 disabled 状态 */
+.btn-primary-disabled:disabled {
+  color: rgb(255 255 255 / 75%);
+  background: #d2d4ff;
+  border-color: #d2d4ff;
+}
+
+/* 清理 菜单 退出的三个点的默认样式 */
+.ant-pro-sider-actions-list-item {
+  @apply bg-transparent !important;
+}
+
+/* 分段控制器的选中样式 */
+.ant-segmented .ant-segmented-item-selected {
+  @apply text-primary;
+}
+
+.hidden-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* diff box */
+.d2h-file-list-wrapper .d2h-file-list-header {
+  display: none;
+}
+
+.d2h-file-name-wrapper .d2h-icon {
+  display: none;
+}
+
+.d2h-file-name-wrapper a {
+  display: none;
+}
+
+.d2h-file-wrapper .d2h-file-header {
+  display: none !important;
+}
+
+/* diff box 内容区域 */
+.d2h-file-wrapper {
+  position: relative;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+
+/* 比对数量在这个里面 */
+.d2h-file-list-wrapper {
+  display: none;
+}
+
+.chat-markdown table {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 滚动槽 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background: rgb(0 0 0 / 6%);
+  box-shadow: inset 0 0 5px rgb(0 0 0 / 8%);
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: rgb(0 0 0 / 8%);
+  box-shadow: inset 0 0 10px rgb(0 0 0 / 20%);
+}

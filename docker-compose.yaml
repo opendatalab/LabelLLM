@@ -1,0 +1,51 @@
+version: "3.1"
+
+services:
+
+  redis:
+    image: redis:5.0
+    restart: always
+    ports:
+      - "16280:6379"
+    volumes:
+      - redis_data:/data
+
+  mongo:
+    image: mongo:4.2
+    restart: always
+    ports:
+      - "16019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mypassword
+    volumes:
+      - mongo_data:/data/db
+      
+  minio:
+    image: docker.io/bitnami/minio:2022
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      - MINIO_ROOT_USER=user
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DEFAULT_BUCKETS=label-llm-test
+    volumes:
+      - minio_data:/data
+    
+  backend:
+    build: ./backend
+    ports:
+      - '16666:8080'
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '8086:80'
+    depends_on:
+      - backend
+
+volumes:
+  redis_data:
+  mongo_data:
+  minio_data:

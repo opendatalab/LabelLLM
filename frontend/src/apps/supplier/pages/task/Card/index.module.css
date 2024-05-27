@@ -1,0 +1,8 @@
+.card {
+  background: linear-gradient(156.69deg, #cfbeff 29.41%, #bad1ff 58.72%, #8eebff 93.86%);
+}
+
+.card:hover {
+  background: #2126c0 !important;
+  box-shadow: 0 2px 10px rgb(18 19 22 / 10%);
+}

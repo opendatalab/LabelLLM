@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --header-height: 56px;
+}
+
+a,
+a:hover {
+  @apply text-primary;
+}
+
+/* 全局样式
+   设计要求覆盖全平台
+ */
+
+/* 弹窗 内容区 */
+.ant-modal-content {
+  padding-bottom: 24px !important;
+}
+
+.ant-table-thead .ant-table-cell {
+  @apply !bg-fill-tertiary;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px white inset !important;
+}
