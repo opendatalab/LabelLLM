@@ -40,7 +40,7 @@ Recognizing the importance of diversity in data, LabelLLM extends its capabiliti
 Ensuring the highest standards of quality and efficiency, LabelLLM features an all-encompassing task management system. This system offers real-time monitoring of annotation progress and quality control, thereby guaranteeing the integrity and timeliness of the data preparation phase for all projects.
 
 <div align="center">
- <img width="33%" src=" https://github.com/opendatalab/LabelLLM/assets/154008929/b98dea89-e78b-4cce-a574-62fed9d4b58e">
+ <img width="33%" src="https://github.com/opendatalab/LabelLLM/assets/154008929/b98dea89-e78b-4cce-a574-62fed9d4b58e">
 </img>
 </div>
 
