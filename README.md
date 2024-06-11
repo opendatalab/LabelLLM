@@ -74,6 +74,8 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 
 ## Local Deployment
 
+> Deployment Tutorial Video:  https://www.youtube.com/watch?v=KXofJzCOafk
+
 1. Clone the project locally or download the project code zip.
 
     > Recommended to run on Linux, if you encounter problems with the installation you can refer to  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">  <button>FAQ </button></a>
@@ -104,6 +106,7 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
     http://localhost:8086/operator admin
 
     > Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
+
 
 ## Technical Communication
 
