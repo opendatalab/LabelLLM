@@ -442,10 +442,9 @@ async def get_label_task(
 )
 async def delete_label_task(
     req: schemas.task.DoTaskBase = Body(...),
-    logger: Logger = Depends(deps.get_logger),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ):
-    logger.info(f"delete task {req.task_id} by {user.user_id}")
+    print(f"delete task {req.task_id} by {user.user_id}")
 
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
@@ -469,8 +468,8 @@ async def delete_label_task(
 
             fp.seek(0)
             minio.minio.client.put_object(
-                settings.ENVIRONMENT,
-                f"/task_backup/{req.task_id}.zip",
+                settings.MINIO_BUCKET,
+                f"{settings.ENVIRONMENT}task_backup/{req.task_id}.zip",
                 fp,
                 length=fp.tell(),
             )
@@ -479,6 +478,7 @@ async def delete_label_task(
     await crud.data.query(task_id=req.task_id).delete()
     await crud.record.query(task_id=req.task_id).delete()
 
+    return {}
 
 @router.post(
     "/data/batch_create",
@@ -521,10 +521,9 @@ async def batch_create_data(
 )
 async def clear_data(
     req: schemas.task.DoTaskBase = Body(...),
-    logger: Logger = Depends(deps.get_logger),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ):
-    logger.info(f"clear data, task_id: {req.task_id}, user_id: {user.user_id}")
+    print(f"clear data, task_id: {req.task_id}, user_id: {user.user_id}")
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
         raise exceptions.TASK_NOT_EXIST
@@ -542,13 +541,12 @@ async def clear_data(
 )
 async def reject_data(
     req: schemas.operator.task.ReqRejectData = Body(...),
-    logger: Logger = Depends(deps.get_logger),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ):
     async with redis_session.lock(
         f"audit_task_scheduler_job_{req.task_id}", blocking=False
     ):
-        logger.info(f"reject data, task_id: {req.task_id}, user_id: {user.user_id}")
+        print(f"reject data, task_id: {req.task_id}, user_id: {user.user_id}")
 
         # 获取任务
         task = await crud.label_task.query(task_id=req.task_id).first_or_none()
