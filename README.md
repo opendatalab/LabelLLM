@@ -101,6 +101,8 @@ MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
 
 > Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
 
+**The first registered account will be set as administrator by default, and subsequent accounts need to be set to get the operation side of the account privileges, please do not forget the first registered account and password!**
+
 ## Technical Communication
 
 Welcome to join Opendatalab official weibo group!
