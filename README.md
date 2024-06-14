@@ -106,6 +106,8 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
     http://localhost:8086/operator admin
 
     > Replace localhost with the corresponding ip address to share it with other team members so that they can use it directly without repeated deployment.
+    
+    <mark>**The first registered account will be set as administrator by default, and subsequent accounts need to be set to get the operation side of the account privileges, please do not forget the first registered account and password!**</mark>
 
 
 ## Technical Communication
