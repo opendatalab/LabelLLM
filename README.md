@@ -71,6 +71,7 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
     <button>User Mannual-Labeler</button>
 </a>
 
+- <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">  <button>FAQ </button></a>
 
 ## Local Deployment
 
