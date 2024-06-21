@@ -4,6 +4,14 @@
     
 <article style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
  <p align="center"><img width="300" alt="LOGO(1)" src="https://github.com/opendatalab/LabelLLM/assets/154008929/86cf7026-c0d6-4cad-8be5-82ae541f9813"></p>
+</a>
+  <a href="https://www.youtube.com/@OpenDataLab" target="_blank">
+    <img alt="YouTube" src="https://img.shields.io/badge/YouTube-black?logo=youtube&logoColor=red" />
+  </a>
+  <a href="https://space.bilibili.com/1081749692" target="_blank">
+    <img alt="BiliBili" src="https://img.shields.io/badge/BiliBili-pink?logo=bilibili&logoColor=white" />
+  </a>
+
 <h1 style="width: 100%; text-align: center;"></h1>
     <p align="center">
         English | <a href="https://github.com/opendatalab/LabelLLM/wiki/README%E2%80%90zh" >简体中文</a>
