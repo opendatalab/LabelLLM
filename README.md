@@ -73,6 +73,24 @@ By incorporating AI-assisted annotations, LabelLLM dramatically increases annota
 
 - <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">  <button>FAQ </button></a>
 
+## Video Tutorial
+
+Click on the image below to watch the video:
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=YObHzZWwDdw">
+    <img src="https://img.youtube.com/vi/YObHzZWwDdw/maxresdefault.jpg" alt="Watch the video" width="600" />
+  </a>
+</div>
+
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=Hp2eprDcWEA&t=2s">
+    <img src="https://img.youtube.com/vi/Hp2eprDcWEA/maxresdefault.jpg" alt="Watch the video" width="600" />
+  </a>
+</div>
+
+
 ## Local Deployment
 
 > Deployment Tutorial Video:  https://www.youtube.com/watch?v=KXofJzCOafk
