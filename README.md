@@ -147,6 +147,7 @@ Welcome to join Opendatalab official weibo group!
 
 ## Links
 - [LabelU](https://github.com/opendatalab/labelU) (another multimodal labeling artifact from Opendatalab)
+- [MinerU](https://github.com/opendatalab/MinerU) (One-stop high quality data extraction tool)
 
 
 ## Configuration details
