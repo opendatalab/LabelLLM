@@ -136,6 +136,16 @@ Click on the image below to watch the video:
     
     <mark>**The first registered account will be set as administrator by default, and subsequent accounts need to be set to get the operation side of the account privileges, please do not forget the first registered account and password!**</mark>
 
+# Citation
+
+```bibtex
+@article{he2024opendatalab,
+  title={Opendatalab: Empowering general artificial intelligence with open datasets},
+  author={He, Conghui and Li, Wei and Jin, Zhenjiang and Xu, Chao and Wang, Bin and Lin, Dahua},
+  journal={arXiv preprint arXiv:2407.13773},
+  year={2024}
+}
+```
 
 ## Technical Communication
 
