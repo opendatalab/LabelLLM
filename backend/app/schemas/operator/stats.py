@@ -1,7 +1,7 @@
 from enum import StrEnum
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 MESSAGE_QUESTION_FIELD_NAME = "__sys_message_type"
 
@@ -74,6 +74,12 @@ class ExportStatsLabelTaskIDProjectModel(BaseModel):
     data_id: UUID = Field(description="数据 id")
     questionnaire_id: UUID = Field(description="问卷 id")
     custom_id: list[str] = Field(description="join 查询出的 data 记录", default=[])
+
+    @validator('custom_id', pre=True, always=True)
+    def set_custom_id(cls, v):
+        if v is None:
+            return []
+        return [item for item in v if item is not None]
 
 
 class StatsLabelTaskIDProjectModel(BaseModel):
