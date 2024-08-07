@@ -9,8 +9,8 @@ import {
   QuestionCircleFilled,
   GithubFilled,
 } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Popover, Space } from 'antd';
-import type { ReactNode } from 'react';
+import { Avatar, Button, Dropdown, MenuProps, Popover, Space, Tooltip } from 'antd';
+import { ReactNode, useState } from 'react';
 import { useEffect } from 'react';
 import _ from 'lodash';
 
@@ -27,11 +27,13 @@ import { ReactComponent as LabelingTitle } from '../assets/title.svg';
 
 import './index.css';
 import clsx from 'clsx';
+import AppPanel from '@/components/AppPanel';
 
 export default () => {
   const location = useLocation();
   const navigate = useNavigate();
   const userInfo = useRouteLoaderData('root') as IUserInfo;
+  const [collapse, setCollapse] = useState(false);
 
   // 导航菜单，不从 routes 文件读取，单独在此定义
   const route = {
@@ -80,6 +82,14 @@ export default () => {
     goLogin();
   };
 
+  const items: MenuProps['items'] = [
+    {
+      key: 'quit',
+      icon: <ImportOutlined className="text-icon" />,
+      label: <a onClick={onLogout}>退出登录</a>,
+    },
+  ];
+
   const name = userInfo?.name;
 
   const isRead = hasPermission('canReadPage');
@@ -101,6 +111,8 @@ export default () => {
       logo={logo}
       // @ts-ignore
       title={<LabelingTitle className="ml-2 -mt-1" />}
+      collapsed={collapse}
+      onCollapse={setCollapse}
       breakpoint={false}
       pageTitleRender={() => title}
       token={{
@@ -123,45 +135,33 @@ export default () => {
       // @ts-ignore
       ErrorBoundary={ErrorBoundary}
       location={location}
-      menuFooterRender={({ collapsed }: any) => {
-        return (
-          <div className="flex flex-col px-2 gap-2">
-            <div className={clsx(collapsed ? 'px-1' : 'flex px-10 mb-4')}>
-              <Button
-                icon={<FileTextOutlined />}
-                shape="round"
-                size="small"
-                block={!collapsed}
-                href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF"
-                target="_blank"
-                className={clsx({ 'text-color h-[32px] py-[4px]': !collapsed })}
-                type={collapsed ? 'text' : 'default'}
-              >
-                {!collapsed && '帮助中心'}
-              </Button>
-            </div>
-            <Popover
-              key="userinfo"
-              arrow={false}
-              placement="rightTop"
-              content={
-                <div className="flex flex-col">
-                  <Button type="text" onClick={onLogout} icon={<ImportOutlined className="text-icon" />}>
-                    退出登录
-                  </Button>
-                </div>
-              }
-            >
-              <div className="flex items-center justify-between rounded-sm p-2 hover:bg-slate-50">
-                <div className="flex items-center justify-start">
-                  <Avatar className="bg-primary text-xl mr-2">{name?.[0]}</Avatar>
-                  <span className={clsx('text-color', { hidden: collapsed })}>{name}</span>
-                </div>
-                <MoreOutlined className={clsx('text-color', { hidden: collapsed })} />
+      avatarProps={{
+        render: (p) => {
+          return (
+            <Dropdown placement="topLeft" menu={{ items }}>
+              <div className={clsx('flex items-center gap-x-1 cursor-pointer', !collapse && 'pl-2')}>
+                <Avatar className="bg-primary">{name[0]}</Avatar>
+                {!collapse && <span className="text-color">{name}</span>}
               </div>
-            </Popover>
-          </div>
-        );
+            </Dropdown>
+          );
+        },
+      }}
+      menuFooterRender={() => <div />}
+      actionsRender={() => {
+        return [
+          <Tooltip title="帮助中心" placement="top" key="help">
+            <a
+              href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%AE%E5%8A%A9%E4%B8%AD%E5%BF%83-%E2%80%90-%E8%BF%90%E8%90%A5%E7%AB%AF"
+              target="_blank"
+              className="text-color py-2"
+              rel="noreferrer"
+            >
+              <FileTextOutlined className="text-sm" />
+            </a>
+          </Tooltip>,
+          <AppPanel key="AppPanel" />,
+        ];
       }}
       onMenuHeaderClick={() => navigate('/')}
       menuItemRender={(item: MenuDataItem, dom: ReactNode) => (

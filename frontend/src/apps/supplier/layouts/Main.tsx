@@ -9,6 +9,7 @@ import { IUserInfo, logout } from '@/api/user';
 import { goLogin } from '@/utils/sso';
 import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import AppPanel from '@/components/AppPanel';
 
 import logo from '../assets/logo.svg';
 import { ReactComponent as Title } from '@/apps/supplier/assets/title.svg';
@@ -89,6 +90,7 @@ export default () => {
         },
       }}
       actionsRender={() => [
+        <AppPanel key="AppPanel" />,
         <Popover
           key="userinfo"
           arrow={false}
