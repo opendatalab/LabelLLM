@@ -14,7 +14,7 @@ const list = [
   },
   {
     name: 'Label U',
-    description: '一款轻量级开源标注工具，自由组合多样工具，无缝兼容多格式数据，同时支持载入预标注，加速数据标注效率',
+    description: '一款轻量级开源标注工具，自由组合多样工具，无缝兼容多格式数据，同时支持载入预标注，加速标注效率',
     icon: labelu,
     links: [
       { name: '在线体验', url: 'https://labelu.shlab.tech/tasks' },
@@ -23,7 +23,7 @@ const list = [
   },
   {
     name: 'Miner U',
-    description: '一款轻量级开源标注工具，自由组合多样工具，无缝兼容多格式数据，同时支持载入预标注，加速数据标注效率',
+    description: '一站式开源高质量数据提取工具，支持多格式（PDF/网页/电子书），智能萃取，生成高质量语料',
     icon: mineru,
     links: [
       { name: '在线体验', url: 'https://opendatalab.com/OpenSourceTools/Extractor/PDF' },
@@ -88,7 +88,7 @@ const Portal = () => {
 const AppPanel = () => {
   return (
     <Popover
-      title={<div className="text-xl">欢迎使用OpenDataLab开源工具箱 🎉</div>}
+      title={<div className="text-xl pl-1 pt-1">欢迎使用OpenDataLab开源工具箱 🎉</div>}
       arrow={false}
       placement="rightTop"
       key="AppPanel"
