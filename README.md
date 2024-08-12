@@ -117,14 +117,12 @@ Click on the image below to watch the video:
 4. Open a browser and access Localhost:9001.
     > username: user password: password
 
-5. Modify the Access key to:
+5. Create a new access key and fill in the following fields:
+  - Access Key: MekKrisWUnFFtsEk
+  - Secret Key: XK4uxD1czzYFJCRTcM70jVrchccBdy6C
+  > You can find the built-in AK/SK environment variables in the [./backend/.env](backend/.env) file. Alternatively, you can create a new access key and update the AK/SK in the .env file.
 
-    ```
-    MINIO_ACCESS_KEY_ID = MekKrisWUnFFtsEk
-    MINIO_ACCESS_KEY_SECRET = XK4uxD1czzYFJCRTcM70jVrchccBdy6C
-    ```
-
-6. Open your browser and visit the following address to access it:
+1. Open your browser and visit the following address to access it:
 
     http://localhost:8086/supplier Labeling
 
