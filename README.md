@@ -93,14 +93,26 @@ Click on the image below to watch the video:
 
     > Recommended to run on Linux, if you encounter problems with the installation you can refer to  <a href="https://github.com/opendatalab/LabelLLM/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">  <button>FAQ </button></a>
 
-2. Install Docker, select the corresponding operating system type and download and install it.
+2. Install Docker, select the corresponding operating system type and download and install it, then **start the Docker service**.
+
+    > Docker installation tutorial: https://docs.docker.com/get-docker/
 
 3. Under the file address of the corresponding project, run the command:
 
     ```
     docker compose up
     ```
-    > Note: The initial installation may take some time, so please be patient and make sure you have a good internet connection.
+    > Note: The initial installation may take some time, so please be patient and make sure you have a good internet connection.  
+    > If you are in china, you can use the following command to speed up the download:
+    > ```json
+    > // /etc/docker/daemon.json
+    > {
+    >   "registry-mirrors": [
+    >     "https://docker.m.daocloud.io"
+    >   ]
+    > }
+    > ```
+    > Read more: https://github.com/DaoCloud/public-image-mirror?tab=readme-ov-file#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5
 
 4. Open a browser and access Localhost:9001.
     > username: user password: password
