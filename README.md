@@ -120,9 +120,9 @@ Click on the image below to watch the video:
 5. Create a new access key and fill in the following fields:
   - Access Key: MekKrisWUnFFtsEk
   - Secret Key: XK4uxD1czzYFJCRTcM70jVrchccBdy6C
-  > You can find the built-in AK/SK environment variables in the [./backend/.env](backend/.env) file. Alternatively, you can create a new access key and update the AK/SK in the .env file.
+      > You can find the built-in AK/SK environment variables in the [./backend/.env](backend/.env) file. Alternatively, you can create a new access key and update the AK/SK in the .env file.
 
-1. Open your browser and visit the following address to access it:
+6. Open your browser and visit the following address to access it:
 
     http://localhost:8086/supplier Labeling
 
