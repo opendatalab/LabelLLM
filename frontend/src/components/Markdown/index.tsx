@@ -6,7 +6,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { isUrlMedia } from '@/utils/isUrlMedia';
+import { getUrlExtension } from '@/utils/getUrlExtension';
 
 import errorImage from './errorImage.png';
 
@@ -59,11 +59,11 @@ const Markdown: React.FC<PropsWithChildren<IProps>> = ({ value, className }) => 
           // 检验图片是否为s3地址 如果是则替换成要转换的地址
           if (node.tagName === 'img') {
             // 解析图片格式 如果是mp3格式的音频文件则解析成audio标签 如果是mp4格式的视频文件则解析成video标签
-            if (isUrlMedia(node.properties.src, 'mp3')) {
+            if (['mp3'].includes(getUrlExtension(node.properties.src))) {
               node.tagName = 'audio';
               node.properties.controls = true;
             }
-            if (isUrlMedia(node.properties.src, 'mp4') || isUrlMedia(node.properties.src, 'mov')) {
+            if (['mp4', 'mov'].includes(getUrlExtension(node.properties.src))) {
               node.tagName = 'video';
               node.properties.controls = true;
               node.properties.style = 'max-width: 100%';
