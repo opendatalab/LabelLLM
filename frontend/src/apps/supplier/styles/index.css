@@ -21,6 +21,12 @@ body {
 .chat-markdown a {
   @apply !text-primary;
 }
+.chat-markdown video {
+  @apply max-w-full;
+}
+.chat-markdown img {
+  @apply max-w-full;
+}
 
 .task-box-bg {
   background: url('../assets/bg.png') no-repeat left top fixed;
