@@ -1,22 +1,37 @@
 import { App as AntApp, ConfigProvider } from 'antd';
 import type { ConfigProviderProps } from 'antd/es/config-provider';
+import { IntlProvider } from 'react-intl';
+import enUS from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
 
 import StaticAnt from '@/components/StaticAnt';
-import themeToken from '@/styles/theme.json';
+import locale from '@/apps/supplier/locales';
+import UseLang from '@/hooks/useLang';
+
+import themeToken from '../styles/theme.json';
 
 interface AppProps extends ConfigProviderProps {
   children: React.ReactNode;
   className?: string;
 }
 
-const AppContainer: React.FC<AppProps> = ({ children, className, ...rest }: AppProps) => {
+const antdLocale = {
+  'zh-CN': zhCN,
+  'en-US': enUS,
+} as Record<string, any>;
+
+// eslint-disable-next-line react/prop-types
+const AppContainer: React.FC<AppProps> = ({ children, className, ...rest }) => {
+  const { lang } = UseLang();
   return (
-    <ConfigProvider theme={themeToken} {...rest}>
-      <AntApp className={className}>
-        <StaticAnt />
-        {children}
-      </AntApp>
-    </ConfigProvider>
+    <IntlProvider locale={'zh-CN'} messages={locale[lang]}>
+      <ConfigProvider theme={themeToken} {...rest} locale={antdLocale[lang]}>
+        <AntApp className={className}>
+          <StaticAnt />
+          {children}
+        </AntApp>
+      </ConfigProvider>
+    </IntlProvider>
   );
 };
 
