@@ -13,8 +13,11 @@ module.exports = {
     React: true,
     NodeJS: true,
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json', // Add this line
+    ecmaVersion: 2022,
+    sourceType: 'module',
+    project: ['tsconfig.json'],
   },
   rules: {
     'prettier/prettier': 'error',

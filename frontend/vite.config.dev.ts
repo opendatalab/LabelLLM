@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { join, relative, resolve } from 'path';
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -35,7 +35,8 @@ export default defineConfig({
     react(),
     svgr(),
     ViteEjsPlugin({
-      root: resolve(__dirname, appDir),
+      // root: resolve(__dirname, appDir),
+      root: join(__dirname, relative(__dirname, resolve(appDir))),
     }),
   ].filter(Boolean),
 
