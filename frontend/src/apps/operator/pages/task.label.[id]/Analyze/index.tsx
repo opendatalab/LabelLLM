@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import type { RadioChangeEvent, TabsProps } from 'antd';
-import { Alert, Button, Drawer, Radio, Spin, Table, Tabs, Tag, Typography } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import type { MenuProps, RadioChangeEvent, TabsProps } from 'antd';
+import { Alert, Button, Drawer, Dropdown, Radio, Spin, Table, Tabs, Tag, Typography } from 'antd';
+import { CaretDownOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { ProCard, ProForm, ProFormDependency, ProFormList, ProFormSelect } from '@ant-design/pro-components';
 import { useParams, useRouteLoaderData } from 'react-router';
@@ -22,6 +22,7 @@ import {
 } from '@/apps/operator/services/task';
 import Help from '@/apps/operator/components/Help';
 import CustomEmpty from '@/apps/operator/components/CustomEmpty';
+import QuickCreate from '../QuickCreate';
 
 const { Text } = Typography;
 
@@ -167,6 +168,17 @@ const Distributed = () => {
   );
 };
 
+const downloadItems: MenuProps['items'] = [
+  {
+    key: 'id',
+    label: 'ID',
+  },
+  {
+    key: 'result',
+    label: '标注结果',
+  },
+];
+
 // 数据筛选
 const Filter = () => {
   const { tool_config, task_id } = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
@@ -309,7 +321,6 @@ const Filter = () => {
                   creatorButtonText: '添加条件',
                   type: 'link',
                   block: false,
-                  className: 'p-0',
                 }}
                 itemRender={({ listDom, action }) => {
                   return (
@@ -416,12 +427,33 @@ const Filter = () => {
             <div className="flex justify-between items-center pb-2">
               <span>共 {refData.current?.count} 条符合条件的数据</span>
               <div className="flex space-x-3">
-                <Button onClick={() => download('result')} disabled={refData.current?.count === 0} type="primary" ghost>
-                  下载标注结果
-                </Button>
-                <Button onClick={() => download('id')} disabled={refData.current?.count === 0} type="primary" ghost>
-                  下载 ID
-                </Button>
+                <QuickCreate
+                  source="analyze"
+                  getIds={async () => {
+                    const result = await getTaskLabelIds(getFormData());
+                    const ids = result?.data?.map((item) => item.data_id);
+                    return (v === EKind.without_duplicate ? ids : ids.flat()) as string[];
+                  }}
+                  trigger={
+                    <Button disabled={refData.current?.count === 0} type="primary" ghost>
+                      以此新建任务
+                    </Button>
+                  }
+                />
+                <Dropdown
+                  menu={{
+                    items: refData.current?.count === 0 ? [] : downloadItems,
+                    onClick: (e) => {
+                      download(e.key as 'id' | 'result');
+                    },
+                  }}
+                  placement="bottom"
+                >
+                  <Button disabled={refData.current?.count === 0} type="primary" ghost>
+                    下载
+                    <CaretDownOutlined />
+                  </Button>
+                </Dropdown>
                 <Button
                   loading={idsLoading}
                   disabled={refData.current?.count === 0}

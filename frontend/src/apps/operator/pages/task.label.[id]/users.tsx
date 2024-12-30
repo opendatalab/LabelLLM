@@ -13,6 +13,7 @@ import Help from '../../components/Help';
 import { labelerKey } from '../../constant/query-key-factories';
 import type { GroupDataByUser, LabelTaskStatisticsBody } from '../../services/task';
 import { getLabelTaskUserStatistics, rejectLabelTask } from '../../services/task';
+import QuickCreate from './QuickCreate';
 
 const queryFormTemplate: FancyInputParams[] = [
   {
@@ -162,9 +163,20 @@ export default function LabelersTable() {
       },
     },
     footer: () => (
-      <Button type="link" className="!px-0" disabled={selectedRecords.length === 0} onClick={() => handleReject()}>
-        打回重做
-      </Button>
+      <div className="flex">
+        <Button type="link" className="!px-0" disabled={selectedRecords.length === 0} onClick={() => handleReject()}>
+          打回重做
+        </Button>
+        <QuickCreate
+          list={selectedRecords}
+          trigger={
+            <Button className="!px-0 ml-4" disabled={selectedRecords.length === 0} type="link">
+              以此新建任务
+            </Button>
+          }
+        />
+        <Help className="ml-1">筛选标注结果快捷新建任务</Help>
+      </div>
     ),
     dataSource: data?.list,
     rowKey: (record) => record.label_user.user_id,

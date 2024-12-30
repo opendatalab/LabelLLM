@@ -463,3 +463,25 @@ export const copyTask = (params: ITaskCopyParams): Promise<ITaskCopyRes> => {
 export const copyAuditTask = (params: ITaskCopyParams): Promise<ITaskCopyRes> => {
   return request.post('/v1/operator/task/audit/copy', params);
 };
+
+/* 派生标注任务 */
+export interface IDeriveLabelTaskParams {
+  task_id: string;
+  data_ids?: string[];
+  // 标注状态 all: 全部 completed: 达标 discarded: 未达标
+  data_status: 'all' | 'completed' | 'discarded';
+  // 题目去重
+  data_duplicated: boolean;
+  // 载入内容 raw: 原题 raw_label: 原题 + 标注数据 raw_label_audit: 原题+标注数据+审核数据
+  data_format: 'raw' | 'raw_label' | 'raw_label_audit';
+  user_id: string[];
+  title: string;
+  distribute_count: number;
+  expire_time: number;
+}
+
+export const deriveLabelTask = (params: {
+  data: IDeriveLabelTaskParams[];
+}): Promise<{ data: { is_ok: boolean }[] }> => {
+  return request.post('/v1/operator/task/label/derive', params);
+};
