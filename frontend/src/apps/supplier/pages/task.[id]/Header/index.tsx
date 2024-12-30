@@ -8,13 +8,22 @@ import { EKind, EQueryQuestionType, useTaskParams } from '@/apps/supplier/hooks/
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import CheckTaskType from '@/apps/supplier/pages/task.[id]/CheckTaskType';
 import type { IPreviewIdParams, IPreviewIdRRes } from '@/apps/supplier/services/task';
-import { ERecordStatus, getLabelRecord, getPreviewId } from '@/apps/supplier/services/task';
+import {
+  ERecordStatus,
+  getLabelRecord,
+  getPreviewId,
+  getLabelTaskUserList,
+  getAuditTaskUserList,
+  getLabelDataId,
+  getAuditDataId,
+} from '@/apps/supplier/services/task';
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
 import CustomizeQuestion from '@/apps/supplier/pages/task.[id]/CustomizeQuestion';
 import { useStoreIds } from '@/hooks/useStoreIds';
 import { message } from '@/components/StaticAnt';
 
 import PluginSet from '../PluginSet';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -72,31 +81,35 @@ const QuestionOptions = ({
   isLoading: boolean;
   mutateAsync: UseMutateAsyncFunction<IPreviewIdRRes, unknown, IPreviewIdParams, unknown>;
 }) => {
-  const { urlState, taskId, setUrlState } = useTaskParams();
+  const { formatMessage } = useIntl();
+  const { urlState, type, taskId, setUrlState } = useTaskParams();
 
   const { getIds } = useStoreIds();
 
+  // 源题查看模式
+  const isWithDuplicate = EKind.with_duplicate === urlState.kind;
+
   const onSearch = async (v: string) => {
-    // const val = v === EQueryQuestionType.all ? undefined : v;
-    if (v === EQueryQuestionType.all) {
-      setUrlState({ question_type: undefined, data_id: undefined, questionnaire_id: undefined });
+    if (v === 'all') {
+      setUrlState({ record_status: undefined, data_id: undefined, questionnaire_id: undefined, user_id: undefined });
       return;
     }
-    if (v === EQueryQuestionType.problem) {
+    if ([ERecordStatus.completed, ERecordStatus.discarded, ERecordStatus.invalid].includes(v as ERecordStatus)) {
       const d = await mutateAsync({
         task_id: taskId as string,
         data_id: urlState.data_id,
+        user_id: urlState.user_id,
         questionnaire_id: urlState.questionnaire_id,
         kind: urlState.kind, // 是否是源题模式
-        is_invalid_questionnaire: true,
         pos_locate: 'current',
+        record_status: v as ERecordStatus,
       });
       if (!d || !d.data_id) {
-        message.error('没有标为有问题的题目');
+        message.error(formatMessage({ id: 'task.error.msg1' }));
         return;
       }
       setUrlState({
-        question_type: v,
+        record_status: v,
         data_id: d?.data_id,
         questionnaire_id: EKind.with_duplicate === urlState.kind ? d?.questionnaire_id : undefined,
       });
@@ -104,11 +117,31 @@ const QuestionOptions = ({
     }
     // 缓存里面读取
     setUrlState({
-      question_type: v,
+      record_status: v,
       data_id: getIds('data_id')[0] || undefined,
       questionnaire_id: undefined,
     });
   };
+
+  // 是否是全部审核题目
+  const isReviewAudits = ERouterTaskType.reviewAudits === type;
+  const options = isReviewAudits
+    ? [
+        { value: 'all', label: formatMessage({ id: 'task.question.all' }) },
+        { value: ERecordStatus.customize, label: formatMessage({ id: 'task.question.scope' }) },
+      ]
+    : [
+        { value: 'all', label: formatMessage({ id: 'task.question.all' }) },
+        ...(isWithDuplicate
+          ? []
+          : [
+              // 单题查看模式
+              { value: ERecordStatus.completed, label: '仅看已达标' },
+              { value: ERecordStatus.discarded, label: '仅看未达标' },
+            ]),
+        { value: ERecordStatus.invalid, label: formatMessage({ id: 'task.question.question' }) },
+        { value: ERecordStatus.customize, label: formatMessage({ id: 'task.question.scope' }) },
+      ];
 
   return (
     <Select
@@ -116,16 +149,138 @@ const QuestionOptions = ({
       variant="borderless"
       loading={isLoading}
       onChange={onSearch}
-      value={value || EQueryQuestionType.all}
+      value={value || 'all'}
       popupMatchSelectWidth={false}
-      options={[
-        { value: EQueryQuestionType.all, label: '全部题目' },
-        { value: EQueryQuestionType.problem, label: '仅看标为有问题' },
-        { value: EQueryQuestionType.customize, label: '自定义题目范围' },
-      ]}
+      options={options}
     />
   );
 };
+
+// 渲染用户列表
+const UserList = () => {
+  const { formatMessage } = useIntl();
+  const { urlState, taskId, setUrlState, flow_index, type } = useTaskParams();
+
+  const isLabel = [ERouterTaskType.reviewTask, ERouterTaskType.review].includes(type);
+
+  const { data } = useQuery({
+    queryKey: ['getLabelTaskUserList', taskId],
+    queryFn: () =>
+      isLabel
+        ? getLabelTaskUserList({ task_id: taskId as string, inlet: urlState.inlet })
+        : getAuditTaskUserList({ task_id: taskId as string, flow_index, inlet: urlState.inlet }),
+  });
+  return (
+    <div className="flex items-center space-x-2">
+      <span className="text-sm font-normal">
+        {isLabel ? (
+          <FormattedMessage id="task.detail.audit.annotator" />
+        ) : (
+          <FormattedMessage id="task.detail.audit.auditor" />
+        )}
+      </span>
+      <Select
+        popupMatchSelectWidth={false}
+        value={urlState.user_id}
+        onChange={(v) => setUrlState({ data_id: undefined, questionnaire_id: undefined, user_id: v })}
+        options={data?.list}
+        fieldNames={{ label: 'username', value: 'user_id' }}
+        style={{ minWidth: 150 }}
+        placeholder={formatMessage({ id: 'common.select' })}
+        // mode="multiple"
+        optionFilterProp="username"
+        allowClear
+        showSearch
+        maxTagCount="responsive"
+      />
+    </div>
+  );
+};
+
+// reviewAudit 和 reviewTask 模式
+function ReviewAuditAndReviewTask({ title }: { title: string }) {
+  const { formatMessage } = useIntl();
+  const { urlState, taskId, setUrlState, flow_index, type } = useTaskParams();
+  const { plugins, data_id } = useDatasetsContext();
+  const isPlugin = !!plugins?.length;
+
+  const isLabel = ERouterTaskType.reviewTask === type;
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: isLabel ? getLabelDataId : getAuditDataId,
+    onSuccess: (d, param) => {
+      if (!d.data_id) {
+        return message.warning(formatMessage({ id: 'task.error.msg1' }));
+      }
+      setUrlState({ data_id: d.data_id, record_status: param.record_status });
+    },
+  });
+
+  const getDataId = async (record_status: string, pos_locate: 'prev' | 'next' | 'current') => {
+    if (record_status === 'all') {
+      setUrlState({ data_id: undefined, record_status: undefined });
+      return;
+    }
+    const data = {
+      task_id: taskId as string,
+      flow_index,
+      user_id: urlState.user_id,
+      data_id: urlState.data_id || data_id,
+      record_status: record_status as ERecordStatus,
+      inlet: urlState.inlet,
+      pos_locate,
+    };
+    mutate(data);
+  };
+
+  return (
+    <HeaderWrapper>
+      <div className="flex items-center">
+        <Title title={title} type={type} />
+        <Select
+          loading={isPending}
+          variant="borderless"
+          value={urlState.record_status || 'all'}
+          popupMatchSelectWidth={false}
+          onChange={(v) => getDataId(v, 'current')}
+          options={[
+            ...(ERouterTaskType.reviewTask === type
+              ? [
+                  { label: formatMessage({ id: 'task.question.all1' }), value: 'all', disabled: false },
+                  {
+                    label: <FormattedMessage id={'task.hint3'} />,
+                    value: ERecordStatus.discarded,
+                  },
+                ]
+              : [
+                  { label: formatMessage({ id: 'task.question.all2' }), value: 'all', disabled: false },
+                  { label: <FormattedMessage id="task.manage.total.audit.approved" />, value: 'approved' },
+                  { label: <FormattedMessage id="task.manage.total.audit.not.approved" />, value: 'rejected' },
+                  {
+                    label: <FormattedMessage id={'task.hint4'} />,
+                    value: 'discarded',
+                  },
+                ]),
+          ]}
+        />
+      </div>
+      <Space>
+        <UserList />
+        <span className="text-quaternary font-normal mx-2">/</span>
+        <div className="flex items-center space-x-2">
+          <Button type="primary" onClick={() => getDataId(urlState.record_status, 'prev')}>
+            <FormattedMessage id={'common.prev'} />
+          </Button>
+          <Button type="primary" onClick={() => getDataId(urlState.record_status, 'next')}>
+            <FormattedMessage id={'common.next'} />
+          </Button>
+        </div>
+        {isPlugin && <span className="text-quaternary font-normal mx-2">/</span>}
+        <PluginSet />
+      </Space>
+    </HeaderWrapper>
+  );
+}
 
 /**
  * Header component for the task page.
@@ -135,8 +290,8 @@ const QuestionOptions = ({
  */
 const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeTheQuestion }) => {
   const { type, taskId, urlState, setUrlState } = useTaskParams();
-  const { plugins } = useDatasetsContext();
-
+  const { plugins, data_id: current_data_id } = useDatasetsContext();
+  const { formatMessage } = useIntl();
   const { getIds, nextId } = useStoreIds();
 
   const { data } = useQuery({
@@ -188,20 +343,25 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
 
   // 获取有问题的题目和自定义题目
   const onGetProblemCustomize = async (pos_locate: 'prev' | 'next') => {
-    if (urlState.question_type === EQueryQuestionType.customize) {
+    if (urlState.record_status === ERecordStatus.customize) {
       const key = isWithDuplicate ? 'questionnaire_id' : 'data_id';
-      setCustomizeIds(nextId(urlState[key], key, pos_locate === 'next' ? 1 : -1));
+      const id = nextId(urlState[key], key, pos_locate === 'next' ? 1 : -1);
+      if (!id) {
+        return;
+      }
+      setCustomizeIds(id);
     } else {
       const d = await mutateAsync({
         task_id: taskId as string,
-        data_id: urlState.data_id,
+        data_id: current_data_id,
         questionnaire_id: urlState.questionnaire_id,
         kind: urlState.kind, // 是否是源题模式
-        is_invalid_questionnaire: urlState.question_type === EQueryQuestionType.problem,
+        record_status: urlState.record_status,
+        user_id: urlState.user_id,
         pos_locate,
       });
       if (!d.data_id || !d.questionnaire_id) {
-        return message.warning('没有更多题目了');
+        return message.warning(formatMessage({ id: 'task.error.msg1' }));
       }
       setUrlState({
         data_id: d?.data_id,
@@ -215,93 +375,67 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
 
   // 1.任务预览-某个标注员做得题目
   if ([ERouterTaskType.reviewTask].includes(type) && urlState.user_id) {
-    return (
-      <HeaderWrapper>
-        <div className="flex items-center">
-          <Title title={title} type={type} />
-          <Segmented
-            value={urlState.record_status || ''}
-            onChange={(v) => onSearch('record_status', v)}
-            className="customize-segmented"
-            options={[
-              { label: '全部题目', value: '', disabled: false },
-              {
-                label: (
-                  <Tooltip
-                    title={
-                      !data?.total
-                        ? type === ERouterTaskType.reviewTask
-                          ? `未达标题数为 0`
-                          : '未采纳题数为 0'
-                        : undefined
-                    }
-                  >
-                    <CheckTaskType types={[ERouterTaskType.reviewTask]}>
-                      <span>仅查看未达标</span>
-                    </CheckTaskType>
-                  </Tooltip>
-                ),
-                value: ERecordStatus.discarded,
-                disabled: !data?.total,
-              },
-            ]}
-          />
-        </div>
-        <Space split={isPlugin && <span className="text-quaternary font-normal mx-2">/</span>}>
-          <Button type="primary" loading={loading} onClick={changeTheQuestion}>
-            换一题
-          </Button>
-          {/*<CheckTaskType types={[ERouterTaskType.reviewTask]}>*/}
-          <PluginSet />
-          {/*</CheckTaskType>*/}
-        </Space>
-      </HeaderWrapper>
-    );
+    return <ReviewAuditAndReviewTask title={title} />;
   }
 
   // 2.任务预览-搜索
   if (ERouterTaskType.review === type) {
-    const isCustomize = EQueryQuestionType.customize === urlState.question_type;
+    const isCustomize = ERecordStatus.customize === urlState.record_status;
     const key = isWithDuplicate ? 'questionnaire_id' : 'data_id';
     const disabled = !getIds(key)?.length && isCustomize;
     return (
       <HeaderWrapper>
         <div className="flex items-center">
-          <Title tag={urlState.kind === EKind.with_duplicate && '源题组合查看'} title={title} type={type} />
-          <QuestionOptions value={urlState.question_type} isLoading={isLoading} mutateAsync={mutateAsync} />
+          <Title
+            tag={urlState.kind === EKind.with_duplicate && formatMessage({ id: 'task.hint5' })}
+            title={title}
+            type={type}
+          />
+          <QuestionOptions value={urlState.record_status} isLoading={isLoading} mutateAsync={mutateAsync} />
           {isCustomize && <CustomizeQuestion storeKey={key} onSearch={setCustomizeIds} />}
         </div>
         <Space split={isPlugin && <span className="text-quaternary font-normal mx-2">/</span>}>
-          {[EQueryQuestionType.problem, EQueryQuestionType.customize].includes(urlState.question_type) ? (
-            <div className="flex space-x-4">
-              <Button
-                type="primary"
-                loading={isLoading}
-                disabled={disabled}
-                onClick={async () => {
-                  await onGetProblemCustomize('prev');
-                }}
-              >
-                上一题
-              </Button>
-              <Button
-                type="primary"
-                loading={isLoading}
-                disabled={disabled}
-                onClick={async () => {
-                  await onGetProblemCustomize('next');
-                }}
-              >
-                下一题
-              </Button>
-            </div>
+          {[ERecordStatus.invalid, ERecordStatus.completed, ERecordStatus.discarded, ERecordStatus.customize].includes(
+            urlState.record_status,
+          ) ? (
+            <>
+              {ERecordStatus.customize !== urlState.record_status && (
+                <>
+                  <UserList />
+                  <span className="text-quaternary font-normal mx-2">/</span>
+                </>
+              )}
+
+              <div className="flex space-x-4">
+                <Button
+                  type="primary"
+                  loading={isLoading}
+                  disabled={disabled}
+                  onClick={async () => {
+                    await onGetProblemCustomize('prev');
+                  }}
+                >
+                  <FormattedMessage id={'common.prev'} />
+                </Button>
+                <Button
+                  type="primary"
+                  loading={isLoading}
+                  disabled={disabled}
+                  onClick={async () => {
+                    await onGetProblemCustomize('next');
+                  }}
+                >
+                  <FormattedMessage id={'common.next'} />
+                </Button>
+              </div>
+            </>
           ) : (
             <>
               {isWithDuplicate ? (
                 <Search
                   key={urlState.questionnaire_id}
                   defaultValue={urlState.questionnaire_id}
-                  placeholder="输入您想要查询的源题ID（Questionnaire_id），按回车键搜索"
+                  placeholder={formatMessage({ id: 'task.question.placeholder' })}
                   onSearch={(v) => {
                     setUrlState({
                       data_id: undefined,
@@ -314,13 +448,13 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
                 <Search
                   key={urlState.data_id}
                   defaultValue={urlState.data_id}
-                  placeholder="输入您想要查询的题目ID（Data_id），按回车键搜索"
+                  placeholder={formatMessage({ id: 'task.question.placeholder2' })}
                   onSearch={(v) => onSearch('data_id', v)}
                   style={{ width: 400 }}
                 />
               )}
               <Button type="primary" loading={loading} onClick={changeTheQuestion}>
-                换一题
+                <FormattedMessage id={'common.switch'} />
               </Button>
             </>
           )}
@@ -330,7 +464,7 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
     );
   }
 
-  const tag = !urlState.user_id && '预览';
+  const tag = !urlState.user_id && formatMessage({ id: 'common.preview' });
   // 默认
   return (
     <HeaderWrapper>
@@ -342,7 +476,7 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
       >
         <CheckTaskType types={[ERouterTaskType.preview]}>
           <Button type="primary" loading={loading} onClick={changeTheQuestion}>
-            换一题
+            <FormattedMessage id={'common.switch'} />
           </Button>
         </CheckTaskType>
         {/*<CheckTaskType types={[ERouterTaskType.task, ERouterTaskType.preview]}>*/}

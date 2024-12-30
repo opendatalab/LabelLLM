@@ -163,8 +163,12 @@ export const getPreviewTaskDetail = async (params: { task_id: string }): Promise
  */
 export enum ERecordStatus {
   processing = 'processing', // 处理中
-  completed = 'completed', // 已完成
-  discarded = 'discarded', // 已废弃
+  completed = 'completed', // 已完成  (已达标)
+  discarded = 'discarded', // 未采纳  (未达标)
+  approved = 'approved', // 审核通过
+  rejected = 'rejected', // 审核未通过
+  invalid = 'invalid', // 仅看标为有问题
+  customize = 'customize', // 自定义题目
 }
 
 export interface IQuestionParams {
@@ -214,8 +218,9 @@ export interface IPreviewIdParams {
   data_id?: string;
   questionnaire_id?: string;
   kind?: EKind; // 是否是源题模式
-  is_invalid_questionnaire?: boolean;
   pos_locate?: 'next' | 'prev' | 'current';
+  record_status?: ERecordStatus;
+  user_id?: string;
 }
 export interface IPreviewIdRRes {
   data_id: string;
@@ -224,6 +229,15 @@ export interface IPreviewIdRRes {
 }
 export const getPreviewId = (params: IPreviewIdParams): Promise<IPreviewIdRRes> => {
   return request.post('/v1/operator/task/label/data/preview/ids', params);
+};
+
+// 用户端 - 获取数据id
+export const getLabelDataId = (params: IQuestionParams): Promise<IPreviewIdRRes> => {
+  return request.post('/v1/task/label/record/preview/ids', params);
+};
+// 用户端 - 审核 获取数据id
+export const getAuditDataId = (params: IQuestionParams): Promise<IPreviewIdRRes> => {
+  return request.post('/v1/task/audit/record/preview/ids', params);
 };
 
 // 根据 questionnaire_id 获取 data_id
@@ -288,4 +302,24 @@ export interface IUploadRes {
 }
 export const getUploadUrl = (params: IUploadParams): Promise<IUploadRes> => {
   return request.post('/v1/file/create', params);
+};
+
+// 获取标注任务用户列表
+export const getLabelTaskUserList = (params: {
+  task_id: string;
+  inlet?: 'supplier' | 'operator';
+}): Promise<{
+  list: ILabelUser[];
+}> => {
+  return request.post('/v1/task/label/user', params);
+};
+// 获取审核任务用户列表
+export const getAuditTaskUserList = (params: {
+  task_id: string;
+  flow_index?: string;
+  inlet?: 'supplier' | 'operator';
+}): Promise<{
+  list: ILabelUser[];
+}> => {
+  return request.post('/v1/task/audit/user', params);
 };

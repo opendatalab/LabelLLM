@@ -62,7 +62,7 @@ const getItems = (id: string) => {
     {
       key: '1',
       label: (
-        <a target="_blank" rel="noopener noreferrer" href={`/supplier/review/${id}`}>
+        <a target="_blank" rel="noopener noreferrer" href={`/supplier/review/${id}?inlet=operator`}>
           单题展示
         </a>
       ),
@@ -70,7 +70,11 @@ const getItems = (id: string) => {
     {
       key: '2',
       label: (
-        <a target="_blank" rel="noopener noreferrer" href={`/supplier/review/${id}?kind=${EKind.with_duplicate}`}>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`/supplier/review/${id}?kind=${EKind.with_duplicate}&inlet=operator`}
+        >
           源题组合展示{' '}
           <Help placement="left" className="relative z-10">
             适用于一题多答，多个答案组合查看

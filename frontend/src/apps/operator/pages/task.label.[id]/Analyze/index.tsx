@@ -216,11 +216,11 @@ const Filter = () => {
       saveIds(key, ids.join('\n'));
       if (isWithDuplicate) {
         window.open(
-          `/supplier/review/${task_id}?question_type=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}`,
+          `/supplier/review/${task_id}?question_type=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}&inlet=operator`,
           '_blank',
         );
       } else {
-        window.open(`/supplier/review/${task_id}?question_type=customize&data_id=${ids[0]}`, '_blank');
+        window.open(`/supplier/review/${task_id}?question_type=customize&data_id=${ids[0]}&inlet=operator`, '_blank');
       }
     },
   });

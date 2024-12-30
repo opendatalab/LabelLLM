@@ -1,26 +1,28 @@
 import { DrawerForm, ProFormTextArea } from '@ant-design/pro-components';
 import { Form, message } from 'antd';
+import { useIntl } from 'react-intl';
 
 import type { TStoreKey } from '@/hooks/useStoreIds';
 import { useStoreIds } from '@/hooks/useStoreIds';
 import IconFont from '@/components/IconFont';
 
-const obj = {
-  data_id: {
-    title: '自定义题目范围',
-    desc: '请输入题目ID （字段：Data_id）一个题目ID一行',
-    placeholder: '一个题目ID一行',
-  },
-  questionnaire_id: {
-    title: '自定义源题范围',
-    desc: '请输入源题ID（字段：Questionnaire_id）一个源题ID一行',
-    placeholder: '一个源题ID一行',
-  },
-};
-
 export default ({ storeKey, onSearch }: { storeKey: TStoreKey; onSearch: (value: string) => void }) => {
   const [form] = Form.useForm<{ ids: string }>();
   const { saveIds, getIds } = useStoreIds();
+  const { formatMessage } = useIntl();
+
+  const obj = {
+    data_id: {
+      title: formatMessage({ id: 'task.custom.question.title' }),
+      desc: formatMessage({ id: 'task.custom.question.desc' }),
+      placeholder: formatMessage({ id: 'task.custom.question.placeholder' }),
+    },
+    questionnaire_id: {
+      title: formatMessage({ id: 'task.custom.root.title' }),
+      desc: formatMessage({ id: 'task.custom.root.desc' }),
+      placeholder: formatMessage({ id: 'task.custom.root.placeholder' }),
+    },
+  };
 
   return (
     <DrawerForm<{
@@ -51,7 +53,7 @@ export default ({ storeKey, onSearch }: { storeKey: TStoreKey; onSearch: (value:
         await saveIds(storeKey, values.ids);
         const ids = getIds(storeKey);
         onSearch(ids[0]);
-        message.success('保存成功');
+        message.success(formatMessage({ id: 'common.save.placeholder' }));
         // 不返回不会关闭弹框
         return true;
       }}

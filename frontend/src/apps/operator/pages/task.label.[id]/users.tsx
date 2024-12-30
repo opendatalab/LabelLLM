@@ -40,6 +40,37 @@ export default function LabelersTable() {
     queryFn: async () => getLabelTaskUserStatistics({ ...queryParams, task_id: routeParams.id! }),
   });
 
+  const handleReject = async (user_ids?: string[]) => {
+    modal.confirm({
+      title: '打回重做',
+      okText: '确认',
+      cancelText: '取消',
+      content: (
+        <div>
+          <p>
+            已选 <span className="font-semibold">{(user_ids || selectedRecords).length}</span>{' '}
+            个标注员，是否确定全部打回？ 打回后题目将被标为未达标，同时生成一道新题，扔回题目池，由其他用户抢答。
+          </p>
+          <p className="text-secondary">打回的题目范围：除了已标为未达标的题目</p>
+        </div>
+      ),
+      onOk: async () => {
+        try {
+          await rejectLabelTask({
+            task_id: routeParams.id!,
+            user_id: user_ids || selectedRecords.map((record) => record.label_user.user_id),
+          });
+
+          message.success('所选标注员的答题已打回');
+          revalidator.revalidate();
+          refetch();
+        } catch (e) {
+          console.error(e);
+        }
+      },
+    });
+  };
+
   const columns = [
     {
       title: '用户名',
@@ -84,21 +115,26 @@ export default function LabelersTable() {
     {
       title: '操作',
       responsive: ['lg', 'xl', 'xxl'],
-      width: 78,
+      width: 120,
       render: (text: string, record) => {
         if (!record?.completed || record.completed === 0) {
           return '-';
         }
 
         return (
-          <a
-            href={`/supplier/review_task/${routeParams.id}?user_id=${record.label_user.user_id}`}
-            target="_blank"
-            key="detail"
-            rel="noreferrer"
-          >
-            查看
-          </a>
+          <div>
+            <a className="mr-2" onClick={() => handleReject([record.label_user.user_id])}>
+              打回
+            </a>
+            <a
+              href={`/supplier/review_task/${routeParams.id}?user_id=${record.label_user.user_id}&inlet=operator`}
+              target="_blank"
+              key="detail"
+              rel="noreferrer"
+            >
+              查看
+            </a>
+          </div>
         );
       },
     },
@@ -106,37 +142,6 @@ export default function LabelersTable() {
 
   const handleSearch: QueryBlockProps<any>['onSearch'] = (params) => {
     setQueryParams(params as unknown as LabelTaskStatisticsBody);
-  };
-
-  const handleReject = async () => {
-    modal.confirm({
-      title: '打回重做',
-      okText: '确认',
-      cancelText: '取消',
-      content: (
-        <div>
-          <p>
-            已选 <span className="font-semibold">{selectedRecords.length}</span> 个标注员，是否确定全部打回？
-            打回后题目将被标为未达标，同时生成一道新题，扔回题目池，由其他用户抢答。
-          </p>
-          <p className="text-secondary">打回的题目范围：除了已标为未达标的题目</p>
-        </div>
-      ),
-      onOk: async () => {
-        try {
-          await rejectLabelTask({
-            task_id: routeParams.id!,
-            user_id: selectedRecords.map((record) => record.label_user.user_id),
-          });
-
-          message.success('所选标注员的答题已打回');
-          revalidator.revalidate();
-          refetch();
-        } catch (e) {
-          console.error(e);
-        }
-      },
-    });
   };
 
   const formProps = {
@@ -157,7 +162,7 @@ export default function LabelersTable() {
       },
     },
     footer: () => (
-      <Button type="link" className="!px-0" disabled={selectedRecords.length === 0} onClick={handleReject}>
+      <Button type="link" className="!px-0" disabled={selectedRecords.length === 0} onClick={() => handleReject()}>
         打回重做
       </Button>
     ),
