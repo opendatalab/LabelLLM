@@ -37,6 +37,7 @@ import Help from '../../components/Help';
 import LabelersTable from './users';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
+import DownloadRange from './DownloadRange';
 
 const FormWrapper = styled.div`
   .ant-steps-item-content {
@@ -195,9 +196,7 @@ export default function LabelDetailRight() {
   };
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
-    if (key === 'result') {
-      exportLabelTask(routeParams.id!);
-    } else {
+    if (key === 'record') {
       exportLabelRecord(routeParams.id!);
     }
   };
@@ -327,7 +326,7 @@ export default function LabelDetailRight() {
                 items: [
                   {
                     key: 'result',
-                    label: '标注结果',
+                    label: <DownloadRange type="label" taskId={routeParams.id!} />,
                   },
                   {
                     key: 'record',

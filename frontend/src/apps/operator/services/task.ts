@@ -1,3 +1,4 @@
+import qs from 'qs';
 import request from '@/api/request';
 import type { ConditionItem } from '@/apps/supplier/services/task';
 
@@ -228,7 +229,7 @@ export const getLabelTaskDetail = (
 
 export interface OperatorTaskUpdatePayload {
   /** Task Id 任务id */
-  task_id: string;
+  task_id: string | string[];
   /** Title 任务标题 */
   title?: string;
   /** Description 任务描述 */
@@ -237,7 +238,7 @@ export interface OperatorTaskUpdatePayload {
   tool_config?: TaskToolConfig;
   /** Expire Time 过期时间/秒 */
   expire_time?: number;
-  /** Teams 标注团队 */
+  /** Teams 执行团队 */
   teams?: string[];
   /** 任务状态 */
   status?: TaskStatus;
@@ -252,6 +253,13 @@ export const updateLabelTask = (
   task_id: string;
 }> => {
   return request.patch(`/v1/operator/task/label/update`, body);
+};
+
+/**
+ * 批量更新标注任务
+ */
+export const batchUpdateLabelTask = (body: OperatorTaskUpdatePayload): Promise<any> => {
+  return request.patch(`/v1/operator/task/label/batch`, body);
 };
 
 /**
@@ -272,24 +280,40 @@ export const rejectLabelTask = (body: { task_id: string; user_id: string[] }): P
  * 导出标注任务数据
  * @param taskId 任务id
  */
-export const exportLabelTask = async (taskId: string) => {
-  downloadFromUrl(`/api/v1/operator/task/label/data/export?task_id=${taskId}`);
+export interface ExportLabelTaskParams {
+  task_id: string | string[];
+  // 题目是否在【标注阶段】被标为 ”此题存在问题，无法作答“
+  invalid?: boolean;
+  // ------------- 标注 -------------
+  // 题目是否完成标注
+  submit?: string;
+  // 标注结果是否达标
+  qualified?: string;
+  // ------------- 审核 -------------
+  // 审核结果是否达标
+  status?: string;
+}
+export const exportLabelTask = async (data: ExportLabelTaskParams) => {
+  const query = qs.stringify(data, { arrayFormat: 'repeat' });
+  downloadFromUrl(`/api/v1/operator/task/label/data/export?${query}`);
 };
 
 /**
  * 导出标注记录
  * @param taskId 任务id
  */
-export const exportLabelRecord = async (taskId: string) => {
-  downloadFromUrl(`/api/v1/operator/task/label/record/export?task_id=${taskId}`);
+export const exportLabelRecord = async (taskId: string | string[]) => {
+  const taskIds = qs.stringify({ task_id: taskId }, { arrayFormat: 'repeat' });
+  downloadFromUrl(`/api/v1/operator/task/label/record/export?${taskIds}`);
 };
 
 /**
  * 导出标注工作量
  * @param taskId 任务id
  */
-export const exportLabelTaskWorkload = async (taskId: string) => {
-  downloadFromUrl(`/api/v1/operator/task/label/data/export_workload?task_id=${taskId}`);
+export const exportLabelTaskWorkload = async (taskId: string | string[]) => {
+  const taskIds = qs.stringify({ task_id: taskId }, { arrayFormat: 'repeat' });
+  downloadFromUrl(`/api/v1/operator/task/label/data/export_workload?${taskIds}`);
 };
 
 // ----------------------------- 标注任务统计相关数据 -----------------------------
