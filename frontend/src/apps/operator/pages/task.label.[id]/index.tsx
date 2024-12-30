@@ -12,6 +12,7 @@ import type { OperatorTaskDetail } from '../../services/task';
 import { updateLabelTask, TaskStatus, deleteLabelTask } from '../../services/task';
 import LabelDetailLeft from './left';
 import LabelDetailRight from './right';
+import CopyTask from '../../components/CopyTask';
 
 export default function LabelTaskDetail() {
   const routeParams = useParams();
@@ -70,6 +71,7 @@ export default function LabelTaskDetail() {
     <CustomPageContainer
       extra={
         <div>
+          <CopyTask id={routeParams.id!} type="label" />
           {_.get(taskInfo, 'status') === TaskStatus.Open && (
             <a className="text-error hover:text-error" onClick={handleEndTask}>
               结束任务

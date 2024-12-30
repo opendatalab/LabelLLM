@@ -422,3 +422,20 @@ export const getTaskLabelIds = async (
 ): Promise<{ data: ITaskLabelDataFilterRes[] }> => {
   return request.post(`/v1/operator/task/label/filters/id/list`, params);
 };
+
+/* 复制标注任务任务 */
+interface ITaskCopyParams {
+  task_id: string;
+}
+interface ITaskCopyRes {
+  is_ok: boolean;
+  task_id: string;
+  msg: string;
+}
+export const copyTask = (params: ITaskCopyParams): Promise<ITaskCopyRes> => {
+  return request.post('/v1/operator/task/label/copy', params);
+};
+/* 复制审核任务任务 */
+export const copyAuditTask = (params: ITaskCopyParams): Promise<ITaskCopyRes> => {
+  return request.post('/v1/operator/task/audit/copy', params);
+};
