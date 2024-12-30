@@ -76,7 +76,7 @@ const uploadStatusMapping: Record<string, string> = {
 };
 
 export interface JsonLResult {
-  status: 'success' | 'error' | 'uploading';
+  status: 'success' | 'error' | 'uploading' | 'done';
   content?: JsonlItem[];
   name: string;
   uid: string;
@@ -214,25 +214,29 @@ export default function JsonlUpload({ children, taskId, url, onFinish, ...rest }
       // 依次上传
       for (let i = 0; i < validList.length; i++) {
         const item = validList[i];
+        let status = item.status;
         try {
           await action({
             task_id: taskId,
             datas: item.content || [],
           });
+          status = 'done';
         } catch (err) {
-          setJsonlList(set(`[${i}].status`)('error')(validList));
+          status = 'error';
           continue;
         }
-
-        setJsonlList(set(`[${i}].status`)('done')(validList));
-        setOpen(false);
-        setJsonlList([]);
+        setJsonlList((prevList) => {
+          const newList = [...prevList];
+          newList[i] = { ...newList[i], status: status };
+          return newList;
+        });
       }
     } catch (err) {
       setLoading(false);
       return;
     }
-
+    setOpen(false);
+    setJsonlList([]);
     onFinish?.(validList);
     setLoading(false);
   };
