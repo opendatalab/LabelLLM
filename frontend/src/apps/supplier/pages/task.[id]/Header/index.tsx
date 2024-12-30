@@ -124,24 +124,18 @@ const QuestionOptions = ({
   };
 
   // 是否是全部审核题目
-  const isReviewAudits = ERouterTaskType.reviewAudits === type;
-  const options = isReviewAudits
-    ? [
-        { value: 'all', label: formatMessage({ id: 'task.question.all' }) },
-        { value: ERecordStatus.customize, label: formatMessage({ id: 'task.question.scope' }) },
-      ]
-    : [
-        { value: 'all', label: formatMessage({ id: 'task.question.all' }) },
-        ...(isWithDuplicate
-          ? []
-          : [
-              // 单题查看模式
-              { value: ERecordStatus.completed, label: '仅看已达标' },
-              { value: ERecordStatus.discarded, label: '仅看未达标' },
-            ]),
-        { value: ERecordStatus.invalid, label: formatMessage({ id: 'task.question.question' }) },
-        { value: ERecordStatus.customize, label: formatMessage({ id: 'task.question.scope' }) },
-      ];
+  const options = [
+    { value: 'all', label: formatMessage({ id: 'task.question.all' }) },
+    ...(isWithDuplicate
+      ? []
+      : [
+          // 单题查看模式
+          { value: ERecordStatus.completed, label: '仅看已达标' },
+          { value: ERecordStatus.discarded, label: '仅看未达标' },
+        ]),
+    { value: ERecordStatus.invalid, label: formatMessage({ id: 'task.question.question' }) },
+    { value: ERecordStatus.customize, label: formatMessage({ id: 'task.question.scope' }) },
+  ];
 
   return (
     <Select

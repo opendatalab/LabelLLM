@@ -188,6 +188,14 @@ export interface ILabelUser {
   username: string;
 }
 
+// 标注任务状态
+export enum ELabelStatus {
+  pending = 'pending', // 待标注
+  processing = 'processing', // 进行中
+  completed = 'completed', // 已完成
+  discarded = 'discarded', // 未采纳
+}
+
 export interface ILabelData {
   data_id: string;
   questionnaire_id: string;
@@ -197,6 +205,7 @@ export interface ILabelData {
   evaluation?: IAnswer; // 审核标注数据
   reference_evaluation?: IAnswer; // 预标注数据
   label_user?: ILabelUser; // 标注员信息
+  status?: ELabelStatus; // 状态
 }
 
 export const getLabelData = (params: IQuestionParams): Promise<ILabelData> => {
@@ -322,4 +331,16 @@ export const getAuditTaskUserList = (params: {
   list: ILabelUser[];
 }> => {
   return request.post('/v1/task/audit/user', params);
+};
+
+/**
+ * 打回标注任务
+ */
+export const rejectLabelTask = (params: {
+  task_id: string;
+  user_id: string[];
+  data_id: string;
+  is_data_recreate: boolean; // true 打回生成新题，false 仅打回
+}): Promise<any> => {
+  return request.post(`/v1/operator/task/label/data/reject`, params);
 };

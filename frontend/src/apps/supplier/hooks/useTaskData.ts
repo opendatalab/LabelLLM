@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -118,4 +118,18 @@ export const useSkipQuestion = () => {
       navigate(`/${type}`);
     },
   });
+};
+
+// 获取活动中的key
+export const useActiveKey = (key: string) => {
+  const queryClient = useQueryClient();
+  // 获取所有活跃的查询
+  const queriesKeys = queryClient
+    .getQueryCache()
+    .getAll()
+    .filter((query) => query.isActive());
+  // 获取当前活跃key中包含 question_key 的
+  const activeKey = queriesKeys.filter((query) => query.queryKey.includes(key))[0]?.queryKey;
+
+  return { activeKey };
 };
