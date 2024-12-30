@@ -232,7 +232,7 @@ export default function LabelDetailLeft() {
                   initialValue={taskInfo.teams?.map((item) => item.team_id)}
                   rules={[{ required: true, message: '请至少选择一个团队' }]}
                 >
-                  <Select mode="multiple" style={{ width: 200 }} options={teamOptions} />
+                  <Select mode="multiple" optionFilterProp="label" style={{ width: 200 }} options={teamOptions} />
                 </Form.Item>
               </Form>
               <div className="flex gap-1 ml-2">

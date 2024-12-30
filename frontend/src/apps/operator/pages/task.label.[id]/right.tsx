@@ -38,6 +38,7 @@ import LabelersTable from './users';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
 import DownloadRange from './DownloadRange';
+import { ProFormSelect } from '@ant-design/pro-components';
 
 const FormWrapper = styled.div`
   .ant-steps-item-content {
@@ -280,18 +281,17 @@ export default function LabelDetailRight() {
                   >
                     <FancyInput type="number" addonAfter="分钟" min={1} className="w-full" />
                   </Form.Item>
-                  <Form.Item
-                    label="标注团队"
+                  <ProFormSelect
                     name="teams"
-                    rules={[
-                      {
-                        required: true,
-                        message: '请选择标注团队',
-                      },
-                    ]}
-                  >
-                    <FancyInput type="enum" mode="multiple" allowClear options={teamOptions} className="w-full" />
-                  </Form.Item>
+                    label="标注团队"
+                    options={teamOptions}
+                    placeholder="请选择执行团队"
+                    rules={[{ required: true, message: '请选择执行团队' }]}
+                    fieldProps={{
+                      mode: 'multiple',
+                      maxTagCount: 'responsive',
+                    }}
+                  />
                   <Form.Item>
                     <Button disabled={isSubmitDisabled} loading={update.isPending} type="primary" htmlType="submit">
                       开始任务

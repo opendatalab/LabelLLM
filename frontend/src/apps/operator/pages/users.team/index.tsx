@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { TablePaginationConfig } from 'antd';
 import { Button, Space, Divider, Table } from 'antd';
 import { Link } from 'react-router-dom';
@@ -14,9 +14,11 @@ import { getTeamList } from '@/apps/operator/services/team';
 import { teamKey } from '../../constant/query-key-factories';
 import CustomPageContainer from '../../layouts/CustomPageContainer';
 import Edit from './Edit';
+import { ProForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
 
 export default function UsersTeam() {
-  const [state, setState] = useUrlState({ page: 1, page_size: 10 });
+  const [state, setState] = useUrlState({ page: 1, page_size: 10, name: undefined });
+  const formRef = useRef<ProFormInstance>();
 
   const [open, onOpenChange] = useBoolean(false);
   const [teamInfo, setTeamInfo] = useState<ITeam | undefined>(undefined);
@@ -82,7 +84,34 @@ export default function UsersTeam() {
 
   return (
     <CustomPageContainer title="标注团队">
-      <div className="text-right mb-4">
+      <div className="mb-4 flex items-center justify-between">
+        <ProForm
+          layout="inline"
+          autoFocusFirstInput={false}
+          formRef={formRef}
+          onFinish={async (values) => {
+            setState({ name: values.name || undefined, page: undefined, page_size: undefined });
+            return true;
+          }}
+          submitter={{
+            searchConfig: {
+              submitText: '搜索',
+            },
+            render: (props, defaultDoms) => {
+              return [defaultDoms?.[1]];
+            },
+          }}
+        >
+          <ProFormText
+            name="name"
+            placeholder="请输入团队名称"
+            fieldProps={{
+              onPressEnter: () => {
+                formRef.current?.submit();
+              },
+            }}
+          />
+        </ProForm>
         <Button type="primary" icon={<PlusOutlined />} onClick={onCreate}>
           新建团队
         </Button>
