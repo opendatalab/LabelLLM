@@ -288,24 +288,6 @@ const Header: React.FC<PropsWithChildren<IProps>> = ({ title, loading, onChangeT
   const { formatMessage } = useIntl();
   const { getIds, nextId } = useStoreIds();
 
-  const { data } = useQuery({
-    queryKey: ['getLabelRecord', taskId, type],
-    queryFn: async () => {
-      const sendData = {
-        task_id: taskId as string,
-        status: ERecordStatus.discarded,
-        user_id: urlState.user_id,
-        page: 1,
-        page_size: 0,
-        flow_index: urlState.flow_index,
-      };
-      if (type === ERouterTaskType.reviewTask) {
-        return await getLabelRecord(sendData);
-      }
-    },
-    enabled: [ERouterTaskType.reviewTask].includes(type),
-  });
-
   const onSearch = (key: string, value?: string | number) => {
     setUrlState({ [key]: value || undefined });
   };

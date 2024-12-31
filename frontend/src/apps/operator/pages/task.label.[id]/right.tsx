@@ -1,7 +1,7 @@
 import { useParams, useRevalidator, useRouteLoaderData } from 'react-router';
 import styled from 'styled-components';
 import type { FormProps, MenuProps } from 'antd';
-import { Button, Divider, Dropdown, Form, Popconfirm, Steps, message } from 'antd';
+import { Button, Divider, Dropdown, Form, Popconfirm, Steps, Tooltip, message } from 'antd';
 import _ from 'lodash';
 import Icon, {
   CaretDownFilled,
@@ -39,6 +39,7 @@ import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
 import DownloadRange from './DownloadRange';
 import { ProFormSelect } from '@ant-design/pro-components';
+import clsx from 'clsx';
 
 const FormWrapper = styled.div`
   .ant-steps-item-content {
@@ -372,7 +373,7 @@ export default function LabelDetailRight() {
           <div className="flex flex-col gap-1 pr-8 flex-1">
             <div className="rounded px-4 text-[var(--color-text-secondary)] flex justify-between items-center">
               <span>
-                已完成题数 <Help>标注完成题数 - 未达标题数</Help>
+                已完成题数 <Help>标注完成题数 - 打回时生成新题的未达标题数</Help>
               </span>
               <span className="text-[var(--color-text)] text-lg">{_.get(taskInfo, 'progress.completed', 0)}</span>
             </div>
@@ -422,7 +423,23 @@ export default function LabelDetailRight() {
             <span>待标注</span>
             <span className="ml-2 mr-12">{_.get(taskInfo, 'progress.pending')}</span>
             <span>标注中</span>
-            <span className="ml-2 mr-12">{_.get(taskInfo, 'progress.labeling')}</span>
+            <span className="ml-2 mr-12">
+              <Tooltip
+                title={
+                  taskInfo.users?.labeling?.length
+                    ? taskInfo.users?.labeling?.map((user) => user.username).join(', ')
+                    : undefined
+                }
+              >
+                <span
+                  className={clsx({
+                    'cursor-default text-primary': !!taskInfo.users?.labeling?.length,
+                  })}
+                >
+                  {_.get(taskInfo, 'progress.labeling')}
+                </span>
+              </Tooltip>
+            </span>
             <span>标注完成</span>
             <span className="ml-2">{_.get(taskInfo, 'progress.labeled')}</span>
             <span className="text-secondary">

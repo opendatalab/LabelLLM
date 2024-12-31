@@ -171,6 +171,9 @@ export interface OperatorTaskDetail {
   expire_time: number;
   /** Teams 标注团队 */
   teams: Team[];
+  users: {
+    labeling: LabelerWithUsername[];
+  };
   /** Progress 任务进度 */
   progress: LabelTaskProgress;
 }
