@@ -60,7 +60,6 @@
     "react-intl": "^7.0.4",
     "react-router": "^6.10.0",
     "react-router-dom": "^6.10.0",
-    "react-use": "^17.5.0",
     "rehype-katex": "^7.0.0",
     "remark-math": "^6.0.0",
     "storejs": "^2.0.7",
