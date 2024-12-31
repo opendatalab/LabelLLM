@@ -4,7 +4,7 @@ import { Button, Space, Divider, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useBoolean } from 'react-use';
+import { useToggle } from 'ahooks';
 import { useQuery } from '@tanstack/react-query';
 import useUrlState from '@ahooksjs/use-url-state';
 
@@ -20,7 +20,7 @@ export default function UsersTeam() {
   const [state, setState] = useUrlState({ page: 1, page_size: 10, name: undefined });
   const formRef = useRef<ProFormInstance>();
 
-  const [open, onOpenChange] = useBoolean(false);
+  const [open, { toggle }] = useToggle(false);
   const [teamInfo, setTeamInfo] = useState<ITeam | undefined>(undefined);
 
   const { data, isLoading, refetch } = useQuery({
@@ -58,7 +58,7 @@ export default function UsersTeam() {
           <a
             onClick={() => {
               setTeamInfo(record);
-              onOpenChange();
+              toggle();
             }}
           >
             编辑
@@ -71,7 +71,7 @@ export default function UsersTeam() {
 
   const onCreate = () => {
     setTeamInfo(undefined);
-    onOpenChange();
+    toggle();
   };
 
   const onChange = (pagination: TablePaginationConfig) => {
@@ -144,7 +144,7 @@ export default function UsersTeam() {
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             isPage ? resetState() : refetch?.();
           }
-          onOpenChange();
+          toggle();
         }}
       />
     </CustomPageContainer>

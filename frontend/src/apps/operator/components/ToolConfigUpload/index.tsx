@@ -10,7 +10,7 @@ import type { ConditionContent } from '@/apps/supplier/services/task';
 import type { TaskToolConfig } from '../../services/task';
 import { ReactComponent as UploadCloud } from '../../assets/upload-cloud.svg';
 import schema from './toolConfig.schema.json';
-import Help from '../Help';
+import Help from '@/components/Help';
 import { isIdUnique } from '../../pages/task.label.create/utils';
 
 /**

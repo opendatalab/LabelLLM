@@ -16,7 +16,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { labelerKey } from '@/apps/operator/constant/query-key-factories';
 import type { GroupDataByUser, IDeriveLabelTaskParams, OperatorTaskDetail } from '@/apps/operator/services/task';
 import { getLabelTaskUserStatistics, deriveLabelTask } from '@/apps/operator/services/task';
-import Help from '@/apps/operator/components/Help';
+import Help from '@/components/Help';
 import IconFont from '@/components/IconFont';
 interface QuickCreateProps {
   source?: 'create' | 'analyze';

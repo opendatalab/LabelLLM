@@ -4,7 +4,7 @@ import { createPatch } from 'diff';
 import { html } from 'diff2html';
 import type { HTMLAttributes, PropsWithChildren } from 'react';
 import React, { useEffect, useState } from 'react';
-import { useKeyPressEvent } from 'react-use';
+import { useKeyPress } from 'ahooks';
 
 import Empty from '@/apps/supplier/components/Empty';
 import type { IMessage } from '@/apps/supplier/services/task';
@@ -91,14 +91,12 @@ export default ({ conversation }: { conversation: IMessage[] }) => {
     setSend({ ...send, [key]: n });
   };
 
-  useKeyPressEvent(
-    (e) => {
-      // 检查是否同时按下了 'Alt' 键 和 '1' 键 或 'Alt' 键 和 '2' 键
-      return e.altKey && e.code === 'Digit3';
-    },
+  useKeyPress(
+    ['alt.3'],
     () => {
-      setOpen((s) => !s);
+      setOpen(!open);
     },
+    { exactMatch: true },
   );
 
   return (

@@ -3,7 +3,7 @@ import { Form } from 'antd';
 
 import type { ExportLabelTaskParams } from '@/apps/operator/services/task';
 import { exportLabelTask } from '@/apps/operator/services/task';
-import Help from '@/apps/operator/components/Help';
+import Help from '@/components/Help';
 
 interface DownloadRangeProps {
   taskId: string | string[];

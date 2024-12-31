@@ -33,7 +33,7 @@ import type { JsonlUploadProps } from '../../components/JsonlUpload';
 import JsonlUpload from '../../components/JsonlUpload';
 import { ReactComponent as BookIcon } from '../../assets/book.svg';
 import PercentageCircle from '../../components/PercentageCircle';
-import Help from '../../components/Help';
+import Help from '@/components/Help';
 import LabelersTable from './users';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';

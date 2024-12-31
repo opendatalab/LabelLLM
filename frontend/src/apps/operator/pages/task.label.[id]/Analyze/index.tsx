@@ -20,7 +20,7 @@ import {
   getTaskLabelStats,
   getTaskLabelId,
 } from '@/apps/operator/services/task';
-import Help from '@/apps/operator/components/Help';
+import Help from '@/components/Help';
 import CustomEmpty from '@/apps/operator/components/CustomEmpty';
 import QuickCreate from '../QuickCreate';
 

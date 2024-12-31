@@ -20,7 +20,7 @@ import {
 } from '../services/task';
 import { labelTaskKey } from '../constant/query-key-factories';
 import QueryBlock from '../components/QueryBlock';
-import Help from '../components/Help';
+import Help from '@/components/Help';
 import dayjs from 'dayjs';
 import CustomPageContainer from '@/apps/operator/layouts/CustomPageContainer';
 import TableSelectedTips from '../components/TableSelectedTips';

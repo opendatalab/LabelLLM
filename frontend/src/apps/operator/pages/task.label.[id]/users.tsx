@@ -9,7 +9,7 @@ import { message, modal } from '@/components/StaticAnt';
 
 import type { QueryBlockProps } from '../../components/QueryBlock';
 import QueryBlock from '../../components/QueryBlock';
-import Help from '../../components/Help';
+import Help from '@/components/Help';
 import { labelerKey } from '../../constant/query-key-factories';
 import type { GroupDataByUser, LabelTaskStatisticsBody } from '../../services/task';
 import { getLabelTaskUserStatistics, rejectLabelTask } from '../../services/task';

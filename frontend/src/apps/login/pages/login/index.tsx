@@ -1,6 +1,6 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
-import { useToggle } from 'react-use';
+import { useToggle } from 'ahooks';
 
 import { create, EUserRole, ICreate, login } from '@/api/user';
 import bg from './bg.png';
@@ -9,7 +9,7 @@ import { Form } from 'antd';
 
 export default () => {
   const [form] = Form.useForm<ICreate>();
-  const [on, toggle] = useToggle(true);
+  const [on, { toggle }] = useToggle(true);
 
   const handleClick = () => {
     toggle();

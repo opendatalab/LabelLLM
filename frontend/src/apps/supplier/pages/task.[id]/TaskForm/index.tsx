@@ -21,6 +21,9 @@ import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import { DatasetsDetailContext, useDatasetsContext } from '../context';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useActiveKey } from '@/apps/supplier/hooks/useTaskData';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useLocalStorageState } from 'ahooks';
+import Help from '@/components/Help';
 
 const statusMap = {
   [ELabelStatus.pending]: '待标注',
@@ -115,6 +118,7 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
   skipQuestionHandle,
   onChangeTheQuestion,
 }) => {
+  const { formatMessage } = useIntl();
   const parentContext = useDatasetsContext();
 
   const navigate = useNavigate();
@@ -124,6 +128,10 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
   const [sortOptions, setSortOptions] = useState<any[]>([]);
 
   const { type } = useTaskParams();
+
+  const [storageLabelData, setStorageLabelData] = useLocalStorageState<IAnswer | undefined>(
+    'use-local-storage-label-data',
+  );
 
   const { mutateAsync: submit, isPending: isLoading } = useMutation({
     mutationFn: submitLabelData,
@@ -162,6 +170,20 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
   };
 
   useEffect(() => {
+    // 本地存储有值，则设置表单值 本地存储的值权重大于预加载的值
+    if (storageLabelData) {
+      formRef.current?.setFieldsValue(storageLabelData);
+      return;
+    }
+    const isEvaluation = Object.values(questionDetail?.evaluation || {}).some((item) => !!item);
+    const labelData = isEvaluation ? questionDetail?.evaluation : questionDetail?.reference_evaluation;
+    if (labelData) {
+      formRef.current?.setFieldsValue(labelData);
+      return;
+    }
+  }, [questionDetail, formRef, type, storageLabelData]);
+
+  useEffect(() => {
     // 预览模式不需要设置表单值
     // if (type === ERouterTaskType.preview) return;
     const isEvaluation = Object.values(questionDetail?.evaluation || {}).some((item) => !!item);
@@ -182,7 +204,10 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
         {questionDetail?.remain_time && (
           <CheckTaskType types={[ERouterTaskType.task]}>
             <Countdown
-              whetherTimeout={() => showModalInfo?.('当前题目超时未完成，已自动回收。请认领其他题目继续答题～')}
+              whetherTimeout={() => {
+                setStorageLabelData(undefined);
+                showModalInfo?.(formatMessage({ id: 'task.detail.timeout.desc' }));
+              }}
               remain_time={questionDetail?.remain_time || 0}
             />
           </CheckTaskType>
@@ -209,22 +234,29 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
 
   const onSubmit = async () => {
     const data = formRef?.current?.getFieldsValue() as IAnswer;
-
     if (data?.questionnaire_evaluation?.is_invalid_questionnaire) {
       await submit({
         questionnaire_evaluation: data?.questionnaire_evaluation,
         data_id: questionDetail?.data_id as string,
       });
+      setStorageLabelData(undefined);
       return;
     }
     formRef?.current?.validateFields().then(
       () => {
+        setStorageLabelData(undefined);
         submit({ ...data, data_id: questionDetail?.data_id as string });
       },
       () => {
-        message.error('有必填项未填写');
+        message.error(formatMessage({ id: 'task.detail.error.required' }));
       },
     );
+  };
+
+  const saveHandle = () => {
+    const data = formRef?.current?.getFieldsValue() as IAnswer;
+    setStorageLabelData(data);
+    message.success(formatMessage({ id: 'common.save.success' }));
   };
 
   return (
@@ -250,26 +282,33 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
                       className="btn-primary-disabled mr-4"
                       type="primary"
                       onClick={onSubmit}
-                      data-wiz="task-submit"
                     >
-                      提交
+                      <FormattedMessage id="task.detail.submit" />
                     </Button>
                     <Button
                       loading={loading}
                       className="mr-4"
-                      onClick={() => skipQuestionHandle?.()}
-                      data-wiz="task-skip"
+                      onClick={() => {
+                        setStorageLabelData(undefined);
+                        skipQuestionHandle?.();
+                      }}
                     >
-                      跳过
+                      <FormattedMessage id="task.detail.skip" />
                     </Button>
-                    <Tooltip title="直接退出，当前输入的内容将不做保持">
+                    <Button loading={loading} type="text" onClick={() => saveHandle?.()}>
+                      <FormattedMessage id="common.save" />
+                      <Help className="">{formatMessage({ id: 'task.detail.save.desc' })}</Help>
+                    </Button>
+                    <Tooltip title={formatMessage({ id: 'task.detail.cancel.desc' })}>
                       <Button
                         className="mr-4"
                         type="text"
-                        onClick={() => skipQuestionHandle?.(true)}
-                        data-wiz="task-exit"
+                        onClick={() => {
+                          setStorageLabelData(undefined);
+                          skipQuestionHandle?.(true);
+                        }}
                       >
-                        退出
+                        <FormattedMessage id="task.detail.cancel" />
                       </Button>
                     </Tooltip>
                   </div>

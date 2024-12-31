@@ -1,7 +1,7 @@
 import { Button, Form } from 'antd';
 import { useNavigate, useParams, useRouteLoaderData } from 'react-router';
 import { useContext, useMemo } from 'react';
-import { useSessionStorage } from 'react-use';
+import { useSessionStorageState } from 'ahooks';
 
 import FancyInput from '@/components/FancyInput';
 
@@ -15,10 +15,7 @@ export default function TaskBasic({ onStepChange }: PartialProps) {
   const { basicForm } = useContext(TaskFormContext);
   const routeParams = useParams();
   const taskInfo = useRouteLoaderData('labelTask') as OperatorTaskDetail;
-  const [basicInfoFromCache, setBasicCache] = useSessionStorage<OperatorTaskDetail>(
-    'label_task_basic_cache',
-    {} as any,
-  );
+  const [basicInfoFromCache, setBasicCache] = useSessionStorageState<OperatorTaskDetail>('label_task_basic_cache', {});
   const navigate = useNavigate();
   const initialValues = useMemo(() => {
     if (routeParams.id) {
