@@ -198,7 +198,7 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
       <div className="flex items-center rounded-md mt-4">
         <div className="mr-4">
           <ProFormCheckbox noStyle name={['questionnaire_evaluation', 'is_invalid_questionnaire']}>
-            此题存在问题，无法作答
+            <FormattedMessage id="task.detail.problematical" />
           </ProFormCheckbox>
         </div>
         {questionDetail?.remain_time && (
@@ -335,7 +335,9 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
             />
             <CheckTaskType types={[ERouterTaskType.review, ERouterTaskType.reviewTask]}>
               {!!taskDetail?.label_tool_config?.conversation?.questions?.length && (
-                <div className="mt-4 font-bold text-base mb-2">标注结果</div>
+                <div className="mt-4 font-bold text-base mb-2">
+                  <FormattedMessage id="task.detail.label.result" />
+                </div>
               )}
             </CheckTaskType>
             <Answer

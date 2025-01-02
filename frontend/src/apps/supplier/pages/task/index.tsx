@@ -15,9 +15,11 @@ import { useStoreIds } from '@/hooks/useStoreIds';
 
 import { questionKey, taskKey } from '../../constant/query-key-factories';
 import Card from './Card';
+import { useIntl } from 'react-intl';
 
 type IProps = HTMLAttributes<HTMLDivElement>;
 const Task: React.FC<PropsWithChildren<IProps>> = () => {
+  const { formatMessage } = useIntl();
   const navigate = useNavigate();
 
   const [state, setState] = useUrlState({ page: 1, page_size: 24 });
@@ -34,7 +36,7 @@ const Task: React.FC<PropsWithChildren<IProps>> = () => {
     if (bool) {
       navigate(`${id}`);
     } else {
-      message.warning('当前任务已无更多题，请选择其他任务卡片');
+      message.warning(formatMessage({ id: 'task.card.other' }));
     }
   };
   const noData = !data?.list?.length && !isLoading;

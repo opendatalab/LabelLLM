@@ -5,7 +5,7 @@ import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 
 import StaticAnt from '@/components/StaticAnt';
-import locale from '@/apps/supplier/locales';
+import locale from '../locales';
 import UseLang from '@/hooks/useLang';
 
 import themeToken from '../styles/theme.json';
@@ -24,7 +24,7 @@ const antdLocale = {
 const AppContainer: React.FC<AppProps> = ({ children, className, ...rest }) => {
   const { lang } = UseLang();
   return (
-    <IntlProvider locale={'zh-CN'} messages={locale[lang]}>
+    <IntlProvider locale={lang || 'zh-CN'} messages={locale[lang || 'zh-CN']}>
       <ConfigProvider theme={themeToken} {...rest} locale={antdLocale[lang]}>
         <AntApp className={className}>
           <StaticAnt />

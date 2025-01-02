@@ -10,6 +10,7 @@ import { message } from '@/components/StaticAnt';
 import IconFont from '@/components/IconFont';
 
 import { upload } from './upload';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   mdValue?: string; // markdown 显示的内容
@@ -32,6 +33,7 @@ const mediaType = [
 const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, question, mdValue, setFieldValue }) => {
   const [checked, setChecked] = React.useState(question.is_preview_expanded);
   const [loading, setLoading] = React.useState(false);
+  const { formatMessage } = useIntl();
 
   const opUpload = async (file: any) => {
     setLoading(true);
@@ -49,11 +51,11 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
     action: '/api/v1/file/file_upload',
     beforeUpload(file) {
       if (!mediaType.includes(file.type)) {
-        message.error('文件格式错误');
+        message.error(formatMessage({ id: 'task.detail.upload.error1' }));
         return false;
       }
       if (file.size > 50 * 1024 * 1024) {
-        message.error('文件大小请控制在50以内M');
+        message.error(formatMessage({ id: 'task.detail.upload.error2' }));
         return false;
       }
       return true;
@@ -98,7 +100,9 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
     <div className="relative mb-4">
       {!!mdValue && (
         <span className="absolute z-10 right-0 top-1 text-sm flex items-center">
-          <span className="mr-1">预览</span>
+          <span className="mr-1">
+            <FormattedMessage id={'common.preview'} />
+          </span>
           <Switch checked={checked} onChange={setChecked} size="small" disabled={false} />
         </span>
       )}
@@ -107,7 +111,6 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
           <ProFormTextArea
             name={names}
             label={<span className="mb-2">{question.label}</span>}
-            placeholder="请输入"
             rules={[{ required: question.required }]}
             initialValue={question.default_value as string}
             fieldProps={{
@@ -126,11 +129,11 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
                   size="small"
                   className="text-sm"
                 >
-                  上传附件
+                  <FormattedMessage id="task.detail.upload" />
                 </Button>
               </Upload>
               <span className="ml-2 text-secondary">
-                支持格式：图片（png、jpg、jpeg、gif）、视频（mp4、mov）、音频（mp3）；单个文件大小不超过50M
+                <FormattedMessage id="task.detail.upload.desc" />
               </span>
             </div>
           )}

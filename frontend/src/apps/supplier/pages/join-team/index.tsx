@@ -8,10 +8,12 @@ import { getInviteLinkDetail, joinTeam } from '@/apps/supplier/services/joinTeam
 
 import { ReactComponent as JoinImg } from '../../assets/join.svg';
 import { ReactComponent as Timeout } from '../../assets/timeout.svg';
+import { useIntl } from 'react-intl';
 
 type IProps = HTMLAttributes<HTMLDivElement>;
 
 const Team: React.FC<PropsWithChildren<IProps>> = () => {
+  const { formatMessage } = useIntl();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isLoading, refetch } = useQuery({
@@ -28,21 +30,23 @@ const Team: React.FC<PropsWithChildren<IProps>> = () => {
     <Spin spinning={isLoading}>
       <div className="h-screen w-screen flex flex-col justify-center items-center">
         {data?.is_expired ? <Timeout /> : <JoinImg />}
-        <div className="font-bold text-xl mt-4">团队：{data?.team_name}</div>
-        <div className="mb-6 mt-2">邀请你加入团队</div>
+        <div className="font-bold text-xl mt-4">
+          {formatMessage({ id: 'member.team' })}：{data?.team_name}
+        </div>
+        <div className="mb-6 mt-2">{formatMessage({ id: 'member.team.join' })}</div>
         {data?.is_expired && (
           <Button type="primary" disabled={true}>
-            链接已超时
+            {formatMessage({ id: 'member.link.timeout' })}
           </Button>
         )}
         {!data?.is_expired && data?.is_joined && (
           <Button type="primary" onClick={() => navigate('/')}>
-            你已加入，请前往标注页面
+            {formatMessage({ id: 'member.team.join.success' })}
           </Button>
         )}
         {!data?.is_expired && !data?.is_joined && (
           <Button type="primary" onClick={toTask}>
-            加入
+            {formatMessage({ id: 'member.join' })}
           </Button>
         )}
       </div>

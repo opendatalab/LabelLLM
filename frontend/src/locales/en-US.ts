@@ -158,5 +158,15 @@ export default {
   'task.manage.total.audit.count.user': 'Reviewed Questions',
   'task.manage.total.audit.approved': 'Approved',
   'task.manage.total.audit.not.approved': 'Rejected',
-  // v1.7.1
+  'login.login': '登录',
+  'login.register': '注册',
+  'login.login.title': '账号登录',
+  'login.register.title': '账号注册',
+  'login.username.placeholder': '请输入用户名',
+  'login.username.rule': '只允许输入英文或数字',
+  'login.password.placeholder': '请输入密码',
+  'login.password.rule': '请输入密码',
+  'login.7.days.no.login': '7天免登录',
+  'login.have.account': '已有账号？',
+  'login.password.not.same': '两次密码不一致',
 };

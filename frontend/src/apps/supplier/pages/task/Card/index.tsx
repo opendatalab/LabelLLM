@@ -7,6 +7,7 @@ import type { ITaskItem } from '@/apps/supplier/services/task';
 import { ETaskStatus } from '@/apps/supplier/services/task';
 
 import style from './index.module.css';
+import { FormattedMessage } from 'react-intl';
 
 const { Text, Paragraph } = Typography;
 
@@ -43,7 +44,7 @@ const Card: React.FC<PropsWithChildren<IProps>> = ({
           {status === ETaskStatus.done && (
             <span className="ml-2">
               <Tag bordered={false} color="error">
-                已结束
+                <FormattedMessage id="task.card.end" />
               </Tag>
             </span>
           )}
@@ -58,9 +59,19 @@ const Card: React.FC<PropsWithChildren<IProps>> = ({
           )}
         >
           <span>
-            剩余：<span className={clsx(!unRemain && !isDone && 'text-primary')}>{remain_count}</span> 题
+            <FormattedMessage
+              id="task.card.remain"
+              values={{
+                count: <span className={clsx(!unRemain && !isDone && 'text-primary')}>{remain_count}</span>,
+              }}
+            />
           </span>
-          <span className="text-secondary">我已答：{completed_count} 题</span>
+          <FormattedMessage
+            id="task.card.finish"
+            values={{
+              count: completed_count,
+            }}
+          />
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import type { IMessage } from '@/apps/supplier/services/task';
 import { EMessageType } from '@/apps/supplier/services/task';
 import IconFont from '@/components/IconFont';
 import 'diff2html/bundles/css/diff2html.min.css';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   oldStr: string;
@@ -63,7 +64,7 @@ export const DiffText: React.FC<PropsWithChildren<IProps>> = ({ oldStr, newStr }
   if (!diff) {
     return (
       <div className="border border-solid border-quaternary rounded-sm py-20 text-center bg-fill-quaternary">
-        没有更改的内容
+        <FormattedMessage id="task.diff.hint" />
       </div>
     );
   }
@@ -72,6 +73,7 @@ export const DiffText: React.FC<PropsWithChildren<IProps>> = ({ oldStr, newStr }
 };
 
 export default ({ conversation }: { conversation: IMessage[] }) => {
+  const { formatMessage } = useIntl();
   const [form] = Form.useForm();
   const [open, setOpen] = useState(true);
   const [send, setSend] = useState({
@@ -101,7 +103,7 @@ export default ({ conversation }: { conversation: IMessage[] }) => {
 
   return (
     <DrawerForm
-      title="内容对比"
+      title={formatMessage({ id: 'task.diff.title' })}
       open={open}
       form={form}
       // @ts-ignore
@@ -148,7 +150,7 @@ export default ({ conversation }: { conversation: IMessage[] }) => {
         <>
           <div className="flex text-base mb-4">
             <div className="flex items-center">
-              <span>基准:</span>
+              <FormattedMessage id={'task.diff.benchmark'} />:
               <Select
                 size="small"
                 value={send.datum}
@@ -161,7 +163,9 @@ export default ({ conversation }: { conversation: IMessage[] }) => {
               />
             </div>
             <div className="flex items-center">
-              <span>对比:</span>
+              <span>
+                <FormattedMessage id={'task.diff.contrast'} />:
+              </span>
               <Select
                 size="small"
                 value={send.compared}
@@ -177,7 +181,7 @@ export default ({ conversation }: { conversation: IMessage[] }) => {
           <DiffText oldStr={options[send.datum]?.content} newStr={options[send.compared]?.content} />
         </>
       ) : (
-        <Empty className="mt-[18vh]" description="无可对比内容" />
+        <Empty className="mt-[18vh]" description={formatMessage({ id: 'task.diff.hint' })} />
       )}
     </DrawerForm>
   );

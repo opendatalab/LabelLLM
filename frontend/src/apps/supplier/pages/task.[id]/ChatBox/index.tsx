@@ -4,6 +4,7 @@ import { Avatar } from 'antd';
 import { RobotOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { ProFormSelect, ProFormText } from '@ant-design/pro-components';
+import { useIntl } from 'react-intl';
 import clsx from 'clsx';
 
 import type { IMessage, IMessageQuestion, IQuestion } from '@/apps/supplier/services/task';
@@ -79,6 +80,7 @@ const BotMessage: React.FC<PropsWithChildren<{ message: IMessage; messageQuestio
   message,
   messageQuestion,
 }) => {
+  const { formatMessage } = useIntl();
   const { sortOptions, setSortOptionsHandle } = useDatasetsContext();
 
   return (
@@ -96,7 +98,7 @@ const BotMessage: React.FC<PropsWithChildren<{ message: IMessage; messageQuestio
 
         <div className="w-full">
           {messageQuestion?.is_sortable ? (
-            <WidgetBox label="排序" horizontal={true} required={true} className="mb-3">
+            <WidgetBox label={formatMessage({ id: 'common.sort' })} horizontal={true} required={true} className="mb-3">
               <ProFormSelect
                 style={{ width: 40 }}
                 options={sortOptions || undefined}

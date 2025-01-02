@@ -4,6 +4,7 @@ import React from 'react';
 
 import { useDatasetsContext } from '@/apps/supplier/pages/task.[id]/context';
 import IconFont from '@/components/IconFont';
+import { useIntl } from 'react-intl';
 
 type IProps = HTMLAttributes<HTMLDivElement>;
 
@@ -12,6 +13,7 @@ export enum EPlugin {
 }
 
 const PluginSet: React.FC<PropsWithChildren<IProps>> = () => {
+  const { formatMessage } = useIntl();
   const { plugins, setPlugins, pluginConfig } = useDatasetsContext();
 
   const RenderTitle = ({ title }: { title: string }) => {
@@ -24,11 +26,11 @@ const PluginSet: React.FC<PropsWithChildren<IProps>> = () => {
 
   const pluginList = [
     {
-      title: '针对对话中的提问',
+      title: formatMessage({ id: 'task.plugin.title3' }),
       show: pluginConfig?.conversation?.message_send_diff,
       options: [
         {
-          text: '内容对比',
+          text: formatMessage({ id: 'task.diff.title' }),
           value: EPlugin.messagesSendDiff,
           show: pluginConfig?.conversation?.message_send_diff,
         },
@@ -76,7 +78,7 @@ const PluginSet: React.FC<PropsWithChildren<IProps>> = () => {
           <Button className="mr-1 leading-none" size="small" type="text">
             <div className="flex items-center">
               <IconFont className="text-xl mr-1" type="icon-chajian" />
-              <span>插件</span>
+              <span>{formatMessage({ id: 'task.plugin' })}</span>
             </div>
           </Button>
         </Popover>

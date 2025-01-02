@@ -7,6 +7,7 @@ import { useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import Copy from '@/apps/supplier/components/Copy';
 import type { ILabelUser } from '@/apps/supplier/services/task';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   name?: string;
@@ -16,44 +17,51 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const AuditInfo: React.FC<PropsWithChildren<IProps>> = ({ dataId, questionnaire_id, label_user }) => {
+  const { formatMessage } = useIntl();
   const { type } = useTaskParams();
   const list = [
     {
-      name: '源题ID',
+      name: formatMessage({ id: 'task.detail.audit.root.id' }),
       show: [ERouterTaskType.review, ERouterTaskType.reviewTask, ERouterTaskType.preview].includes(type),
       icon: 'icon-yuanti',
       text: (
         <span>
           <span className="break-all">{questionnaire_id}</span>
           <Copy val={questionnaire_id || ''}>
-            <span className="ml-4 text-blue-500 cursor-pointer hover:text-blue-600">复制</span>
+            <span className="ml-4 text-blue-500 cursor-pointer hover:text-blue-600">
+              <FormattedMessage id={'common.copy'} />
+            </span>
           </Copy>
         </span>
       ),
     },
     {
-      name: '题目ID',
+      name: formatMessage({ id: 'task.detail.audit.question.id' }),
       icon: 'icon-timu',
       show: true,
       text: (
         <span>
           <span className="break-all">{dataId}</span>
           <Copy val={dataId || ''}>
-            <span className="ml-4 text-blue-500 cursor-pointer hover:text-blue-600">复制</span>
+            <span className="ml-4 text-blue-500 cursor-pointer hover:text-blue-600">
+              <FormattedMessage id={'common.copy'} />
+            </span>
           </Copy>
         </span>
       ),
     },
     {
-      name: '标注员',
+      name: formatMessage({ id: 'task.detail.audit.annotator' }),
       icon: 'icon-gerenzhongxin',
       show: [ERouterTaskType.reviewTask, ERouterTaskType.review].includes(type),
       text: label_user ? (
         <div className="break-all">
-          <span>用户名：{label_user?.username || '-'}</span>
+          <span>
+            <FormattedMessage id={'common.username'} />：{label_user?.username || '-'}
+          </span>
         </div>
       ) : (
-        '无'
+        <FormattedMessage id={'common.none'} />
       ),
     },
   ].filter((item) => item.show);

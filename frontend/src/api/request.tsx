@@ -6,7 +6,7 @@ import axios from 'axios';
 import { goLogin } from '@/utils/sso';
 import { message } from '@/components/StaticAnt';
 
-import { EECode, ECode } from './errorCode';
+import { EECode, ECode, getErrorText } from './errorCode';
 
 /**
  * @param response
@@ -25,20 +25,7 @@ function errorHandler(error: AxiosError) {
     return Promise.reject(_.get(error, 'response.data.detail'));
   }
 
-  // 开发环境和开发自测环境显示报错信息
-  if (import.meta.env.DEV && errMsgFromServer) {
-    notification.error({
-      message: `${errMsgFromServer || _.get(error, 'code')}【${_.get(error, 'response.status', '无状态码')}】`,
-      description: (
-        <>
-          <p>{errCode}</p>
-          <p>{error.message}</p>
-          <p>{error.request.responseURL}</p>
-        </>
-      ),
-    });
-  }
-  const errorText = (errCode && ECode[errCode]) || errMsgFromServer;
+  const errorText = (errCode && getErrorText(errCode)) || errMsgFromServer;
   if (errorText) {
     message.error(errorText);
   }
