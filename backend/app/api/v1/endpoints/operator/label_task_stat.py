@@ -190,7 +190,6 @@ async def data_record(
         )
         .to_list()
     ):
-
         res.append(
             schemas.operator.stats.ExportStatsLabelTaskIDProjectModel(
                 data_id=v.data_id,
@@ -264,7 +263,7 @@ async def filter_label_task(
     response_class=StreamingResponse,
 )
 async def export_label_id(params: str):
-    req = schemas.operator.stats.ReqFilterAnswer.parse_obj(json.loads(params))
+    req = schemas.operator.stats.ReqFilterAnswer.model_validate(json.loads(params))
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
         raise exceptions.TASK_NOT_EXIST
@@ -349,7 +348,7 @@ async def export_label_id(params: str):
     response_class=StreamingResponse,
 )
 async def export_label_data(params: str):
-    req = schemas.operator.stats.ReqFilterAnswer.parse_obj(json.loads(params))
+    req = schemas.operator.stats.ReqFilterAnswer.model_validate(json.loads(params))
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
         raise exceptions.TASK_NOT_EXIST
@@ -385,7 +384,9 @@ async def export_label_data(params: str):
                 dedup_h[str(v.data.data_id)] = 1
                 index += 1
                 datas += (
-                    schemas.data.DoData.parse_obj(v.data).json(ensure_ascii=False)
+                    schemas.data.DoData.model_validate(
+                        v.data, from_attributes=True
+                    ).model_dump_json()
                     + "\n"
                 )
                 if index % 100 == 0:
@@ -417,9 +418,9 @@ async def export_label_data(params: str):
                     dedup_h[str(r.datas[i].data_id)] = 1
                     index += 1
                     datas += (
-                        schemas.data.DoData.parse_obj(r.datas[i]).json(
-                            ensure_ascii=False
-                        )
+                        schemas.data.DoData.model_validate(
+                            r.datas[i], from_attributes=True
+                        ).model_dump_json()
                         + "\n"
                     )
 
@@ -454,7 +455,6 @@ async def list_label_id(
     schemas.operator.stats.RespFilterAnswerQuestionnaireID,
     schemas.operator.stats.RespFilterAnswerDataID,
 ]:
-
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
         raise exceptions.TASK_NOT_EXIST

@@ -31,6 +31,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     return user
 
 
+async def get_current_team(
+    user: schemas.user.DoUser = Depends(get_current_user),
+):
+    teams = await crud.team.query(user_id=user.user_id).to_list()
+
+    return teams
+
+
 # 用户是管理员或运营
 async def is_admin_or_operator(
     user: schemas.user.DoUser = Depends(get_current_user),

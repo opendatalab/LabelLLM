@@ -2,6 +2,7 @@ import time
 from collections import defaultdict
 
 import sentry_sdk
+from pydantic import BaseModel
 from fastapi import APIRouter, Body, Depends
 
 from app import crud, models, schemas
@@ -66,7 +67,7 @@ async def list_label_task(
         # 剩余的题数
         remain_count_map: defaultdict = defaultdict(int)
         # 已完成的题目id
-        questionnaire_ids_set = set()
+        questionnaire_ids_map = {i.task_id: set() for i in tasks}
 
         # 已提交的记录
         with sentry_sdk.start_span(description="get submit record"):
@@ -76,7 +77,7 @@ async def list_label_task(
                 is_submit=True,
             ):
                 completed_count_map[record.task_id] += 1
-                questionnaire_ids_set.add(record.questionnaire_id)
+                questionnaire_ids_map[record.task_id].add(record.questionnaire_id)
 
         # 待提交的记录
         with sentry_sdk.start_span(description="get not submit record"):
@@ -86,7 +87,7 @@ async def list_label_task(
                 is_submit=False,
             ):
                 remain_count_map[record.task_id] += 1
-                questionnaire_ids_set.add(record.questionnaire_id)
+                questionnaire_ids_map[record.task_id].add(record.questionnaire_id)
 
         # 统计剩余题数
         with sentry_sdk.start_span(description="count task remain"):
@@ -115,10 +116,10 @@ async def list_label_task(
                 remain_count_map[task_remain.task_id] += task_remain.remain
 
         # 把已经做过的题目从剩余题数中减去
-        with sentry_sdk.start_span(description="count has done task remain"):
+        for task in tasks:
             async for task_remain in crud.data.query(
-                task_id=open_task_ids,
-                questionnaire_id=list(questionnaire_ids_set),
+                task_id=task.task_id,
+                questionnaire_id=list(questionnaire_ids_map[task.task_id]),
                 status=schemas.data.DataStatus.PENDING,
             ).aggregate(
                 [
@@ -387,4 +388,67 @@ async def commit_data(
             evaluation=evaluation,
             status=schemas.record.RecordStatus.COMPLETED,
         ),
+    )
+
+
+@router.post(
+    "/user",
+    summary="获取标注任务用户",
+    description="获取标注任务用户",
+)
+async def get_task_user(
+    req: schemas.task.DoTaskKindBase = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
+    teams: list[models.team.Team] = Depends(deps.get_current_team),
+) -> schemas.user.ListUserTaskResp:
+    class UserField(BaseModel):
+        creator_id: str
+
+    # 获取团队用户信息
+    team_user_ids = []
+    for team in teams:
+        team_user_ids.extend([user.user_id for user in team.users])
+
+    if req.inlet == schemas.task.PreviewDataKind.USER:
+        user_ids = [user.user_id]
+    elif req.inlet == schemas.task.PreviewDataKind.SUPPLIER:
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                is_submit=True,
+            )
+            .project(
+                UserField,
+            )
+            .to_list()
+        )
+        user_ids = list(
+            set([record.creator_id for record in records]) & set(team_user_ids)
+        )
+    elif req.inlet == schemas.task.PreviewDataKind.OPERATOR:
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                is_submit=True,
+            )
+            .project(
+                UserField,
+            )
+            .to_list()
+        )
+        user_ids = [record.creator_id for record in records]
+    else:
+        raise exceptions.SERVER_ERROR
+
+    users = await crud.user.query(user_id=user_ids).to_list()
+
+    return schemas.user.ListUserTaskResp(
+        list=[
+            schemas.user.DoUserWithUsername(
+                user_id=user.user_id,
+                username=user.name,
+            )
+            for user in users
+        ],
+        total=len(users),
     )

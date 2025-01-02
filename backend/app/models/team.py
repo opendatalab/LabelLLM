@@ -1,4 +1,5 @@
 import time
+from typing import Annotated
 from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
@@ -7,16 +8,16 @@ from app.schemas.team import TeamMember
 
 class Team(Document):
     # id
-    team_id: Indexed(UUID, unique=True)  # type: ignore
+    team_id: Annotated[UUID, Indexed(unique=True)]
 
     # 名字
     name: str
 
     # 联系人
-    owner: str | None
+    owner: str | None = Field(default=None)
 
     # 联系人电话
-    owner_cellphone: str | None
+    owner_cellphone: str | None = Field(default=None)
 
     # 创建时间
     create_time: int
@@ -25,7 +26,7 @@ class Team(Document):
     update_time: int
 
     # 用户 id 列表
-    users: list[TeamMember] = []
+    users: list[TeamMember] = Field(default_factory=list)
 
     # 成员个数
     user_count: int
@@ -43,9 +44,9 @@ class TeamCreate(BaseModel):
 
 
 class TeamUpdate(BaseModel):
-    name: str | None = None
-    owner: str | None = None
-    owner_cellphone: str | None = None
-    users: list[TeamMember] | None = None
-    user_count: int | None = None
+    name: str | None = Field(default=None)
+    owner: str | None = Field(default=None)
+    owner_cellphone: str | None = Field(default=None)
+    users: list[TeamMember] | None = Field(default=None)
+    user_count: int | None = Field(default=None)
     update_time: int = Field(default_factory=lambda: int(time.time()))

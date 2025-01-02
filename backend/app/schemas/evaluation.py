@@ -33,4 +33,11 @@ class SingleEvaluation(LabelEvaluation):
     data_evaluation: dict | None = Field(description="针对本条数据的评价", default=None)
 
 
-class Evaluation(LabelEvaluation, AuditEvaluation): ...
+class Evaluation(LabelEvaluation, AuditEvaluation):
+    
+    def to_label_evaluation(self) -> LabelEvaluation:
+        return LabelEvaluation(
+            message_evaluation=self.message_evaluation,
+            conversation_evaluation=self.conversation_evaluation,
+            questionnaire_evaluation=self.questionnaire_evaluation,
+        )

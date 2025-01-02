@@ -1,4 +1,5 @@
-from pydantic import BaseSettings, RedisDsn
+from pydantic import RedisDsn
+from pydantic_settings import BaseSettings
 import secrets
 
 
@@ -16,7 +17,7 @@ class Settings(BaseSettings):
     MongoDB_DB_NAME: str = ""
 
     # Redis Config
-    REDIS_DSN: RedisDsn = RedisDsn("redis://localhost:16279/0", scheme="redis")  # type: ignore
+    REDIS_DSN: RedisDsn = RedisDsn("redis://localhost:16279/0")  # type: ignore
 
     # Sentry Config
     SENTRY_DSN: str = ""

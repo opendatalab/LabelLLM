@@ -7,4 +7,5 @@ from app.core.config import settings
 mongo_session = motor_asyncio.AsyncIOMotorClient(settings.MongoDB_DSN)
 
 # redis session
-redis_session = Redis.from_url(settings.REDIS_DSN)
+redis_session = Redis.from_url(str(settings.REDIS_DSN))
+
