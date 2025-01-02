@@ -1,4 +1,5 @@
 import time
+from typing import Annotated
 
 from beanie import Document, Indexed
 from pydantic import BaseModel, Field
@@ -8,7 +9,7 @@ from app import schemas
 
 class User(Document):
     # 用户id, 目前使用sso的id
-    user_id: Indexed(str, unique=True)  # type: ignore
+    user_id: Annotated[str, Indexed(unique=True)]
 
     # 用户密码
     password: str
@@ -36,6 +37,6 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    name: str | None = None
-    role: schemas.user.UserType | None = None
+    name: str | None = Field(default=None)
+    role: schemas.user.UserType | None = Field(default=None)
     update_time: int = Field(default_factory=lambda: int(time.time()))

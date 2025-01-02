@@ -53,7 +53,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in: CreateSchemaType,
         session: ClientSession | None = None,
     ) -> ModelType:
-        db_obj = self.model.parse_obj(obj_in)
+        db_obj = self.model.model_validate(obj_in, from_attributes=True)
         await self.model.insert(db_obj, session=session)
         return db_obj
 
@@ -63,7 +63,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in: list[CreateSchemaType],
         session: ClientSession | None = None,
     ) -> list[ModelType]:
-        db_obj = [self.model.parse_obj(obj) for obj in obj_in]
+        db_obj = [self.model.model_validate(obj, from_attributes=True) for obj in obj_in]
         await self.model.insert_many(db_obj, session=session)
         return db_obj
 
@@ -74,7 +74,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in: UpdateSchemaType,
         session: ClientSession | None = None,
     ) -> ModelType:
-        update_data = obj_in.dict(exclude_none=True)
+        update_data = obj_in.model_dump(exclude_none=True)
         for key, value in update_data.items():
             setattr(db_obj, key, value)
 

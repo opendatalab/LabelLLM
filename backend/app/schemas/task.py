@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -17,6 +17,12 @@ class TaskStatus(str, Enum):
     OPEN = "open"
     # 任务已结束
     DONE = "done"
+
+class PreviewDataKind(StrEnum):
+    # 入口类型
+    USER = "user"
+    SUPPLIER = "supplier"
+    OPERATOR = "operator"
 
 
 class ViewQuestionnaireID(BaseModel):
@@ -44,6 +50,13 @@ class DoTaskBase(BaseModel):
 
     task_id: UUID = Field(description="任务id")
 
+
+class DoTaskKindBase(DoTaskBase):
+    """
+    任务基础信息
+    """
+
+    inlet: PreviewDataKind = Field(description="入口类型")
 
 class DoTask(DoTaskBase):
     title: str = Field(description="任务标题")
@@ -82,7 +95,7 @@ class ReqListTask(BaseModel):
     """
 
     page: int = Field(description="跳过数量", default=1, gt=0)
-    page_size: int = Field(description="获取数量", default=12, gte=0)
+    page_size: int = Field(description="获取数量", default=12, gt=0)
 
 
 class ListTaskBase(DoTaskBase):
@@ -107,4 +120,9 @@ class ReqBatchCreateData(DoTaskBase):
     批量创建数据
     """
 
-    datas: list[DataCreate] = Field(description="数据列表", min_items=1)
+    datas: list[DataCreate] = Field(description="数据列表", min_length=1)
+
+class RespCopyTask(BaseModel):
+    is_ok: bool = Field(description="是否成功")
+    task_id: UUID | None = Field(description="任务id", default=None)
+    msg: str | None = Field(description="错误信息", default=None)

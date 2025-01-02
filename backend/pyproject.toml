@@ -36,6 +36,7 @@ dependencies = [
     "google-api-python-client>=2.123.0",
     "minio>=7.2.7",
     "python-magic>=0.4.27",
+    "pydantic-settings>=2.7.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"

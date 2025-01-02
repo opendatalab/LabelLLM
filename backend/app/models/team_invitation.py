@@ -1,4 +1,5 @@
 import time
+from typing import Annotated
 from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
@@ -8,7 +9,7 @@ from pydantic import BaseModel, Field
 ## InvitaionLink
 class TeamInvitationLink(Document):
     # link id
-    link_id: Indexed(UUID, unique=True)  # type: ignore
+    link_id: Annotated[UUID, Indexed(unique=True)]
 
     # team id
     team_id: UUID
@@ -26,5 +27,4 @@ class TeamInvitationLinkCreate(BaseModel):
     expire_time: int = Field(default_factory=lambda: int(time.time()) + 12 * 60 * 60)
 
 
-class TeamInvitationLinkUpdate(BaseModel):
-    ...
+class TeamInvitationLinkUpdate(BaseModel): ...

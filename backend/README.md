@@ -51,13 +51,13 @@ docker compose logs backend
 从 `./backend/`，你可以安装所有依赖项：
 
 ```console
-$ pdm install
+pdm install
 ```
 
 然后你可以启动一个新环境的 shell 会话：
 
 ```console
-$ pdm shell
+pdm shell
 ```
 
 确保你的编辑器使用正确的 Python 虚拟环境。
@@ -67,13 +67,13 @@ $ pdm shell
 
 
 ```console
-$ docker compose up -d
+docker compose up -d
 ```
 
 然后 `exec` 进入运行的容器：
 
 ```console
-$ docker compose exec backend bash
+docker compose exec backend bash
 ```
 
 你应该看到类似的输出：

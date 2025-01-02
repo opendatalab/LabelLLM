@@ -24,6 +24,8 @@ class CRUDData(CRUDBase[Data, DataCreate, DataUpdate]):
         update_time_lt: int | None = None,
         update_time_gt: int | None = None,
         source_data_id: UUID | list[UUID] | None = None,
+        is_reject: bool | None = None,
+        invalid: bool | None = None,
     ):
         query = super().query(_id=_id, skip=skip, limit=limit, sort=sort)
 
@@ -70,6 +72,26 @@ class CRUDData(CRUDBase[Data, DataCreate, DataUpdate]):
                 query = query.find(In(self.model.source_data_id, source_data_id))
             else:
                 query = query.find(self.model.source_data_id == source_data_id)
+
+        if is_reject is not None:
+            if is_reject:
+                query = query.find(self.model.source_data_id != None)
+            else:
+                query = query.find(self.model.source_data_id == None)
+
+        if invalid is not None:
+            if invalid:
+                query = query.find(
+                    {
+                        "evaluation.questionnaire_evaluation.is_invalid_questionnaire": True
+                    }
+                )
+            else:
+                query = query.find(
+                    {
+                        "evaluation.questionnaire_evaluation.is_invalid_questionnaire": False
+                    }
+                )
 
         return query
 
