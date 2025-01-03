@@ -110,6 +110,7 @@ export default () => {
           className="text-color hover:text-black"
           onClick={() => setLang(isZh ? 'en-US' : 'zh-CN')}
         />,
+        <AppPanel key="AppPanel" />,
         <span key="1" className="text-color" onClick={() => setCollapse(!collapse)}>
           {collapse ? <IconFont type="icon-zhankai" /> : <IconFont type="icon-shouqi" />}
         </span>,
