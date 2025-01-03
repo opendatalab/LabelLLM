@@ -33,7 +33,7 @@ async def create_team(
             owner_cellphone=req.owner_cellphone,
         )
     )
-    resp = schemas.team.Team.parse_obj(team)
+    resp = schemas.team.Team.model_validate(team, from_attributes=True)
     return resp
 
 
@@ -68,7 +68,7 @@ async def update_team(
             owner_cellphone=req.owner_cellphone,
         ),
     )
-    return schemas.team.Team.parse_obj(team)
+    return schemas.team.Team.model_validate(team, from_attributes=True)
 
 
 @router.post(

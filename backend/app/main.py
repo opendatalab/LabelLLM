@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
         # 初始化数据库
         await init_db()
         # 初始化定时任务
-        scheduler.start(paused=True)
+        scheduler.start()
     except Exception as e:
         raise e
     yield

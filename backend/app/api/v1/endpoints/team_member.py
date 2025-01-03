@@ -100,7 +100,7 @@ async def create_invidation_link(
     link = await crud.team_invitation_link.create(
         obj_in=record,
     )
-    resp = schemas.team.InvitationToTeamLink.parse_obj(link)
+    resp = schemas.team.InvitationToTeamLink.model_validate(link, from_attributes=True)
     return resp
 
 

@@ -241,7 +241,9 @@ async def get_data(
             data_id=data.data_id,
             prompt=data.prompt,
             conversation=[
-                schemas.message.MessageBase.parse_obj(message)
+                schemas.message.MessageBase.model_validate(
+                    message, from_attributes=True
+                )
                 for message in data.conversation
             ],
             reference_evaluation=data.reference_evaluation,
@@ -295,7 +297,7 @@ async def get_data(
         data_id=data.data_id,
         prompt=data.prompt,
         conversation=[
-            schemas.message.MessageBase.parse_obj(message)
+            schemas.message.MessageBase.model_validate(message, from_attributes=True)
             for message in data.conversation
         ],
         reference_evaluation=data.reference_evaluation,
