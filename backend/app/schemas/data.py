@@ -34,6 +34,32 @@ class DataStatus(str, Enum):
     # 已废弃
     DISCARDED = "discarded"
 
+
+class DataRange(str, Enum):
+    """
+    数据范围
+    """
+
+    # 全部
+    ALL = "all"
+    # 未达标
+    DISCARDED = "discarded"
+    # 已达标
+    COMPLETED = "completed"
+
+class DataFormat(str, Enum):
+    """
+    数据格式
+    """
+
+    # 原始数据
+    RAW = "raw"
+    # 原始数据 + 标注数据
+    RAW_LABEL = "raw_label"
+    # 原始数据 + 标注数据 + 审核数据
+    RAW_LABEL_AUDIT = "raw_label_audit"
+
+
 class DoDataBase(BaseModel):
     """
     任务基础信息

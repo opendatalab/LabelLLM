@@ -19,6 +19,25 @@ class RecordStatus(str, Enum):
     DISCARDED = "discarded"
 
 
+class RecordFullStatus(str, Enum):
+    """
+    数据状态
+    """
+
+    # 加工中
+    PROCESSING = "processing"
+    # 已完成
+    COMPLETED = "completed"
+    # 已废弃
+    DISCARDED = "discarded"
+    # 审核通过
+    APPROVED = "approved"
+    # 审核未通过
+    REJECTED = "rejected"
+    # 无效问卷
+    INVALID = "invalid"
+
+
 class ViewGroupUser(BaseModel):
     user_id: str = Field(description="用户id", alias="_id")
     completed_data_count: int = Field(description="答题数")

@@ -67,3 +67,8 @@ class UserLoginRequest(BaseModel):
 class RespMe(DoUser):
     name: str = Field(..., description="用户名")
     teams: list[TeamMember] | None = Field(description="teams that user joined")
+
+
+class ListUserTaskResp(BaseModel):
+    list: list[DoUserWithUsername]
+    total: int
