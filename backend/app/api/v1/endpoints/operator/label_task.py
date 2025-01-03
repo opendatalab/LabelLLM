@@ -796,15 +796,12 @@ async def clear_data(
 )
 async def reject_data(
     req: schemas.operator.task.ReqRejectData = Body(...),
-    logger: Logger = Depends(deps.get_logger),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ):
     try:
         async with redis_session.lock(
             f"audit_task_scheduler_job_{req.task_id}", blocking=False
         ):
-            logger.info(f"reject data, task_id: {req.task_id}, user_id: {user.user_id}")
-
             # 获取任务
             task = await crud.label_task.query(task_id=req.task_id).first_or_none()
             if not task:
@@ -828,7 +825,6 @@ async def reject_data(
             # 被新建的数据id
             new_data_ids = []
 
-
             # 获取数据
             datas = await crud.data.query(
                 task_id=req.task_id, data_id=data_ids
@@ -850,7 +846,6 @@ async def reject_data(
                     )
                 )
                 new_data_ids.append(data.data_id)
-
 
             if len(new_datas) > 0:
                 await crud.data.query(task_id=req.task_id, data_id=new_data_ids).set(

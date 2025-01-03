@@ -4,6 +4,13 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.schemas.data import DataCreate
+from app.schemas.record import RecordStatus
+
+
+class RecordPosLocateKind(StrEnum):
+    NEXT = "next"
+    PRE = "prev"
+    CURRENT = "current"
 
 
 class TaskStatus(str, Enum):
@@ -17,6 +24,7 @@ class TaskStatus(str, Enum):
     OPEN = "open"
     # 任务已结束
     DONE = "done"
+
 
 class PreviewDataKind(StrEnum):
     # 入口类型
@@ -57,6 +65,7 @@ class DoTaskKindBase(DoTaskBase):
     """
 
     inlet: PreviewDataKind = Field(description="入口类型")
+
 
 class DoTask(DoTaskBase):
     title: str = Field(description="任务标题")
@@ -122,7 +131,24 @@ class ReqBatchCreateData(DoTaskBase):
 
     datas: list[DataCreate] = Field(description="数据列表", min_length=1)
 
+
 class RespCopyTask(BaseModel):
     is_ok: bool = Field(description="是否成功")
     task_id: UUID | None = Field(description="任务id", default=None)
     msg: str | None = Field(description="错误信息", default=None)
+
+
+class ReqPreviewRecord(DoTaskKindBase):
+    data_id: UUID | None = Field(description="数据id", default=None)
+    user_id: str | None = Field(description="用户id", default=None)
+    record_status: RecordStatus | None = Field(description="数据状态", default=None)
+
+
+class RespPreviewDataID(DoTaskBase):
+    data_id: UUID | None = Field(description="数据 ID", default=None)
+
+
+class ReqPreviewDataID(ReqPreviewRecord):
+    pos_locate: RecordPosLocateKind = Field(
+        description="当前问卷或者是下一份问卷", default=RecordPosLocateKind.CURRENT
+    )
