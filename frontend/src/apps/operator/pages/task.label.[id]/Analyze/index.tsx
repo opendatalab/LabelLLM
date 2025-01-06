@@ -235,11 +235,11 @@ const Filter = () => {
       setLang('zh-CN');
       if (isWithDuplicate) {
         window.open(
-          `/supplier/review/${task_id}?question_type=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}&inlet=operator`,
+          `/supplier/review/${task_id}?record_status=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}&inlet=operator`,
           '_blank',
         );
       } else {
-        window.open(`/supplier/review/${task_id}?question_type=customize&data_id=${ids[0]}&inlet=operator`, '_blank');
+        window.open(`/supplier/review/${task_id}?record_status=customize&data_id=${ids[0]}&inlet=operator`, '_blank');
       }
     },
   });

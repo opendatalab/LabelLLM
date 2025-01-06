@@ -92,6 +92,7 @@ export default function TaskList() {
               page: pageNoRef.current!,
               page_size: 10,
               username: filterValue,
+              is_operator: true,
             }).then((res) => {
               totalRef.current = res.total;
               pageNoRef.current += 1;
