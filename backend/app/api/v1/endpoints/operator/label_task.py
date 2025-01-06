@@ -291,6 +291,38 @@ async def update_label_task(
 
     return resp
 
+@router.patch(
+    "/batch",
+    summary="批量更新标注任务",
+    description="批量更新标注任务",
+    response_model=schemas.operator.task.RespLabelTaskCreateWithData,
+)
+async def batch_label_task(
+    req: schemas.operator.task.ReqBatchLabelTaskUpdate = Body(...),
+) -> schemas.operator.task.RespLabelTaskCreateWithData:
+    data = []
+    for task_id in req.task_id:
+        is_ok = True
+        msg = None
+        try:
+            await update_label_task(
+                req=schemas.operator.task.ReqLabelTaskUpdate(
+                    task_id=task_id,
+                    status=req.status,
+                )
+            )
+        except Exception:
+            is_ok = False
+            msg = "无法更新任务"
+        data.append(
+            schemas.operator.task.RespLabelTaskCreateWithDataBase(
+                is_ok=is_ok,
+                msg=msg,
+            )
+        )
+
+    return schemas.operator.task.RespLabelTaskCreateWithData(data=data)
+
 
 @router.post(
     "/list",
