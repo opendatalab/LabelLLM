@@ -14,6 +14,7 @@ import { labelerKey } from '../../constant/query-key-factories';
 import type { GroupDataByUser, LabelTaskStatisticsBody } from '../../services/task';
 import { getLabelTaskUserStatistics, rejectLabelTask } from '../../services/task';
 import QuickCreate from './QuickCreate';
+import useLang from '@/hooks/useLang';
 
 const queryFormTemplate: FancyInputParams[] = [
   {
@@ -33,6 +34,7 @@ export default function LabelersTable() {
   const revalidator = useRevalidator();
   const [searchParams] = useSearchParams({ page: '1', page_size: '10', username: '' });
   const [selectedRecords, setSelectedRecords] = useState<GroupDataByUser[]>([]);
+  const { setLang } = useLang();
   const [queryParams, setQueryParams] = useState<LabelTaskStatisticsBody>(
     Object.fromEntries(searchParams) as unknown as LabelTaskStatisticsBody,
   );
@@ -128,8 +130,13 @@ export default function LabelersTable() {
               打回
             </a>
             <a
-              href={`/supplier/review_task/${routeParams.id}?user_id=${record.label_user.user_id}&inlet=operator`}
-              target="_blank"
+              onClick={() => {
+                setLang('zh-CN');
+                window.open(
+                  `/supplier/review_task/${routeParams.id}?user_id=${record.label_user.user_id}&inlet=operator`,
+                  '_blank',
+                );
+              }}
               key="detail"
               rel="noreferrer"
             >

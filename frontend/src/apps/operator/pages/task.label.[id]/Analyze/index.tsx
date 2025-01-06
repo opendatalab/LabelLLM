@@ -23,6 +23,7 @@ import {
 import Help from '@/components/Help';
 import CustomEmpty from '@/apps/operator/components/CustomEmpty';
 import QuickCreate from '../QuickCreate';
+import useLang from '@/hooks/useLang';
 
 const { Text } = Typography;
 
@@ -51,6 +52,8 @@ const Distributed = () => {
     setValue(value);
   };
 
+  const { setLang } = useLang();
+
   const { data, isFetching } = useQuery({
     queryKey: ['/v1/operator/task/label/stats', v],
     queryFn: async () => getTaskLabelStats({ _id: params.id!, scope: v }),
@@ -64,6 +67,7 @@ const Distributed = () => {
     onSuccess: (d) => {
       const ids = d?.data?.map((item) => item.data_id);
       saveIds('data_id', ids.join('\n'));
+      setLang('zh-CN');
       window.open(`/supplier/review/${task_id}?question_type=customize&data_id=${ids[0]}`, '_blank');
     },
   });
@@ -186,6 +190,8 @@ const Filter = () => {
   const formRef = useRef<ProFormInstance<TValues>>();
   const refData = useRef<{ count: number }>();
 
+  const { setLang } = useLang();
+
   // 判断每一个筛选项是否有选择题
   type TQuestionsType = 'conversation' | 'message' | 'question';
   const checkQuestions = (key: TQuestionsType) => {
@@ -226,6 +232,7 @@ const Filter = () => {
         : data.data?.map((item) => item.data_id);
 
       saveIds(key, ids.join('\n'));
+      setLang('zh-CN');
       if (isWithDuplicate) {
         window.open(
           `/supplier/review/${task_id}?question_type=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}&inlet=operator`,

@@ -40,6 +40,7 @@ import { getTeamList } from '../../services/team';
 import DownloadRange from './DownloadRange';
 import { ProFormSelect } from '@ant-design/pro-components';
 import clsx from 'clsx';
+import useLang from '@/hooks/useLang';
 
 const FormWrapper = styled.div`
   .ant-steps-item-content {
@@ -94,6 +95,7 @@ export default function LabelDetailRight() {
   const { clearAll } = useStoreIds();
   const taskInfo = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
   const [form] = Form.useForm();
+  const { setLang } = useLang();
   const [stepStatus, setStepStatus] = useState<Record<string, 'processing' | 'finish'>>({
     0: 'processing',
     1: 'processing',
@@ -101,6 +103,11 @@ export default function LabelDetailRight() {
   const update = useMutation({
     mutationFn: updateLabelTask,
   });
+
+  const onOpenChange = () => {
+    setLang('zh-CN');
+    clearAll();
+  };
 
   useEffect(() => {
     if (_.get(taskInfo, 'progress.total')) {
@@ -387,7 +394,7 @@ export default function LabelDetailRight() {
           </div>
           <Divider type="vertical" className="h-12" />
           <div className="flex flex-col basis-[33%] items-center">
-            <Dropdown menu={{ items: getItems(routeParams.id as string) }} onOpenChange={clearAll}>
+            <Dropdown menu={{ items: getItems(routeParams.id as string) }} onOpenChange={onOpenChange}>
               <a onClick={(e) => e.preventDefault()}>
                 查看题目 <DownOutlined />
               </a>

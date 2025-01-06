@@ -20,6 +20,7 @@ import JsonlUpload from '../../components/JsonlUpload';
 import { ReactComponent as BookIcon } from '../../assets/book.svg';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
+import useLang from '@/hooks/useLang';
 import dayjs from 'dayjs';
 
 export const fillDefaultPluginValues = (toolConfig: TaskToolConfig) => {
@@ -63,96 +64,13 @@ const handleToolConfigExport = (toolConfig: TaskToolConfig) => {
   );
 };
 
-const basicInfoColumns: ProDescriptionsProps['columns'] = [
-  {
-    title: '任务ID',
-    key: 'task_id',
-    dataIndex: 'task_id',
-    ellipsis: true,
-    copyable: true,
-  },
-  {
-    title: '任务状态',
-    key: 'status',
-    dataIndex: 'status',
-    valueType: 'select',
-    valueEnum: Object.values(TaskStatus).reduce((acc, status) => {
-      return Object.assign(acc, {
-        [status]: { text: TaskStatusMapping[status as TaskStatus], status },
-      });
-    }, {}),
-  },
-  {
-    title: '任务描述',
-    key: 'description',
-    dataIndex: 'description',
-  },
-  {
-    title: '工具配置',
-    render: (text, record) => {
-      return (
-        <>
-          <Button
-            size="small"
-            className="!py-0 !px-0"
-            type="link"
-            onClick={() => {
-              if (!record?.progress?.total) {
-                message.error('请先上传数据');
-                return;
-              }
-
-              window.open(`/supplier/preview/${record.task_id}`, '_blank');
-            }}
-          >
-            预览配置
-          </Button>
-          <Button
-            size="small"
-            className="!py-0 !px-0 ml-2"
-            type="link"
-            onClick={() => {
-              handleToolConfigExport(record.tool_config as TaskToolConfig);
-            }}
-          >
-            导出配置
-          </Button>
-        </>
-      );
-    },
-  },
-  {
-    title: '创建人',
-    key: 'creator',
-    dataIndex: 'creator',
-  },
-  {
-    title: '创建时间',
-    key: 'created_time',
-    dataIndex: 'created_time',
-    render: (text) => {
-      return dayjs((text as number) * 1000).format('YYYY-MM-DD HH:mm:ss');
-    },
-  },
-];
-
-const dataColumns: ProDescriptionsProps['columns'] = [
-  {
-    title: '总题数',
-    key: 'total',
-    dataIndex: 'total',
-    render: (text, record) => {
-      return record.progress?.total || 0;
-    },
-  },
-];
-
 const descriptionLabelStyle = { width: 96, flexShrink: 0 };
 
 export default function LabelDetailLeft() {
   const taskInfo = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
   const routeParams = useParams();
   const revalidator = useRevalidator();
+  const { setLang } = useLang();
   const [form] = Form.useForm<{
     teams: string[];
   }>();
@@ -176,6 +94,91 @@ export default function LabelDetailLeft() {
       }),
     enabled: taskInfo?.status !== TaskStatus.Done,
   });
+
+  const basicInfoColumns: ProDescriptionsProps['columns'] = [
+    {
+      title: '任务ID',
+      key: 'task_id',
+      dataIndex: 'task_id',
+      ellipsis: true,
+      copyable: true,
+    },
+    {
+      title: '任务状态',
+      key: 'status',
+      dataIndex: 'status',
+      valueType: 'select',
+      valueEnum: Object.values(TaskStatus).reduce((acc, status) => {
+        return Object.assign(acc, {
+          [status]: { text: TaskStatusMapping[status as TaskStatus], status },
+        });
+      }, {}),
+    },
+    {
+      title: '任务描述',
+      key: 'description',
+      dataIndex: 'description',
+    },
+    {
+      title: '工具配置',
+      render: (text, record) => {
+        return (
+          <>
+            <Button
+              size="small"
+              className="!py-0 !px-0"
+              type="link"
+              onClick={() => {
+                if (!record?.progress?.total) {
+                  message.error('请先上传数据');
+                  return;
+                }
+                setLang('zh-CN');
+                window.open(`/supplier/preview/${record.task_id}`, '_blank');
+              }}
+            >
+              预览配置
+            </Button>
+            <Button
+              size="small"
+              className="!py-0 !px-0 ml-2"
+              type="link"
+              onClick={() => {
+                handleToolConfigExport(record.tool_config as TaskToolConfig);
+              }}
+            >
+              导出配置
+            </Button>
+          </>
+        );
+      },
+    },
+    {
+      title: '创建人',
+      key: 'creator',
+      dataIndex: 'creator',
+    },
+    {
+      title: '创建时间',
+      key: 'created_time',
+      dataIndex: 'created_time',
+      render: (text) => {
+        return dayjs((text as number) * 1000).format('YYYY-MM-DD HH:mm:ss');
+      },
+    },
+  ];
+
+  const dataColumns: ProDescriptionsProps['columns'] = [
+    {
+      title: '总题数',
+      key: 'total',
+      dataIndex: 'total',
+      render: (text, record) => {
+        return record.progress?.total || 0;
+      },
+    },
+  ];
+
   const teamOptions = useMemo(() => {
     return data?.list.map((team) => ({
       label: team.name,
