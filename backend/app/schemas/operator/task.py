@@ -132,6 +132,15 @@ class ReqLabelTaskUpdate(DoTaskBase):
     status: TaskStatus | None = Field(description="任务状态", default=None)
 
 
+class ReqBatchLabelTaskUpdate(BaseModel):
+    """
+    批量更新标注任务
+    """
+    task_id: list[UUID] = Field(description="任务 ID")
+    status: TaskStatus | None = Field(description="任务状态", default=None)
+
+
+
 class RespGetLabelTask(DoTaskBase):
     """
     获取标注任务
