@@ -21,7 +21,7 @@ function CopyTask({ id, type }: IProps) {
           cancelText: '知道了',
           okText: '前往查看',
           onOk: () => {
-            window.open(`/operator/task/${type}/${data.task_id}`, '_blank');
+            window.open(`/operator/task/${data.task_id}`, '_blank');
           },
           content: '任务复制成功',
           centered: true,

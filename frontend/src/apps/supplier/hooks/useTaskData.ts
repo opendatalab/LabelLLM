@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import {
+  ERecordStatus,
   getLabelData,
   getLabelDataByUserId,
   getPreviewData,
@@ -78,8 +79,9 @@ export const useTaskQuestion = ({ messageRef }: { messageRef: any }) => {
     flow_index,
     data_id: urlState?.data_id,
     questionnaire_id: urlState?.questionnaire_id,
-    record_status: urlState?.record_status,
+    record_status: urlState?.record_status === ERecordStatus.customize ? undefined : urlState?.record_status,
     user_id: urlState?.user_id,
+    inlet: urlState?.inlet,
   };
 
   const api = apiMap[type];

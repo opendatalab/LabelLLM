@@ -347,31 +347,33 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
 
             <div className="flex justify-between items-end">
               <CountdownComponent />
-              <CheckTaskType
-                types={[
-                  ERouterTaskType.task,
-                  ERouterTaskType.review,
-                  ERouterTaskType.reviewTask,
-                  ERouterTaskType.preview,
-                ]}
-              >
-                <AuditInfo
-                  dataId={questionDetail?.data_id}
-                  label_user={questionDetail?.label_user}
-                  questionnaire_id={questionDetail?.questionnaire_id}
-                />
-              </CheckTaskType>
-              {/* 管理端跳转过来显示 */}
-              {urlState.inlet === 'operator' && questionDetail && (
-                <CheckTaskType types={[ERouterTaskType.review, ERouterTaskType.reviewTask]}>
-                  {questionDetail?.status && (
-                    <Tag bordered={false} color="processing">
-                      {statusMap[questionDetail?.status]}
-                    </Tag>
-                  )}
-                  {questionDetail?.status === ELabelStatus.completed && <ReAudit questionDetail={questionDetail} />}
+              <div className="flex items-center space-x-2">
+                <CheckTaskType
+                  types={[
+                    ERouterTaskType.task,
+                    ERouterTaskType.review,
+                    ERouterTaskType.reviewTask,
+                    ERouterTaskType.preview,
+                  ]}
+                >
+                  <AuditInfo
+                    dataId={questionDetail?.data_id}
+                    label_user={questionDetail?.label_user}
+                    questionnaire_id={questionDetail?.questionnaire_id}
+                  />
                 </CheckTaskType>
-              )}
+                {/* 管理端跳转过来显示 */}
+                {urlState.inlet === 'operator' && questionDetail && (
+                  <CheckTaskType types={[ERouterTaskType.review, ERouterTaskType.reviewTask]}>
+                    {questionDetail?.status && (
+                      <Tag bordered={false} color="processing">
+                        {statusMap[questionDetail?.status]}
+                      </Tag>
+                    )}
+                    {questionDetail?.status === ELabelStatus.completed && <ReAudit questionDetail={questionDetail} />}
+                  </CheckTaskType>
+                )}
+              </div>
             </div>
           </div>
         </ProForm>
