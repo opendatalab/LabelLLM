@@ -183,16 +183,6 @@ const TaskForm: React.FC<PropsWithChildren<IProps>> = ({
     }
   }, [questionDetail, formRef, type, storageLabelData]);
 
-  useEffect(() => {
-    // 预览模式不需要设置表单值
-    // if (type === ERouterTaskType.preview) return;
-    const isEvaluation = Object.values(questionDetail?.evaluation || {}).some((item) => !!item);
-    const labelData = isEvaluation ? questionDetail?.evaluation : questionDetail?.reference_evaluation;
-    if (labelData) {
-      formRef.current?.setFieldsValue(labelData);
-    }
-  }, [questionDetail, formRef, type]);
-
   const CountdownComponent = () => {
     return (
       <div className="flex items-center rounded-md mt-4">

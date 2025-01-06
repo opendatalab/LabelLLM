@@ -24,6 +24,7 @@ import Help from '@/components/Help';
 import CustomEmpty from '@/apps/operator/components/CustomEmpty';
 import QuickCreate from '../QuickCreate';
 import useLang from '@/hooks/useLang';
+import { DrawerStyles } from 'antd/es/drawer/DrawerPanel';
 
 const { Text } = Typography;
 
@@ -506,12 +507,18 @@ const Analyze: React.FC = () => {
     },
   ];
 
+  const drawerStyles: DrawerStyles = {
+    wrapper: {
+      transform: 'translateX(0) !important',
+    },
+  };
+
   return (
     <>
       <Button className="!p-0" type="link" onClick={showDrawer}>
         统计分析
       </Button>
-      <Drawer title="统计分析" width={900} destroyOnClose onClose={onClose} open={open}>
+      <Drawer title="统计分析" width={900} destroyOnClose onClose={onClose} open={open} styles={drawerStyles}>
         <Tabs size="large" className="-mt-4" defaultActiveKey={EScopeType.conversation} items={items} />
       </Drawer>
     </>
