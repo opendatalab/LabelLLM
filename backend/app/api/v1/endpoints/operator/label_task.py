@@ -1222,22 +1222,24 @@ async def preview_data_ids(
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
         raise exceptions.TASK_NOT_EXIST
+
+    if req.user_id is not None:
+        data_ids = [
+            i.data_id
+            for i in await crud.record.query(
+                task_id=task.task_id,
+                user_id=req.user_id,
+            ).to_list()
+        ]
+    else:
+        data_ids = None
+
     if req.kind == schemas.operator.stats.ANSWER_FLITER_KIND.WITHOUT_DUPLICATE:
-        if req.user_id is not None:
-            data_ids = [
-                i.data_id
-                for i in await crud.record.query(
-                    task_id=task.task_id,
-                    user_id=req.user_id,
-                ).to_list()
-            ]
-        else:
-            data_ids = None
 
         records = await crud.data.query(
             task_id=task.task_id,
             data_id=data_ids,
-            sort="update_time",
+            sort="data_id",
             status=req.record_status
             if req.record_status
             in (
@@ -1249,14 +1251,6 @@ async def preview_data_ids(
             if req.record_status == schemas.record.RecordFullStatus.INVALID
             else None,
         ).to_list()
-        if len(records) > 0 and req.data_id is None:
-            idx = random.randint(0, len(records) - 1)
-            return schemas.operator.task.RespPreviewDataID(
-                task_id=req.task_id,
-                data_id=records[idx].data_id,
-                questionnaire_id=records[idx].questionnaire_id,
-            )
-        p_judge_by_some_id = lambda x: x.data_id == req.data_id
     else:
 
         class AggProjectModel(BaseModel):
@@ -1266,6 +1260,8 @@ async def preview_data_ids(
         records = (
             await crud.data.query(
                 task_id=task.task_id,
+                data_id=data_ids,
+                sort="data_id",
                 invalid=True
                 if req.record_status == schemas.record.RecordFullStatus.INVALID
                 else None,
@@ -1279,42 +1275,28 @@ async def preview_data_ids(
             .to_list()
         )
 
-        if len(records) > 0 and req.questionnaire_id is None:
-            idx = random.randint(0, len(records) - 1)
-            return schemas.operator.task.RespPreviewDataID(
-                task_id=req.task_id,
-                data_id=records[idx].data_id,
-                questionnaire_id=records[idx].questionnaire_id,
-            )
-        p_judge_by_some_id = lambda x: x.questionnaire_id == req.questionnaire_id
-
-    if len(records) == 0:
-        return schemas.operator.task.RespPreviewDataID(task_id=req.task_id)
-    prev_one = None
-    current = None
-    next_one = None
-    for idx in range(len(records)):
-        if idx > 0:
-            prev_one = records[idx - 1]
-        current = records[idx]
-        next_one = None
-        if len(records) - 1 >= idx + 1:
-            next_one = records[idx + 1]
-        if p_judge_by_some_id(records[idx]):
-            break
-
-    answer = None
-    resp = schemas.operator.task.RespPreviewDataID(task_id=req.task_id)
-    if req.pos_locate == schemas.operator.task.RecordPosLocateKind.CURRENT:
-        answer = current
-    elif req.pos_locate == schemas.operator.task.RecordPosLocateKind.PRE:
-        answer = prev_one
-    else:
-        answer = next_one
-    if answer is not None:
-        resp.questionnaire_id = answer.questionnaire_id
-        resp.data_id = answer.data_id
-    return resp
+    record = None
+    if req.pos_locate == schemas.task.RecordPosLocateKind.CURRENT:
+        if records:
+            record = records[0]
+    elif req.pos_locate == schemas.task.RecordPosLocateKind.NEXT:
+        stop = False
+        for r in records:
+            if stop:
+                record = r
+                break
+            if r.data_id == req.data_id:
+                stop = True
+    elif req.pos_locate == schemas.task.RecordPosLocateKind.PRE:
+        for r in records:
+            if r.data_id == req.data_id:
+                break
+            record = r
+    return schemas.operator.task.RespPreviewDataID(
+        task_id=req.task_id,
+        data_id=record.data_id if record else None,
+        questionnaire_id=record.questionnaire_id if record else None,
+    )
 
 
 # 预览配置
@@ -1346,7 +1328,7 @@ async def preview_data(
         await crud.data.query(
             task_id=task.task_id,
             data_id=req.data_id if req.data_id else data_ids,
-            sort="update_time",
+            sort="data_id",
             status=req.record_status
             if req.record_status
             in (

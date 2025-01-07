@@ -584,6 +584,7 @@ async def preview_record(
             user_id=record.creator_id,
             username=label_user.name if label_user else "",
         ),
+        status=data.status,
     )
 
     return resp

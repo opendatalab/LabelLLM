@@ -271,7 +271,7 @@ class ReqPreviewRecord(DoTaskBase):
 
 class RespPreviewRecord(DoDataForUser):
     label_user: DoUserWithUsername | None = Field(description="标注员", default=None)
-
+    status: DataStatus | None = Field(description="状态", default=None)
 
 class ReqRecordList(DoTaskBase):
     status: RecordStatus | None = Field(description="记录状态", default=None)
