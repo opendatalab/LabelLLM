@@ -16,10 +16,10 @@ const customEmpty = () => {
 
 export default function App() {
   return (
-    <AppContainer renderEmpty={customEmpty}>
-      <QueryProvider>
+    <QueryProvider>
+      <AppContainer renderEmpty={customEmpty}>
         <RouterContainer routes={routes} basename="/operator" />
-      </QueryProvider>
-    </AppContainer>
+      </AppContainer>
+    </QueryProvider>
   );
 }

@@ -32,6 +32,7 @@ interface IQuery {
   // 题目类型 包含 全部题目 仅看标为有问题 自定义题目范围
   question_type?: EQueryQuestionType;
   kind?: EKind; // 源题组合展示  默认不传 单题模式
+  inlet?: 'supplier' | 'operator';
 }
 
 // 预览任务 https://labelu-llm-dev.shlab.tech/supplier/preview/beebc1fa-9b7f-406a-b498-194dab40d673;
@@ -46,7 +47,7 @@ export const useTaskParams = () => {
     record_status: undefined,
     is_search: undefined,
     data_id: undefined,
-    question_type: undefined,
+    inlet: undefined,
   });
 
   const type = params.type || ERouterTaskType.task;

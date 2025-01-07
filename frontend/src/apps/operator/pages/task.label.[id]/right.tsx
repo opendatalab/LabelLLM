@@ -1,7 +1,7 @@
 import { useParams, useRevalidator, useRouteLoaderData } from 'react-router';
 import styled from 'styled-components';
 import type { FormProps, MenuProps } from 'antd';
-import { Button, Divider, Dropdown, Form, Popconfirm, Steps, message } from 'antd';
+import { Button, Divider, Dropdown, Form, Popconfirm, Steps, Tooltip, message } from 'antd';
 import _ from 'lodash';
 import Icon, {
   CaretDownFilled,
@@ -33,10 +33,14 @@ import type { JsonlUploadProps } from '../../components/JsonlUpload';
 import JsonlUpload from '../../components/JsonlUpload';
 import { ReactComponent as BookIcon } from '../../assets/book.svg';
 import PercentageCircle from '../../components/PercentageCircle';
-import Help from '../../components/Help';
+import Help from '@/components/Help';
 import LabelersTable from './users';
 import { teamKey } from '../../constant/query-key-factories';
 import { getTeamList } from '../../services/team';
+import DownloadRange from './DownloadRange';
+import { ProFormSelect } from '@ant-design/pro-components';
+import clsx from 'clsx';
+import useLang from '@/hooks/useLang';
 
 const FormWrapper = styled.div`
   .ant-steps-item-content {
@@ -62,7 +66,7 @@ const getItems = (id: string) => {
     {
       key: '1',
       label: (
-        <a target="_blank" rel="noopener noreferrer" href={`/supplier/review/${id}`}>
+        <a target="_blank" rel="noopener noreferrer" href={`/supplier/review/${id}?inlet=operator`}>
           单题展示
         </a>
       ),
@@ -70,7 +74,11 @@ const getItems = (id: string) => {
     {
       key: '2',
       label: (
-        <a target="_blank" rel="noopener noreferrer" href={`/supplier/review/${id}?kind=${EKind.with_duplicate}`}>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`/supplier/review/${id}?kind=${EKind.with_duplicate}&inlet=operator`}
+        >
           源题组合展示{' '}
           <Help placement="left" className="relative z-10">
             适用于一题多答，多个答案组合查看
@@ -87,6 +95,7 @@ export default function LabelDetailRight() {
   const { clearAll } = useStoreIds();
   const taskInfo = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
   const [form] = Form.useForm();
+  const { setLang } = useLang();
   const [stepStatus, setStepStatus] = useState<Record<string, 'processing' | 'finish'>>({
     0: 'processing',
     1: 'processing',
@@ -94,6 +103,11 @@ export default function LabelDetailRight() {
   const update = useMutation({
     mutationFn: updateLabelTask,
   });
+
+  const onOpenChange = () => {
+    setLang('zh-CN');
+    clearAll();
+  };
 
   useEffect(() => {
     if (_.get(taskInfo, 'progress.total')) {
@@ -191,9 +205,7 @@ export default function LabelDetailRight() {
   };
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
-    if (key === 'result') {
-      exportLabelTask(routeParams.id!);
-    } else {
+    if (key === 'record') {
       exportLabelRecord(routeParams.id!);
     }
   };
@@ -232,7 +244,7 @@ export default function LabelDetailRight() {
                       </Button>
                     </JsonlUpload>
                     <Link
-                      className="ml-4 text-secondary"
+                      className="ml-4 text-color"
                       to="https://github.com/opendatalab/LabelLLM/wiki/%E6%95%B0%E6%8D%AE%E4%B8%8A%E4%BC%A0%E6%A0%BC%E5%BC%8F"
                       target="_blank"
                     >
@@ -277,18 +289,17 @@ export default function LabelDetailRight() {
                   >
                     <FancyInput type="number" addonAfter="分钟" min={1} className="w-full" />
                   </Form.Item>
-                  <Form.Item
-                    label="标注团队"
+                  <ProFormSelect
                     name="teams"
-                    rules={[
-                      {
-                        required: true,
-                        message: '请选择标注团队',
-                      },
-                    ]}
-                  >
-                    <FancyInput type="enum" mode="multiple" allowClear options={teamOptions} className="w-full" />
-                  </Form.Item>
+                    label="标注团队"
+                    options={teamOptions}
+                    placeholder="请选择执行团队"
+                    rules={[{ required: true, message: '请选择执行团队' }]}
+                    fieldProps={{
+                      mode: 'multiple',
+                      maxTagCount: 'responsive',
+                    }}
+                  />
                   <Form.Item>
                     <Button disabled={isSubmitDisabled} loading={update.isPending} type="primary" htmlType="submit">
                       开始任务
@@ -323,7 +334,7 @@ export default function LabelDetailRight() {
                 items: [
                   {
                     key: 'result',
-                    label: '标注结果',
+                    label: <DownloadRange type="label" taskId={routeParams.id!} />,
                   },
                   {
                     key: 'record',
@@ -369,7 +380,7 @@ export default function LabelDetailRight() {
           <div className="flex flex-col gap-1 pr-8 flex-1">
             <div className="rounded px-4 text-[var(--color-text-secondary)] flex justify-between items-center">
               <span>
-                已完成题数 <Help>标注完成题数 - 未达标题数</Help>
+                已完成题数 <Help>标注完成题数 - 打回时生成新题的未达标题数</Help>
               </span>
               <span className="text-[var(--color-text)] text-lg">{_.get(taskInfo, 'progress.completed', 0)}</span>
             </div>
@@ -383,7 +394,7 @@ export default function LabelDetailRight() {
           </div>
           <Divider type="vertical" className="h-12" />
           <div className="flex flex-col basis-[33%] items-center">
-            <Dropdown menu={{ items: getItems(routeParams.id as string) }} onOpenChange={clearAll}>
+            <Dropdown menu={{ items: getItems(routeParams.id as string) }} onOpenChange={onOpenChange}>
               <a onClick={(e) => e.preventDefault()}>
                 查看题目 <DownOutlined />
               </a>
@@ -419,7 +430,23 @@ export default function LabelDetailRight() {
             <span>待标注</span>
             <span className="ml-2 mr-12">{_.get(taskInfo, 'progress.pending')}</span>
             <span>标注中</span>
-            <span className="ml-2 mr-12">{_.get(taskInfo, 'progress.labeling')}</span>
+            <span className="ml-2 mr-12">
+              <Tooltip
+                title={
+                  taskInfo.users?.labeling?.length
+                    ? taskInfo.users?.labeling?.map((user) => user.username).join(', ')
+                    : undefined
+                }
+              >
+                <span
+                  className={clsx({
+                    'cursor-default text-primary': !!taskInfo.users?.labeling?.length,
+                  })}
+                >
+                  {_.get(taskInfo, 'progress.labeling')}
+                </span>
+              </Tooltip>
+            </span>
             <span>标注完成</span>
             <span className="ml-2">{_.get(taskInfo, 'progress.labeled')}</span>
             <span className="text-secondary">

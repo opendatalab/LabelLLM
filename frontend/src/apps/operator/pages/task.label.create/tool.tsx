@@ -1,7 +1,7 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ProFormDependency, ProFormRadio, ProFormSwitch } from '@ant-design/pro-components';
 import { useMutation } from '@tanstack/react-query';
-import { useSessionStorage } from 'react-use';
+import { useSessionStorageState } from 'ahooks';
 import type { CollapseProps, FormProps } from 'antd';
 import { Button, Card, Checkbox, Collapse, Form, Popover } from 'antd';
 import _ from 'lodash';
@@ -135,8 +135,8 @@ export default function TaskTool({ onStepChange }: PartialProps) {
   const update = useMutation({
     mutationFn: updateLabelTask,
   });
-  const [preStepTaskCache] = useSessionStorage<OperatorTaskDetail>('label_task_basic_cache');
-  const [toolFromCache, setToolCache] = useSessionStorage<TaskToolConfig>('label_task_tool_cache');
+  const [preStepTaskCache] = useSessionStorageState<OperatorTaskDetail>('label_task_basic_cache');
+  const [toolFromCache, setToolCache] = useSessionStorageState<TaskToolConfig>('label_task_tool_cache');
   const taskInfo = useRouteLoaderData('labelTask') as OperatorTaskDetail;
   const toolsDisabled = Boolean(routeParams.id) && taskInfo?.status !== TaskStatus.Created;
 

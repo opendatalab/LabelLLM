@@ -1,15 +1,20 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
-import { useToggle } from 'react-use';
+import { useToggle } from 'ahooks';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 import { create, EUserRole, ICreate, login } from '@/api/user';
 import bg from './bg.png';
 import { message } from '@/components/StaticAnt';
 import { Form } from 'antd';
+import useLang from '@/hooks/useLang';
+import IconFont from '@/components/IconFont';
 
 export default () => {
+  const { formatMessage } = useIntl();
   const [form] = Form.useForm<ICreate>();
-  const [on, toggle] = useToggle(true);
+  const [on, { toggle }] = useToggle(true);
+  const { setLang, isZh } = useLang();
 
   const handleClick = () => {
     toggle();
@@ -22,7 +27,7 @@ export default () => {
       window.location.href = res.role === EUserRole.admin ? '/operator/task' : '/supplier';
     } else {
       if (values.password !== values.password2) {
-        message.error('两次密码不一致');
+        message.error(formatMessage({ id: 'login.password.not.same' }));
         return;
       }
       await create(values);
@@ -32,17 +37,25 @@ export default () => {
 
   return (
     <div className="w-screen h-screen !bg-cover relative" style={{ background: `url(${bg})` }}>
+      <IconFont
+        key="lang"
+        type="icon-zhongyingwenfanyi"
+        className="absolute right-10 top-8 text-xl text-color hover:text-black"
+        onClick={() => setLang(isZh ? 'en-US' : 'zh-CN')}
+      />
       <div className="absolute right-32 top-1/2 -translate-y-1/2 bg-white p-10 rounded">
         <LoginForm<ICreate>
           onFinish={onFinish}
           form={form}
           submitter={{
             searchConfig: {
-              submitText: on ? '登录' : '注册',
+              submitText: on ? <FormattedMessage id="login.login" /> : <FormattedMessage id="login.register" />,
             },
           }}
         >
-          <div className="text-center text-2xl font-bold mb-10">{on ? '账号登录' : '账号注册'}</div>
+          <div className="text-center text-2xl font-bold mb-10">
+            {on ? <FormattedMessage id="login.login.title" /> : <FormattedMessage id="login.register.title" />}
+          </div>
           <ProFormText
             name="username"
             fieldProps={{
@@ -51,16 +64,16 @@ export default () => {
               showCount: true,
               prefix: <UserOutlined className={'prefixIcon'} />,
             }}
-            placeholder="请输入用户名"
+            placeholder={formatMessage({ id: 'login.username.placeholder' })}
             rules={[
               {
                 required: true,
                 whitespace: true,
-                message: '请输入用户名!',
+                message: formatMessage({ id: 'login.username.placeholder' }),
               },
               {
                 pattern: /^[A-Za-z0-9]+$/,
-                message: '只允许输入英文或数字',
+                message: formatMessage({ id: 'login.username.rule' }),
               },
             ]}
           />
@@ -72,11 +85,11 @@ export default () => {
               showCount: true,
               prefix: <LockOutlined className={'prefixIcon'} />,
             }}
-            placeholder="密码"
+            placeholder={formatMessage({ id: 'login.password.placeholder' })}
             rules={[
               {
                 required: true,
-                message: '请输入密码！',
+                message: formatMessage({ id: 'login.password.placeholder' }),
               },
             ]}
           />
@@ -89,11 +102,11 @@ export default () => {
                 showCount: true,
                 prefix: <LockOutlined className={'prefixIcon'} />,
               }}
-              placeholder="密码"
+              placeholder={formatMessage({ id: 'login.password.placeholder' })}
               rules={[
                 {
                   required: true,
-                  message: '请输入密码！',
+                  message: formatMessage({ id: 'login.password.placeholder' }),
                 },
               ]}
             />
@@ -105,7 +118,7 @@ export default () => {
               }}
             >
               <ProFormCheckbox initialValue={true} noStyle name="remember_me">
-                7天免登录
+                <FormattedMessage id="login.7.days.no.login" />
               </ProFormCheckbox>
             </div>
           )}
@@ -113,13 +126,15 @@ export default () => {
         <div className="text-right pr-8 -mt-4">
           {on ? (
             <span className="text-primary cursor-pointer" onClick={handleClick}>
-              注册
+              <FormattedMessage id="login.register" />
             </span>
           ) : (
             <>
-              <span>已有账号？</span>
+              <span>
+                <FormattedMessage id="login.have.account" />
+              </span>
               <span className="text-primary cursor-pointer" onClick={handleClick}>
-                登录
+                <FormattedMessage id="login.login" />
               </span>
             </>
           )}

@@ -14,7 +14,7 @@ class File(Document):
 class FileCreate(BaseModel):
     file_id: UUID = Field(default_factory=uuid4)
     creator_id: str
-    create_time: int = Field(default_factory=time.time)
+    create_time: int = Field(default_factory=lambda: int(time.time()))
 
 
 class FileUpdate(BaseModel):

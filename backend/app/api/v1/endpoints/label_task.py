@@ -1,7 +1,9 @@
 import time
+from uuid import UUID
 from collections import defaultdict
 
 import sentry_sdk
+from pydantic import BaseModel
 from fastapi import APIRouter, Body, Depends
 
 from app import crud, models, schemas
@@ -66,7 +68,7 @@ async def list_label_task(
         # 剩余的题数
         remain_count_map: defaultdict = defaultdict(int)
         # 已完成的题目id
-        questionnaire_ids_set = set()
+        questionnaire_ids_map = {i.task_id: set() for i in tasks}
 
         # 已提交的记录
         with sentry_sdk.start_span(description="get submit record"):
@@ -76,7 +78,7 @@ async def list_label_task(
                 is_submit=True,
             ):
                 completed_count_map[record.task_id] += 1
-                questionnaire_ids_set.add(record.questionnaire_id)
+                questionnaire_ids_map[record.task_id].add(record.questionnaire_id)
 
         # 待提交的记录
         with sentry_sdk.start_span(description="get not submit record"):
@@ -86,7 +88,7 @@ async def list_label_task(
                 is_submit=False,
             ):
                 remain_count_map[record.task_id] += 1
-                questionnaire_ids_set.add(record.questionnaire_id)
+                questionnaire_ids_map[record.task_id].add(record.questionnaire_id)
 
         # 统计剩余题数
         with sentry_sdk.start_span(description="count task remain"):
@@ -115,10 +117,10 @@ async def list_label_task(
                 remain_count_map[task_remain.task_id] += task_remain.remain
 
         # 把已经做过的题目从剩余题数中减去
-        with sentry_sdk.start_span(description="count has done task remain"):
+        for task in tasks:
             async for task_remain in crud.data.query(
-                task_id=open_task_ids,
-                questionnaire_id=list(questionnaire_ids_set),
+                task_id=task.task_id,
+                questionnaire_id=list(questionnaire_ids_map[task.task_id]),
                 status=schemas.data.DataStatus.PENDING,
             ).aggregate(
                 [
@@ -240,7 +242,9 @@ async def get_data(
             data_id=data.data_id,
             prompt=data.prompt,
             conversation=[
-                schemas.message.MessageBase.parse_obj(message)
+                schemas.message.MessageBase.model_validate(
+                    message, from_attributes=True
+                )
                 for message in data.conversation
             ],
             reference_evaluation=data.reference_evaluation,
@@ -294,7 +298,7 @@ async def get_data(
         data_id=data.data_id,
         prompt=data.prompt,
         conversation=[
-            schemas.message.MessageBase.parse_obj(message)
+            schemas.message.MessageBase.model_validate(message, from_attributes=True)
             for message in data.conversation
         ],
         reference_evaluation=data.reference_evaluation,
@@ -387,4 +391,260 @@ async def commit_data(
             evaluation=evaluation,
             status=schemas.record.RecordStatus.COMPLETED,
         ),
+    )
+
+
+@router.post(
+    "/user",
+    summary="获取标注任务用户",
+    description="获取标注任务用户",
+)
+async def get_task_user(
+    req: schemas.task.DoTaskKindBase = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
+    teams: list[models.team.Team] = Depends(deps.get_current_team),
+) -> schemas.user.ListUserTaskResp:
+    class UserField(BaseModel):
+        creator_id: str
+
+    # 获取团队用户信息
+    team_user_ids = []
+    for team in teams:
+        team_user_ids.extend([user.user_id for user in team.users])
+
+    if req.inlet == schemas.task.PreviewDataKind.USER:
+        user_ids = [user.user_id]
+    elif req.inlet == schemas.task.PreviewDataKind.SUPPLIER:
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                is_submit=True,
+            )
+            .project(
+                UserField,
+            )
+            .to_list()
+        )
+        user_ids = list(
+            set([record.creator_id for record in records]) & set(team_user_ids)
+        )
+    elif req.inlet == schemas.task.PreviewDataKind.OPERATOR:
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                is_submit=True,
+            )
+            .project(
+                UserField,
+            )
+            .to_list()
+        )
+        user_ids = [record.creator_id for record in records]
+    else:
+        raise exceptions.SERVER_ERROR
+
+    users = await crud.user.query(user_id=user_ids).to_list()
+
+    return schemas.user.ListUserTaskResp(
+        list=[
+            schemas.user.DoUserWithUsername(
+                user_id=user.user_id,
+                username=user.name,
+            )
+            for user in users
+        ],
+        total=len(users),
+    )
+
+
+async def get_record_ids(
+    req: schemas.task.ReqPreviewRecord,
+    teams: list[models.team.Team],
+    user: schemas.user.DoUser,
+):
+    # 获取团队用户信息
+    class DataField(BaseModel):
+        data_id: UUID
+
+    team_user_ids = []
+    for team in teams:
+        team_user_ids.extend([user.user_id for user in team.users])
+
+    if req.inlet == schemas.task.PreviewDataKind.USER:
+        user_ids = [user.user_id]
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                user_id=user_ids,
+                is_submit=True,
+            )
+            .project(
+                DataField,
+            )
+            .to_list()
+        )
+    elif req.inlet == schemas.task.PreviewDataKind.SUPPLIER:
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                is_submit=True,
+                user_id=team_user_ids,
+            )
+            .project(
+                DataField,
+            )
+            .to_list()
+        )
+    elif req.inlet == schemas.task.PreviewDataKind.OPERATOR and user.role in (
+        schemas.user.UserType.ADMIN,
+        schemas.user.UserType.SUPER_ADMIN,
+    ):
+        records = (
+            await crud.record.query(
+                task_id=req.task_id,
+                is_submit=True,
+            )
+            .project(
+                DataField,
+            )
+            .to_list()
+        )
+    else:
+        raise exceptions.SERVER_ERROR
+
+    return [record.data_id for record in records]
+
+
+@router.post(
+    "/record/preview",
+    summary="预览记录",
+    description="预览记录",
+    response_model=schemas.operator.task.RespPreviewRecord,
+)
+async def preview_record(
+    req: schemas.task.ReqPreviewRecord = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
+    teams: list[models.team.Team] = Depends(deps.get_current_team),
+):
+    task = await crud.label_task.query(task_id=req.task_id).first_or_none()
+    if not task:
+        raise exceptions.TASK_NOT_EXIST
+
+    record_ids = await get_record_ids(req, teams, user)
+    if req.data_id:
+        data_id = list(set(record_ids) & set([req.data_id]))
+    else:
+        data_id = record_ids
+
+    records = (
+        await crud.record.query(
+            task_id=task.task_id,
+            user_id=req.user_id,
+            data_id=data_id,
+            status=req.record_status,
+            is_submit=True,
+        )
+        .aggregate(
+            [
+                {"$sort": {"submit_time": -1}},
+                {"$limit": 1},
+            ],
+            projection_model=models.record.Record,
+        )
+        .to_list()
+    )
+
+    if not records:
+        raise exceptions.RECORD_NOT_EXIST
+
+    record = records[0]
+
+    data = await crud.data.query(
+        task_id=task.task_id,
+        data_id=record.data_id,
+    ).first_or_none()
+    if not data:
+        raise exceptions.SERVER_ERROR
+
+    label_user = await crud.user.query(user_id=record.creator_id).first_or_none()
+
+    resp = schemas.operator.task.RespPreviewRecord(
+        questionnaire_id=data.questionnaire_id,
+        data_id=data.data_id,
+        prompt=data.prompt,
+        conversation=[
+            schemas.message.MessageBase.model_validate(message, from_attributes=True)
+            for message in data.conversation
+        ],
+        evaluation=schemas.evaluation.SingleEvaluation.model_validate(
+            record.evaluation, from_attributes=True
+        ),
+        reference_evaluation=data.reference_evaluation,
+        label_user=schemas.user.DoUserWithUsername(
+            user_id=record.creator_id,
+            username=label_user.name if label_user else "",
+        ),
+        status=data.status,
+    )
+
+    return resp
+
+
+@router.post(
+    "/record/preview/ids",
+    summary="获取预览数据 id",
+    description="预览数据 id",
+    response_model=schemas.task.RespPreviewDataID,
+)
+async def preview_data_ids(
+    req: schemas.task.ReqPreviewDataID = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
+    teams: list[models.team.Team] = Depends(deps.get_current_team),
+) -> schemas.task.RespPreviewDataID:
+    task = await crud.label_task.query(task_id=req.task_id).first_or_none()
+    if not task:
+        raise exceptions.TASK_NOT_EXIST
+
+    class TaskField(BaseModel):
+        data_id: UUID
+
+    record_ids = await get_record_ids(req, teams, user)
+
+    records = (
+        await crud.record.query(
+            task_id=task.task_id,
+            user_id=req.user_id,
+            status=req.record_status,
+            data_id=record_ids,
+            is_submit=True,
+        )
+        .aggregate(
+            [
+                {"$sort": {"submit_time": -1}},
+            ],
+            projection_model=TaskField,
+        )
+        .to_list()
+    )
+
+    data_id = None
+    if req.pos_locate == schemas.task.RecordPosLocateKind.CURRENT:
+        if records:
+            data_id = records[0].data_id
+    elif req.pos_locate == schemas.task.RecordPosLocateKind.NEXT:
+        stop = False
+        for record in records:
+            if stop:
+                data_id = record.data_id
+                break
+            if record.data_id == req.data_id:
+                stop = True
+    elif req.pos_locate == schemas.task.RecordPosLocateKind.PRE:
+        for record in records:
+            if record.data_id == req.data_id:
+                break
+            data_id = record.data_id
+    return schemas.task.RespPreviewDataID(
+        data_id=data_id,
+        task_id=task.task_id,
     )

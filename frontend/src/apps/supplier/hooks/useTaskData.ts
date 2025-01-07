@@ -1,9 +1,10 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 import { ERouterTaskType } from '@/apps/supplier/constant/task';
 import {
+  ERecordStatus,
   getLabelData,
   getLabelDataByUserId,
   getPreviewData,
@@ -78,8 +79,9 @@ export const useTaskQuestion = ({ messageRef }: { messageRef: any }) => {
     flow_index,
     data_id: urlState?.data_id,
     questionnaire_id: urlState?.questionnaire_id,
-    record_status: urlState?.record_status,
+    record_status: urlState?.record_status === ERecordStatus.customize ? undefined : urlState?.record_status,
     user_id: urlState?.user_id,
+    inlet: urlState?.inlet,
   };
 
   const api = apiMap[type];
@@ -118,4 +120,18 @@ export const useSkipQuestion = () => {
       navigate(`/${type}`);
     },
   });
+};
+
+// 获取活动中的key
+export const useActiveKey = (key: string) => {
+  const queryClient = useQueryClient();
+  // 获取所有活跃的查询
+  const queriesKeys = queryClient
+    .getQueryCache()
+    .getAll()
+    .filter((query) => query.isActive());
+  // 获取当前活跃key中包含 question_key 的
+  const activeKey = queriesKeys.filter((query) => query.queryKey.includes(key))[0]?.queryKey;
+
+  return { activeKey };
 };

@@ -163,8 +163,12 @@ export const getPreviewTaskDetail = async (params: { task_id: string }): Promise
  */
 export enum ERecordStatus {
   processing = 'processing', // 处理中
-  completed = 'completed', // 已完成
-  discarded = 'discarded', // 已废弃
+  completed = 'completed', // 已完成  (已达标)
+  discarded = 'discarded', // 未采纳  (未达标)
+  approved = 'approved', // 审核通过
+  rejected = 'rejected', // 审核未通过
+  invalid = 'invalid', // 仅看标为有问题
+  customize = 'customize', // 自定义题目
 }
 
 export interface IQuestionParams {
@@ -184,6 +188,14 @@ export interface ILabelUser {
   username: string;
 }
 
+// 标注任务状态
+export enum ELabelStatus {
+  pending = 'pending', // 待标注
+  processing = 'processing', // 进行中
+  completed = 'completed', // 已完成
+  discarded = 'discarded', // 未采纳
+}
+
 export interface ILabelData {
   data_id: string;
   questionnaire_id: string;
@@ -193,6 +205,7 @@ export interface ILabelData {
   evaluation?: IAnswer; // 审核标注数据
   reference_evaluation?: IAnswer; // 预标注数据
   label_user?: ILabelUser; // 标注员信息
+  status?: ELabelStatus; // 状态
 }
 
 export const getLabelData = (params: IQuestionParams): Promise<ILabelData> => {
@@ -205,7 +218,7 @@ export const getPreviewData = (params: IQuestionParams): Promise<ILabelData> => 
 };
 // 获取某个标注员的标注数据
 export const getLabelDataByUserId = (params: IQuestionParams): Promise<ILabelData> => {
-  return request.post('/v1/operator/task/label/record/preview', params);
+  return request.post('/v1/task/label/record/preview', params);
 };
 
 // 获取预览数据id
@@ -214,8 +227,9 @@ export interface IPreviewIdParams {
   data_id?: string;
   questionnaire_id?: string;
   kind?: EKind; // 是否是源题模式
-  is_invalid_questionnaire?: boolean;
   pos_locate?: 'next' | 'prev' | 'current';
+  record_status?: ERecordStatus;
+  user_id?: string;
 }
 export interface IPreviewIdRRes {
   data_id: string;
@@ -226,8 +240,21 @@ export const getPreviewId = (params: IPreviewIdParams): Promise<IPreviewIdRRes> 
   return request.post('/v1/operator/task/label/data/preview/ids', params);
 };
 
+// 用户端 - 获取数据id
+export const getLabelDataId = (params: IQuestionParams): Promise<IPreviewIdRRes> => {
+  return request.post('/v1/task/label/record/preview/ids', params);
+};
+// 用户端 - 审核 获取数据id
+export const getAuditDataId = (params: IQuestionParams): Promise<IPreviewIdRRes> => {
+  return request.post('/v1/task/audit/record/preview/ids', params);
+};
+
 // 根据 questionnaire_id 获取 data_id
-export const getTaskDataIds = (params: { questionnaire_id?: string; task_id: string }): Promise<{ data: string[] }> => {
+export const getTaskDataIds = (params: {
+  questionnaire_id?: string;
+  task_id: string;
+  record_status?: ERecordStatus;
+}): Promise<{ data: string[] }> => {
   return request.post('/v1/operator/task/label/data/list_by_questionnaire_id', params);
 };
 
@@ -288,4 +315,36 @@ export interface IUploadRes {
 }
 export const getUploadUrl = (params: IUploadParams): Promise<IUploadRes> => {
   return request.post('/v1/file/create', params);
+};
+
+// 获取标注任务用户列表
+export const getLabelTaskUserList = (params: {
+  task_id: string;
+  inlet?: 'supplier' | 'operator';
+}): Promise<{
+  list: ILabelUser[];
+}> => {
+  return request.post('/v1/task/label/user', params);
+};
+// 获取审核任务用户列表
+export const getAuditTaskUserList = (params: {
+  task_id: string;
+  flow_index?: string;
+  inlet?: 'supplier' | 'operator';
+}): Promise<{
+  list: ILabelUser[];
+}> => {
+  return request.post('/v1/task/audit/user', params);
+};
+
+/**
+ * 打回标注任务
+ */
+export const rejectLabelTask = (params: {
+  task_id: string;
+  user_id: string[];
+  data_id: string;
+  is_data_recreate: boolean; // true 打回生成新题，false 仅打回
+}): Promise<any> => {
+  return request.post(`/v1/operator/task/label/data/reject`, params);
 };

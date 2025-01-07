@@ -53,6 +53,7 @@ interface IUserListParams {
   page_size?: number;
   username?: string;
   role?: EUserRole;
+  is_operator?: boolean;
 }
 export const getUserList = async (params: IUserListParams): Promise<{ list: IUserInfo[]; total: number }> => {
   return request.post('/v1/user/list', params);

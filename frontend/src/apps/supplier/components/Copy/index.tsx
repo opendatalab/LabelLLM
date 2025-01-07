@@ -6,6 +6,7 @@ import clsx from 'clsx';
 
 import IconFont from '@/components/IconFont';
 import { message } from '@/components/StaticAnt';
+import { useIntl } from 'react-intl';
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   val: string;
@@ -13,15 +14,16 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Copy: React.FC<PropsWithChildren<IProps>> = ({ val, className, children }) => {
+  const { formatMessage } = useIntl();
   return (
     <CopyToClipboard
       text={val}
       onCopy={() => {
-        message.success('复制成功');
+        message.success(formatMessage({ id: 'common.copy.success' }));
       }}
     >
       {children || (
-        <Tooltip title="复制">
+        <Tooltip title={formatMessage({ id: 'common.copy' })}>
           <span
             className={clsx(
               'inline-flex text-secondary border border-solid border-borderSecondary p-1 cursor-pointer bg-white rounded group/c',

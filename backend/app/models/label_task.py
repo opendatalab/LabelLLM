@@ -1,4 +1,5 @@
 import time
+from typing import Annotated
 from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
@@ -13,7 +14,7 @@ class LabelTask(Document):
     """
 
     # 任务id
-    task_id: Indexed(UUID, unique=True)  # type: ignore
+    task_id: Annotated[UUID, Indexed(unique=True)]
 
     # 任务标题
     title: str
@@ -66,10 +67,10 @@ class LabelTaskUpdate(BaseModel):
     标注任务更新
     """
 
-    title: str | None = None
-    description: str | None = None
-    status: schemas.task.TaskStatus | None = None
-    tool_config: dict | None = None
-    distribute_count: int | None = None
-    expire_time: int | None = None
-    teams: list[UUID] | None = None
+    title: str | None = Field(default=None)
+    description: str | None = Field(default=None)
+    status: schemas.task.TaskStatus | None  = Field(default=None)
+    tool_config: dict | None = Field(default=None)
+    distribute_count: int | None = Field(default=None)
+    expire_time: int | None = Field(default=None)
+    teams: list[UUID] | None = Field(default=None)

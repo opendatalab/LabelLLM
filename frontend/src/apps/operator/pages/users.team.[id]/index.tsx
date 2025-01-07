@@ -6,7 +6,7 @@ import type { ProFormInstance } from '@ant-design/pro-components';
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import React, { useRef } from 'react';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { useBoolean } from 'react-use';
+import { useToggle } from 'ahooks';
 import useUrlState from '@ahooksjs/use-url-state';
 import { useQuery } from '@tanstack/react-query';
 
@@ -23,7 +23,7 @@ export default function SupplierMember() {
   const params = useParams<{ team_id: string }>();
   const [state, setState] = useUrlState({ page: 1, page_size: 10, user_name: undefined });
   const formRef = useRef<ProFormInstance>();
-  const [open, onOpenChange] = useBoolean(false);
+  const [open, { toggle }] = useToggle(false);
 
   const sendData = { ...state, team_id: params.team_id } as ITeamMemberParams;
   const { data, refetch, isFetching } = useQuery({
@@ -111,7 +111,7 @@ export default function SupplierMember() {
             }}
           />
         </ProForm>
-        <Button type="primary" icon={<PlusOutlined />} onClick={onOpenChange}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={toggle}>
           邀请成员
         </Button>
       </div>
@@ -130,15 +130,7 @@ export default function SupplierMember() {
         }}
         onChange={onChange}
       />
-      <Modal
-        title="邀请成员"
-        open={open}
-        onCancel={onOpenChange}
-        centered
-        footer={null}
-        destroyOnClose={true}
-        width={560}
-      >
+      <Modal title="邀请成员" open={open} onCancel={toggle} centered footer={null} destroyOnClose={true} width={560}>
         <MemberInvite teamId={params.team_id as string} />
       </Modal>
     </CustomPageContainer>

@@ -9,10 +9,12 @@ import { message, modal } from '@/components/StaticAnt';
 
 import type { QueryBlockProps } from '../../components/QueryBlock';
 import QueryBlock from '../../components/QueryBlock';
-import Help from '../../components/Help';
+import Help from '@/components/Help';
 import { labelerKey } from '../../constant/query-key-factories';
 import type { GroupDataByUser, LabelTaskStatisticsBody } from '../../services/task';
 import { getLabelTaskUserStatistics, rejectLabelTask } from '../../services/task';
+import QuickCreate from './QuickCreate';
+import useLang from '@/hooks/useLang';
 
 const queryFormTemplate: FancyInputParams[] = [
   {
@@ -32,6 +34,7 @@ export default function LabelersTable() {
   const revalidator = useRevalidator();
   const [searchParams] = useSearchParams({ page: '1', page_size: '10', username: '' });
   const [selectedRecords, setSelectedRecords] = useState<GroupDataByUser[]>([]);
+  const { setLang } = useLang();
   const [queryParams, setQueryParams] = useState<LabelTaskStatisticsBody>(
     Object.fromEntries(searchParams) as unknown as LabelTaskStatisticsBody,
   );
@@ -39,6 +42,37 @@ export default function LabelersTable() {
     queryKey: labelerKey.list(queryParams),
     queryFn: async () => getLabelTaskUserStatistics({ ...queryParams, task_id: routeParams.id! }),
   });
+
+  const handleReject = async (user_ids?: string[]) => {
+    modal.confirm({
+      title: '打回重做',
+      okText: '确认',
+      cancelText: '取消',
+      content: (
+        <div>
+          <p>
+            已选 <span className="font-semibold">{(user_ids || selectedRecords).length}</span>{' '}
+            个标注员，是否确定全部打回？ 打回后题目将被标为未达标，同时生成一道新题，扔回题目池，由其他用户抢答。
+          </p>
+          <p className="text-secondary">打回的题目范围：除了已标为未达标的题目</p>
+        </div>
+      ),
+      onOk: async () => {
+        try {
+          await rejectLabelTask({
+            task_id: routeParams.id!,
+            user_id: user_ids || selectedRecords.map((record) => record.label_user.user_id),
+          });
+
+          message.success('所选标注员的答题已打回');
+          revalidator.revalidate();
+          refetch();
+        } catch (e) {
+          console.error(e);
+        }
+      },
+    });
+  };
 
   const columns = [
     {
@@ -84,21 +118,31 @@ export default function LabelersTable() {
     {
       title: '操作',
       responsive: ['lg', 'xl', 'xxl'],
-      width: 78,
+      width: 120,
       render: (text: string, record) => {
         if (!record?.completed || record.completed === 0) {
           return '-';
         }
 
         return (
-          <a
-            href={`/supplier/review_task/${routeParams.id}?user_id=${record.label_user.user_id}`}
-            target="_blank"
-            key="detail"
-            rel="noreferrer"
-          >
-            查看
-          </a>
+          <div>
+            <a className="mr-2" onClick={() => handleReject([record.label_user.user_id])}>
+              打回
+            </a>
+            <a
+              onClick={() => {
+                setLang('zh-CN');
+                window.open(
+                  `/supplier/review_task/${routeParams.id}?user_id=${record.label_user.user_id}&inlet=operator`,
+                  '_blank',
+                );
+              }}
+              key="detail"
+              rel="noreferrer"
+            >
+              查看
+            </a>
+          </div>
         );
       },
     },
@@ -106,37 +150,6 @@ export default function LabelersTable() {
 
   const handleSearch: QueryBlockProps<any>['onSearch'] = (params) => {
     setQueryParams(params as unknown as LabelTaskStatisticsBody);
-  };
-
-  const handleReject = async () => {
-    modal.confirm({
-      title: '打回重做',
-      okText: '确认',
-      cancelText: '取消',
-      content: (
-        <div>
-          <p>
-            已选 <span className="font-semibold">{selectedRecords.length}</span> 个标注员，是否确定全部打回？
-            打回后题目将被标为未达标，同时生成一道新题，扔回题目池，由其他用户抢答。
-          </p>
-          <p className="text-secondary">打回的题目范围：除了已标为未达标的题目</p>
-        </div>
-      ),
-      onOk: async () => {
-        try {
-          await rejectLabelTask({
-            task_id: routeParams.id!,
-            user_id: selectedRecords.map((record) => record.label_user.user_id),
-          });
-
-          message.success('所选标注员的答题已打回');
-          revalidator.revalidate();
-          refetch();
-        } catch (e) {
-          console.error(e);
-        }
-      },
-    });
   };
 
   const formProps = {
@@ -157,9 +170,20 @@ export default function LabelersTable() {
       },
     },
     footer: () => (
-      <Button type="link" className="!px-0" disabled={selectedRecords.length === 0} onClick={handleReject}>
-        打回重做
-      </Button>
+      <div className="flex">
+        <Button type="link" className="!px-0" disabled={selectedRecords.length === 0} onClick={() => handleReject()}>
+          打回重做
+        </Button>
+        <QuickCreate
+          list={selectedRecords}
+          trigger={
+            <Button className="!px-0 ml-4" disabled={selectedRecords.length === 0} type="link">
+              以此新建任务
+            </Button>
+          }
+        />
+        <Help className="ml-1">筛选标注结果快捷新建任务</Help>
+      </div>
     ),
     dataSource: data?.list,
     rowKey: (record) => record.label_user.user_id,

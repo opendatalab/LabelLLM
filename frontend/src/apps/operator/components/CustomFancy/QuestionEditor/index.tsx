@@ -5,7 +5,7 @@ import type { DataNode, TreeProps } from 'antd/es/tree';
 import { filter, isEqual, set, size, update } from 'lodash/fp';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
-import Icon, { PlusOutlined, StarFilled, SwapOutlined } from '@ant-design/icons';
+import Icon, { PlusOutlined, StarFilled, StarOutlined, SwapOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 
 import type { FancyInputProps } from '@/components/FancyInput/types';
@@ -19,6 +19,7 @@ import { QuestionType } from './types';
 import type { QuestionItem, QuestionOption } from './types';
 import TagSwitcher from './TagSwitcher';
 import Condition from './Condition';
+import clsx from 'clsx';
 
 export interface QuestionEditorProps extends FancyInputProps {
   disabled?: boolean;
@@ -634,11 +635,11 @@ const QuestionEditor = forwardRef<QuestionEditorRef, QuestionEditorProps>(functi
                 />
               </Form.Item>
               <Tooltip title="设为默认值">
-                <StyledStar
-                  active={Boolean(item.is_default)}
-                  icon={<StarFilled />}
-                  size="small"
+                <Button
+                  className="text-[var(--color-text-secondary)]"
+                  icon={<StarOutlined className={clsx(item.is_default ? 'text-warning' : 'text-color')} />}
                   type="text"
+                  size="small"
                   onClick={handleToggleDefault(preIndex!, index)}
                 />
               </Tooltip>

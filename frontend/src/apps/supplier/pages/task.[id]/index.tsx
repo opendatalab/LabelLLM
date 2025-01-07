@@ -108,6 +108,7 @@ const TaskDetail: React.FC<PropsWithChildren<IProps>> = () => {
               id="task-content"
             >
               <div className="flex items-end justify-between mb-2">
+                <span>{taskDetail?.description}</span>
                 <CheckTaskType types={[ERouterTaskType.review]}>
                   <div className="shrink-0">
                     <QuestionnaireSelect

@@ -22,7 +22,7 @@ dependencies = [
     "passlib[bcrypt]>=1.7.4",
     "motor>=3.1.2",
     "beanie>=1.18.0",
-    "cryptography==42.0.7",
+    "cryptography==43.0.1",
     "gunicorn>=20.1.0",
     "apscheduler>=3.10.1",
     "loguru>=0.7.0",
@@ -31,11 +31,10 @@ dependencies = [
     "openpyxl>=3.1.2",
     "requests>=2.31.0",
     "oss2>=2.18.0",
-    "sentry-sdk[fastapi]>=1.28.1",
-    "deepl>=1.15.0",
-    "google-api-python-client>=2.123.0",
     "minio>=7.2.7",
     "python-magic>=0.4.27",
+    "pydantic-settings>=2.7.0",
+    "sentry-sdk[fastapi]>=2.19.2",
 ]
 requires-python = ">=3.10"
 readme = "README.md"

@@ -1,6 +1,9 @@
 import random
 import tempfile
 import zipfile
+import io
+import urllib.parse
+from operator import itemgetter
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import AsyncGenerator
@@ -8,7 +11,7 @@ from uuid import UUID
 
 import orjson
 from beanie.operators import PullAll
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Query
 from fastapi.responses import Response, StreamingResponse
 from loguru._logger import Logger
 from openpyxl import Workbook
@@ -44,12 +47,186 @@ async def create_label_task(
             creator_id=user.user_id,
             tool_config=req.tool_config,
             distribute_count=req.distribute_count,
+            teams=req.teams,
+            expire_time=req.expire_time,
         )
     )
 
     resp = schemas.task.DoTaskBase(task_id=task.task_id)
 
     return resp
+
+
+@router.post(
+    "/derive",
+    summary="派生标注任务",
+    description="派生标注任务",
+    response_model=schemas.operator.task.RespLabelTaskCreateWithData,
+)
+async def derive_label_task(
+    req: schemas.operator.task.ReqLabelTaskCreateWithData = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
+):
+    def remove_duplicates(dict_list, key):
+        seen = set()
+        new_list = []
+        for d in dict_list:
+            k = getattr(d, key)
+            if k not in seen:
+                seen.add(k)
+                new_list.append(d)
+        return new_list
+
+    def filter_data_by_status(data_list, status: list[schemas.data.DataStatus]):
+        return [data for data in data_list if data.status in status]
+
+    res = []
+    tasks: list[list[models.data.Data]] = []
+
+    for data in req.data:
+        if data.data_ids:
+            datas = await crud.data.query(data_id=data.data_ids).to_list()
+        else:
+            if data.user_id:
+                records = await crud.record.query(
+                    task_id=data.task_id, user_id=data.user_id
+                ).to_list()
+                datas = await crud.data.query(
+                    task_id=data.task_id, data_id=[record.data_id for record in records]
+                ).to_list()
+            else:
+                datas = await crud.data.query(task_id=data.task_id).to_list()
+        if data.data_duplicated:
+            datas = remove_duplicates(datas, "questionnaire_id")
+        if data.data_status == schemas.data.DataRange.DISCARDED:
+            datas = filter_data_by_status(datas, [schemas.data.DataStatus.DISCARDED])
+        elif data.data_status == schemas.data.DataRange.COMPLETED:
+            datas = filter_data_by_status(datas, [schemas.data.DataStatus.COMPLETED])
+        else:
+            datas = filter_data_by_status(
+                datas,
+                [
+                    # schemas.data.DataStatus.PENDING,
+                    # schemas.data.DataStatus.PROCESSING,
+                    schemas.data.DataStatus.COMPLETED,
+                    schemas.data.DataStatus.DISCARDED,
+                ],
+            )
+        if len(datas) == 0:
+            res.append(
+                schemas.operator.task.RespLabelTaskCreateWithDataBase(
+                    is_ok=False, msg="前筛选结果对应题数为0, 无法创建任务! 请修改"
+                )
+            )
+        else:
+            res.append(
+                schemas.operator.task.RespLabelTaskCreateWithDataBase(is_ok=True)
+            )
+        tasks.append(datas)
+
+    if not all([r.is_ok for r in res]):
+        return schemas.operator.task.RespLabelTaskCreateWithData(
+            data=res,
+        )
+
+    for item, datas in zip(req.data, tasks):
+        task = await crud.label_task.query(task_id=item.task_id).first_or_none()
+        if not task:
+            raise exceptions.TASK_NOT_EXIST
+
+        new_task = await crud.label_task.create(
+            obj_in=models.label_task.LabelTaskCreate(
+                title=item.title,
+                description=task.description,
+                creator_id=user.user_id,
+                tool_config=task.tool_config,
+                distribute_count=item.distribute_count,
+                teams=task.teams,
+                expire_time=item.expire_time,
+            )
+        )
+        new_datas = [
+            models.data.DataCreate(
+                task_id=new_task.task_id,
+                questionnaire_id=data.questionnaire_id,
+                prompt=data.prompt
+                if item.data_format == schemas.data.DataFormat.RAW_LABEL_AUDIT
+                else data.prompt,
+                conversation_id=data.conversation_id,
+                conversation=data.conversation,
+                reference_evaluation=data.reference_evaluation
+                if item.data_format == schemas.data.DataFormat.RAW
+                else data.evaluation.to_label_evaluation(),
+                custom=data.custom,
+            )
+            for data in datas
+        ]
+
+        await crud.data.create_many(obj_in=new_datas)
+        await update_label_task(
+            req=schemas.operator.task.ReqLabelTaskUpdate(
+                task_id=new_task.task_id,
+                status=schemas.task.TaskStatus.OPEN,
+            )
+        )
+    return schemas.operator.task.RespLabelTaskCreateWithData(
+        data=res,
+    )
+
+
+@router.post(
+    "/copy",
+    summary="复制标注任务",
+    description="复制标注任务",
+    response_model=schemas.task.RespCopyTask,
+)
+async def copy_label_task(
+    req: schemas.task.DoTaskBase = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
+) -> schemas.task.RespCopyTask:
+    copy_task = await crud.label_task.query(task_id=req.task_id).first_or_none()
+    if not copy_task:
+        return schemas.task.RespCopyTask(is_ok=False, msg="任务不存在")
+    # 创建任务
+    try:
+        task_resp = await create_label_task(
+            req=schemas.operator.task.ReqLabelTaskCreate(
+                title=f"{copy_task.title}(副本)",
+                description=copy_task.description,
+                tool_config=copy_task.tool_config,
+                distribute_count=copy_task.distribute_count,
+                teams=copy_task.teams,
+                expire_time=copy_task.expire_time,
+            ),
+            user=user,
+        )
+    except Exception as e:
+        print(e)
+        return schemas.task.RespCopyTask(is_ok=False, msg="创建任务失败")
+
+    # 创建数据
+    try:
+        copy_task_data = await crud.data.query(task_id=copy_task.task_id).to_list()
+        if copy_task_data:
+            datas = [
+                models.data.DataCreate(
+                    task_id=task_resp.task_id,
+                    questionnaire_id=data.questionnaire_id,
+                    prompt=data.prompt,
+                    conversation_id=data.conversation_id,
+                    conversation=data.conversation,
+                    reference_evaluation=data.reference_evaluation,
+                    custom=data.custom,
+                )
+                for data in copy_task_data
+            ]
+
+            await crud.data.create_many(obj_in=datas)
+    except Exception as e:
+        print(e)
+        return schemas.task.RespCopyTask(is_ok=False, msg="创建数据失败")
+
+    return schemas.task.RespCopyTask(is_ok=True, task_id=task_resp.task_id)
 
 
 @router.patch(
@@ -115,6 +292,39 @@ async def update_label_task(
     return resp
 
 
+@router.patch(
+    "/batch",
+    summary="批量更新标注任务",
+    description="批量更新标注任务",
+    response_model=schemas.operator.task.RespLabelTaskCreateWithData,
+)
+async def batch_label_task(
+    req: schemas.operator.task.ReqBatchLabelTaskUpdate = Body(...),
+) -> schemas.operator.task.RespLabelTaskCreateWithData:
+    data = []
+    for task_id in req.task_id:
+        is_ok = True
+        msg = None
+        try:
+            await update_label_task(
+                req=schemas.operator.task.ReqLabelTaskUpdate(
+                    task_id=task_id,
+                    status=req.status,
+                )
+            )
+        except Exception:
+            is_ok = False
+            msg = "无法更新任务"
+        data.append(
+            schemas.operator.task.RespLabelTaskCreateWithDataBase(
+                is_ok=is_ok,
+                msg=msg,
+            )
+        )
+
+    return schemas.operator.task.RespLabelTaskCreateWithData(data=data)
+
+
 @router.post(
     "/list",
     summary="获取标注任务列表",
@@ -130,8 +340,6 @@ async def list_label_task(
         raise exceptions.USER_NOT_EXIST
 
     total_q_d = {"title": req.title, "status": req.status, "creator_id": req.creator_id}
-    if db_user.role == schemas.user.UserType.USER:
-        total_q_d["creator_id"] = db_user.user_id
 
     total = await crud.label_task.query(**total_q_d).count()
 
@@ -159,9 +367,6 @@ async def list_label_task(
         "sort": ["-create_time"],
         "creator_id": req.creator_id,
     }
-
-    if db_user.role == schemas.user.UserType.USER:
-        list_task_q["creator_id"] = db_user.user_id
 
     tasks = await crud.label_task.query(**list_task_q).to_list()
     if not tasks:
@@ -203,12 +408,69 @@ async def list_label_task(
                                 "$cond": [
                                     {
                                         "$in": [
+                                            "$source_data_id",
+                                            [
+                                                None,
+                                            ],
+                                        ]
+                                    },
+                                    1,
+                                    0,
+                                ]
+                            }
+                        },
+                        "pending": {
+                            "$sum": {
+                                "$cond": [
+                                    {
+                                        "$eq": [
+                                            "$status",
+                                            schemas.data.DataStatus.PENDING,
+                                        ]
+                                    },
+                                    1,
+                                    0,
+                                ]
+                            }
+                        },
+                        "labeling": {
+                            "$sum": {
+                                "$cond": [
+                                    {
+                                        "$eq": [
+                                            "$status",
+                                            schemas.data.DataStatus.PROCESSING,
+                                        ]
+                                    },
+                                    1,
+                                    0,
+                                ]
+                            }
+                        },
+                        "labeled": {
+                            "$sum": {
+                                "$cond": [
+                                    {
+                                        "$in": [
                                             "$status",
                                             [
-                                                schemas.data.DataStatus.PENDING,
-                                                schemas.data.DataStatus.PROCESSING,
                                                 schemas.data.DataStatus.COMPLETED,
+                                                schemas.data.DataStatus.DISCARDED,
                                             ],
+                                        ]
+                                    },
+                                    1,
+                                    0,
+                                ]
+                            }
+                        },
+                        "discarded": {
+                            "$sum": {
+                                "$cond": [
+                                    {
+                                        "$eq": [
+                                            "$status",
+                                            schemas.data.DataStatus.DISCARDED,
                                         ]
                                     },
                                     1,
@@ -219,11 +481,12 @@ async def list_label_task(
                     }
                 }
             ],
-            projection_model=schemas.operator.task.ViewDataCount,
+            projection_model=schemas.operator.task.ViewTaskProgressCount,
         )
         .to_list()
     )
-    completed_map = {item.task_id: item.completed for item in data_count or []}
+    pending_map = {item.task_id: item.pending for item in data_count or []}
+    labeling_map = {item.task_id: item.labeling for item in data_count or []}
     total_map = {item.task_id: item.total for item in data_count or []}
 
     resp = schemas.operator.task.RespListLabelTask(
@@ -235,7 +498,9 @@ async def list_label_task(
                 status=task.status,
                 creator=user_name_map.get(task.creator_id, ""),
                 created_time=task.create_time,
-                completed_count=completed_map.get(task.task_id, 0),
+                completed_count=total_map.get(task.task_id, 0)
+                - pending_map.get(task.task_id, 0)
+                - labeling_map.get(task.task_id, 0),
                 total_count=total_map.get(task.task_id, 0),
             )
             for task in tasks
@@ -291,11 +556,9 @@ async def get_label_task(
                                 "$cond": [
                                     {
                                         "$in": [
-                                            "$status",
+                                            "$source_data_id",
                                             [
-                                                schemas.data.DataStatus.PENDING,
-                                                schemas.data.DataStatus.PROCESSING,
-                                                schemas.data.DataStatus.COMPLETED,
+                                                None,
                                             ],
                                         ]
                                     },
@@ -383,6 +646,15 @@ async def get_label_task(
     else:
         task_progress = data_count[0]
 
+    # 获取用户分布
+    labeling_users_set = set()
+    async for record in crud.record.query(
+        task_id=task.task_id, status=schemas.record.RecordStatus.PROCESSING
+    ):
+        labeling_users_set.add(record.creator_id)
+
+    users = await crud.user.query(user_id=list(labeling_users_set)).to_list()
+
     # 获取任务的标注时间
     task_time_view = (
         await crud.record.query(task_id=task.task_id, is_submit=True)
@@ -421,13 +693,23 @@ async def get_label_task(
             for team_id in task.teams or []
         ],
         progress=schemas.operator.task.LabelTaskProgress(
-            completed=task_progress.completed,
+            completed=task_progress.total
+            - task_progress.pending
+            - task_progress.labeling,
             total=task_progress.total,
             pending=task_progress.pending,
             labeling=task_progress.labeling,
             labeled=task_progress.labeled,
             discarded=task_progress.discarded,
             label_time=label_time,
+        ),
+        users=schemas.operator.task.LabelTaskUsers(
+            labeling=[
+                schemas.user.DoUserWithUsername(
+                    user_id=user.user_id, username=user.name
+                )
+                for user in users or []
+            ]
         ),
     )
 
@@ -479,6 +761,7 @@ async def delete_label_task(
     await crud.record.query(task_id=req.task_id).delete()
 
     return {}
+
 
 @router.post(
     "/data/batch_create",
@@ -543,64 +826,72 @@ async def reject_data(
     req: schemas.operator.task.ReqRejectData = Body(...),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ):
-    async with redis_session.lock(
-        f"audit_task_scheduler_job_{req.task_id}", blocking=False
-    ):
-        print(f"reject data, task_id: {req.task_id}, user_id: {user.user_id}")
+    try:
+        async with redis_session.lock(
+            f"audit_task_scheduler_job_{req.task_id}", blocking=False
+        ):
+            # 获取任务
+            task = await crud.label_task.query(task_id=req.task_id).first_or_none()
+            if not task:
+                raise exceptions.TASK_NOT_EXIST
 
-        # 获取任务
-        task = await crud.label_task.query(task_id=req.task_id).first_or_none()
-        if not task:
-            raise exceptions.TASK_NOT_EXIST
+            # 获取已完成的标注记录（排除已经被打回的）
+            records = await crud.record.query(
+                task_id=req.task_id,
+                user_id=req.user_id,
+                data_id=req.data_id,
+                is_submit=True,
+                status=schemas.record.RecordStatus.COMPLETED,
+            ).to_list()
+            if not records:
+                return
 
-        # 获取已完成的标注记录（排除已经被打回的）
-        records = await crud.record.query(
-            task_id=req.task_id,
-            user_id=req.user_id,
-            is_submit=True,
-            status=schemas.record.RecordStatus.COMPLETED,
-        ).to_list()
-        if not records:
-            return
+            data_ids = [record.data_id for record in records]
 
-        data_ids = [record.data_id for record in records]
+            # 要新建的数据
+            new_datas = []
+            # 被新建的数据id
+            new_data_ids = []
 
-        # 要新建的数据
-        new_datas = []
-        # 被新建的数据id
-        new_data_ids = []
+            # 获取数据
+            datas = await crud.data.query(
+                task_id=req.task_id, data_id=data_ids
+            ).to_list()
 
-        # 获取数据
-        datas = await crud.data.query(task_id=req.task_id, data_id=data_ids).to_list()
-
-        for data in datas:
-            new_datas.append(
-                models.data.DataCreate(
-                    task_id=task.task_id,
-                    source_data_id=data.data_id,
-                    result_id=data.result_id,
-                    questionnaire_id=data.questionnaire_id,
-                    prompt=data.prompt,
-                    conversation=data.conversation,
-                    conversation_id=data.conversation_id,
-                    reference_evaluation=data.reference_evaluation,
-                    custom=data.custom,
+            # 如果没有审核任务，直接创建新的数据
+            for data in datas:
+                new_datas.append(
+                    models.data.DataCreate(
+                        task_id=task.task_id,
+                        source_data_id=data.data_id,
+                        result_id=data.result_id,
+                        questionnaire_id=data.questionnaire_id,
+                        prompt=data.prompt,
+                        conversation=data.conversation,
+                        conversation_id=data.conversation_id,
+                        reference_evaluation=data.reference_evaluation,
+                        custom=data.custom,
+                    )
                 )
-            )
-            new_data_ids.append(data.data_id)
+                new_data_ids.append(data.data_id)
 
-        if len(new_datas) > 0:
-            await crud.data.query(data_id=new_data_ids).set(
-                {
-                    models.data.Data.status: schemas.data.DataStatus.DISCARDED,
-                }
-            )  # type: ignore
-            await crud.record.query(
-                task_id=req.task_id, data_id=new_data_ids, user_id=req.user_id
-            ).set({models.record.Record.status: schemas.record.RecordStatus.DISCARDED})  # type: ignore
-            await crud.data.create_many(obj_in=new_datas)
+            if len(new_datas) > 0:
+                await crud.data.query(task_id=req.task_id, data_id=new_data_ids).set(
+                    {
+                        models.data.Data.status: schemas.data.DataStatus.DISCARDED,
+                    }
+                )  # type: ignore
+                await crud.record.query(
+                    task_id=req.task_id, data_id=new_data_ids, user_id=req.user_id
+                ).set(
+                    {models.record.Record.status: schemas.record.RecordStatus.DISCARDED}
+                )  # type: ignore
+                if req.is_data_recreate:
+                    await crud.data.create_many(obj_in=new_datas)
 
-        return
+            return
+    except LockError:
+        raise exceptions.SERVER_ERROR
 
 
 @router.get(
@@ -610,21 +901,51 @@ async def reject_data(
     response_class=StreamingResponse,
 )
 async def export_data(
-    task_id: UUID,
+    task_id: UUID | list[UUID] = Query(...),
+    submit: schemas.operator.task.SubmitStatus | None = Query(None),
+    qualified: schemas.operator.task.QualifiedStatus | None = Query(None),
+    invalid: bool | None = Query(None),
 ):
-    task = await crud.label_task.query(task_id=task_id).first_or_none()
-    if not task:
+    task_count = await crud.label_task.query(task_id=task_id).count()
+    if task_count == 0:
         raise exceptions.TASK_NOT_EXIST
+
+    status = None
+    if submit is not None:
+        if submit == schemas.operator.task.SubmitStatus.SUBMITTED:
+            status = [
+                schemas.data.DataStatus.COMPLETED,
+                schemas.data.DataStatus.DISCARDED,
+            ]
+        elif submit == schemas.operator.task.SubmitStatus.UN_SUBMITTED:
+            status = [
+                schemas.data.DataStatus.PENDING,
+                schemas.data.DataStatus.PROCESSING,
+            ]
+
+    if qualified is not None:
+        if qualified == schemas.operator.task.QualifiedStatus.COMPLETED:
+            if status is None:
+                status = [schemas.data.DataStatus.COMPLETED]
+            else:
+                status = list(set(status) & {schemas.data.DataStatus.COMPLETED})
+        elif qualified == schemas.operator.task.QualifiedStatus.DISCARDED:
+            if status is None:
+                status = [schemas.data.DataStatus.DISCARDED]
+            else:
+                status = list(set(status) & {schemas.data.DataStatus.DISCARDED})
 
     async def export_stream_data(task_id) -> AsyncGenerator:
         datas = ""
         index = 0
-        async for data in crud.data.query(task_id=task_id):
+        async for data in crud.data.query(
+            task_id=task_id, status=status, invalid=invalid
+        ):
             index += 1
             datas += (
-                schemas.data.DoData.parse_obj(data).json(
-                    ensure_ascii=False, exclude={"evaluation": {"data_evaluation"}}
-                )
+                schemas.data.DoData.model_validate(
+                    data, from_attributes=True
+                ).model_dump_json()
                 + "\n"
             )
 
@@ -635,14 +956,48 @@ async def export_data(
         if datas:
             yield datas
 
-    resp = StreamingResponse(
-        content=export_stream_data(task_id),
-        media_type="application/octet-stream",
-        headers={
-            "Content-Disposition": f"attachment; filename={datetime.now(tz=timezone(timedelta(hours=8))).strftime('%Y%m%d%H%M')}.jsonl"
-        },
-    )
+    async def zip_generator(task_id: list[UUID]) -> AsyncGenerator[bytes, None]:
+        tasks = await crud.label_task.query(task_id=task_id).to_list()
+        task_h = {task.task_id: task for task in tasks}
+        title_set = set()
+        title_map = {}
+        with io.BytesIO() as zip_buffer:
+            with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+                for tid in task_id:
+                    data_buffer = io.StringIO()
+                    async for chunk in export_stream_data(tid):
+                        data_buffer.write(chunk)
+                    data_buffer.seek(0)
+                    if task_h[tid].title not in title_set:
+                        title_set.add(task_h[tid].title)
+                        title = task_h[tid].title
+                        title_map[title] = 1
+                    else:
+                        title = f"{task_h[tid].title}({title_map[task_h[tid].title]})"
+                        title_map[task_h[tid].title] += 1
+                    zip_file.writestr(f"{title}.jsonl", data_buffer.read())
 
+            zip_buffer.seek(0)
+            yield zip_buffer.read()
+
+    if task_count == 1:
+        task = await crud.label_task.query(task_id=task_id).first_or_none()
+        if not task:
+            raise exceptions.TASK_NOT_EXIST
+        filename = urllib.parse.quote(task.title)
+        resp = StreamingResponse(
+            content=export_stream_data(task_id),
+            media_type="application/octet-stream",
+            headers={"Content-Disposition": f"attachment; filename={filename}.jsonl"},
+        )
+    else:
+        resp = StreamingResponse(
+            content=zip_generator(task_id),  # type: ignore
+            media_type="application/zip",
+            headers={
+                "Content-Disposition": f"attachment; filename={datetime.now(tz=timezone(timedelta(hours=8))).strftime('%Y%m%d%H%M%S')}.zip"
+            },
+        )
     return resp
 
 
@@ -662,6 +1017,9 @@ async def list_by_questionnaire_id(
     datas: list[models.data.Data] = await crud.data.query(
         task_id=task.task_id,
         questionnaire_id=req.questionnaire_id,
+        invalid=True
+        if req.record_status == schemas.operator.task.RecordFullStatus.INVALID
+        else None,
     ).to_list()
 
     return schemas.operator.task.RespQuestionnaireDataIDs(
@@ -676,10 +1034,10 @@ async def list_by_questionnaire_id(
     response_class=StreamingResponse,
 )
 async def export_record(
-    task_id: UUID,
+    task_id: UUID | list[UUID] = Query(...),
 ):
-    task = await crud.label_task.query(task_id=task_id).first_or_none()
-    if not task:
+    task_count = await crud.label_task.query(task_id=task_id).count()
+    if task_count == 0:
         raise exceptions.TASK_NOT_EXIST
 
     user_name_map = defaultdict(str)
@@ -691,8 +1049,10 @@ async def export_record(
         index = 0
         async for record in crud.record.query(task_id=task_id, is_submit=True):
             index += 1
-            do_record = schemas.record.DoRecord.parse_obj(record)
-            record_dict = do_record.dict(exclude={"evaluation": {"data_evaluation"}})
+            do_record = schemas.record.DoRecord.model_validate(
+                record, from_attributes=True
+            )
+            record_dict = do_record.model_dump()
             record_dict["creator"] = user_name_map[do_record.creator_id]
             records += orjson.dumps(record_dict).decode("utf-8") + "\n"
 
@@ -703,13 +1063,47 @@ async def export_record(
         if records:
             yield records
 
-    resp = StreamingResponse(
-        content=export_stream_data(task_id),
-        media_type="application/octet-stream",
-        headers={
-            "Content-Disposition": f"attachment; filename={datetime.now(tz=timezone(timedelta(hours=8))).strftime('%Y%m%d%H%M')}.jsonl"
-        },
-    )
+    async def zip_generator(task_id: list[UUID]) -> AsyncGenerator[bytes, None]:
+        tasks = await crud.label_task.query(task_id=task_id).to_list()
+        task_h = {task.task_id: task for task in tasks}
+        title_set = set()
+        title_map = {}
+        with io.BytesIO() as zip_buffer:
+            with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+                for tid in task_id:
+                    data_buffer = io.StringIO()
+                    async for chunk in export_stream_data(tid):
+                        data_buffer.write(chunk)
+                    data_buffer.seek(0)
+                    if task_h[tid].title not in title_set:
+                        title_set.add(task_h[tid].title)
+                        title = task_h[tid].title
+                        title_map[title] = 1
+                    else:
+                        title = f"{task_h[tid].title}({title_map[task_h[tid].title]})"
+                        title_map[task_h[tid].title] += 1
+                    zip_file.writestr(f"{title}.jsonl", data_buffer.read())
+            zip_buffer.seek(0)
+            yield zip_buffer.read()
+
+    if task_count == 1:
+        task = await crud.label_task.query(task_id=task_id).first_or_none()
+        if not task:
+            raise exceptions.TASK_NOT_EXIST
+        filename = urllib.parse.quote(task.title)
+        resp = StreamingResponse(
+            content=export_stream_data(task_id),
+            media_type="application/octet-stream",
+            headers={"Content-Disposition": f"attachment; filename={filename}.jsonl"},
+        )
+    else:
+        resp = StreamingResponse(
+            content=zip_generator(task_id),  # type: ignore
+            media_type="application/zip",
+            headers={
+                "Content-Disposition": f"attachment; filename={datetime.now(tz=timezone(timedelta(hours=8))).strftime('%Y%m%d%H%M%S')}.zip"
+            },
+        )
 
     return resp
 
@@ -722,31 +1116,32 @@ async def export_record(
     response_class=Response,
 )
 async def export_workload(
-    task_id: UUID,
+    task_id: UUID | list[UUID] = Query(...),
 ):
-    task = await crud.label_task.query(task_id=task_id).first_or_none()
-    if not task:
+    task_count = await crud.label_task.query(task_id=task_id).count()
+    if task_count == 0:
         raise exceptions.TASK_NOT_EXIST
 
     # 用户答题总数
-    user_data_count: defaultdict = defaultdict(int)
+    task_user_data_count: defaultdict = defaultdict(int)
     # 用户未达标题数
-    user_data_discarded_count: defaultdict = defaultdict(int)
+    task_user_data_discarded_count: defaultdict = defaultdict(int)
     # 用户答题总时长（秒）
-    user_data_duration: defaultdict = defaultdict(int)
+    task_user_data_duration: defaultdict = defaultdict(int)
     # 用户id set
-    user_ids_set: set = set()
+    task_user_ids_set: set[tuple[UUID, str]] = set()
 
     async for record in crud.record.query(task_id=task_id, is_submit=True):
-        user_ids_set.add(record.creator_id)
-        user_data_count[record.creator_id] += 1
-        user_data_duration[record.creator_id] += (
+        key = (record.task_id, record.creator_id)
+        task_user_ids_set.add(key)
+        task_user_data_count[key] += 1
+        task_user_data_duration[key] += (
             (record.submit_time - record.create_time) if record.submit_time else 0
         )
         if record.status == schemas.data.DataStatus.DISCARDED:
-            user_data_discarded_count[record.creator_id] += 1
+            task_user_data_discarded_count[key] += 1
 
-    user_ids = list(user_ids_set)
+    user_ids = list(set([user_id for _, user_id in task_user_ids_set]))
     users = await crud.user.query(user_id=user_ids).to_list()
     user_name_map = {user.user_id: user.name for user in users}
 
@@ -756,35 +1151,45 @@ async def export_workload(
         for t_user in team.users:
             user_teams[t_user.user_id].append(team.name)
 
-    colummns: list[list[str]] = [
-        [
-            "用户ID",
-            "用户名",
-            "所属团队",
-            "答题效率（题/小时）",
-            "答题时长（小时）",
-            "答题数",
-            "未达标题数",
-            "未达标率",
-        ]
+    tasks = await crud.label_task.query(task_id=task_id).to_list()
+    task_h = {task.task_id: task for task in tasks}
+
+    headers = [
+        "任务ID",
+        "任务名称",
+        "用户ID",
+        "用户名",
+        "所属团队",
+        "答题效率（题/小时）",
+        "答题时长（小时）",
+        "答题数",
+        "未达标题数",
+        "未达标率",
     ]
-    for user_id in user_ids:
+    colummns: list[list[str]] = []
+    for task_id, user_id in task_user_ids_set:
+        key = (task_id, user_id)
         colummns.append(
             [
+                str(task_id),
+                task_h[task_id].title,
                 user_id,
                 user_name_map[user_id] if user_id in user_name_map else "",
                 ",".join(user_teams[user_id]) if user_id in user_teams else "",
-                f"{(user_data_count[user_id] / user_data_duration[user_id] * 60 * 60):.2f}",
-                f"{(user_data_duration[user_id]/60/60):.4f}",
-                user_data_count[user_id],
-                user_data_discarded_count[user_id],
-                f"{(user_data_discarded_count[user_id]/user_data_count[user_id]*100):.2f}%",
+                f"{(task_user_data_count[key] / task_user_data_duration[key] * 60 * 60):.2f}",
+                f"{(task_user_data_duration[key]/60/60):.4f}",
+                task_user_data_count[key],
+                task_user_data_discarded_count[key],
+                f"{(task_user_data_discarded_count[key]/task_user_data_count[key]*100):.2f}%",
             ]
         )
+
+    colummns = sorted(colummns, key=itemgetter(0, 2))
 
     # 生成excel
     wb = Workbook()
     ws = wb.active
+    ws.append(headers)  # type: ignore
     for row in colummns:
         ws.append(row)  # type: ignore
 
@@ -817,35 +1222,35 @@ async def preview_data_ids(
     task = await crud.label_task.query(task_id=req.task_id).first_or_none()
     if not task:
         raise exceptions.TASK_NOT_EXIST
-    if req.kind == schemas.operator.stats.ANSWER_FLITER_KIND.WITHOUT_DUPLICATE:
-        records = (
-            await crud.data.query(
+
+    if req.user_id is not None:
+        data_ids = [
+            i.data_id
+            for i in await crud.record.query(
                 task_id=task.task_id,
+                user_id=req.user_id,
+            ).to_list()
+        ]
+    else:
+        data_ids = None
+
+    if req.kind == schemas.operator.stats.ANSWER_FLITER_KIND.WITHOUT_DUPLICATE:
+
+        records = await crud.data.query(
+            task_id=task.task_id,
+            data_id=data_ids,
+            sort="data_id",
+            status=req.record_status
+            if req.record_status
+            in (
+                schemas.data.DataStatus.COMPLETED,
+                schemas.data.DataStatus.DISCARDED,
             )
-            .aggregate(
-                [
-                    {
-                        "$match": {
-                            "evaluation.questionnaire_evaluation.is_invalid_questionnaire": (
-                                req.is_invalid_questionnaire
-                                if req.is_invalid_questionnaire is not None
-                                else {"$exists": True}
-                            ),
-                        }
-                    }
-                ],
-                projection_model=models.data.Data,
-            )
-            .to_list()
-        )
-        if len(records) > 0 and req.data_id is None:
-            idx = random.randint(0, len(records) - 1)
-            return schemas.operator.task.RespPreviewDataID(
-                task_id=req.task_id,
-                data_id=records[idx].data_id,
-                questionnaire_id=records[idx].questionnaire_id,
-            )
-        p_judge_by_some_id = lambda x: x.data == req.data_id
+            else None,
+            invalid=True
+            if req.record_status == schemas.record.RecordFullStatus.INVALID
+            else None,
+        ).to_list()
     else:
 
         class AggProjectModel(BaseModel):
@@ -855,18 +1260,14 @@ async def preview_data_ids(
         records = (
             await crud.data.query(
                 task_id=task.task_id,
+                data_id=data_ids,
+                sort="data_id",
+                invalid=True
+                if req.record_status == schemas.record.RecordFullStatus.INVALID
+                else None,
             )
             .aggregate(
                 [
-                    {
-                        "$match": {
-                            "evaluation.questionnaire_evaluation.is_invalid_questionnaire": (
-                                req.is_invalid_questionnaire
-                                if req.is_invalid_questionnaire is not None
-                                else {"$exists": True}
-                            )
-                        }
-                    },
                     {"$project": {"questionnaire_id": 1, "data_id": 1}},
                 ],
                 projection_model=AggProjectModel,
@@ -874,42 +1275,28 @@ async def preview_data_ids(
             .to_list()
         )
 
-        if len(records) > 0 and req.questionnaire_id is None:
-            idx = random.randint(0, len(records) - 1)
-            return schemas.operator.task.RespPreviewDataID(
-                task_id=req.task_id,
-                data_id=records[idx].data_id,
-                questionnaire_id=records[idx].questionnaire_id,
-            )
-    p_judge_by_some_id = lambda x: x.questionnaire_id == req.questionnaire_id
-
-    if len(records) == 0:
-        return schemas.operator.task.RespPreviewDataID(task_id=req.task_id)
-    prev_one = None
-    current = None
-    next_one = None
-    for idx in range(len(records)):
-        if idx > 0:
-            prev_one = records[idx - 1]
-        current = records[idx]
-        next_one = None
-        if len(records) - 1 >= idx + 1:
-            next_one = records[idx + 1]
-        if p_judge_by_some_id(records[idx]):
-            break
-
-    answer = None
-    resp = schemas.operator.task.RespPreviewDataID(task_id=req.task_id)
-    if req.pos_locate == schemas.operator.task.RecordPosLocateKind.CURRENT:
-        answer = current
-    elif req.pos_locate == schemas.operator.task.RecordPosLocateKind.PRE:
-        answer = prev_one
-    else:
-        answer = next_one
-    if answer is not None:
-        resp.questionnaire_id = answer.questionnaire_id
-        resp.data_id = answer.data_id
-    return resp
+    record = None
+    if req.pos_locate == schemas.task.RecordPosLocateKind.CURRENT:
+        if records:
+            record = records[0]
+    elif req.pos_locate == schemas.task.RecordPosLocateKind.NEXT:
+        stop = False
+        for r in records:
+            if stop:
+                record = r
+                break
+            if r.data_id == req.data_id:
+                stop = True
+    elif req.pos_locate == schemas.task.RecordPosLocateKind.PRE:
+        for r in records:
+            if r.data_id == req.data_id:
+                break
+            record = r
+    return schemas.operator.task.RespPreviewDataID(
+        task_id=req.task_id,
+        data_id=record.data_id if record else None,
+        questionnaire_id=record.questionnaire_id if record else None,
+    )
 
 
 # 预览配置
@@ -926,15 +1313,37 @@ async def preview_data(
     if not task:
         raise exceptions.TASK_NOT_EXIST
 
+    if req.user_id is not None:
+        data_ids = [
+            i.data_id
+            for i in await crud.record.query(
+                task_id=task.task_id,
+                user_id=req.user_id,
+            ).to_list()
+        ]
+    else:
+        data_ids = None
+
     datas = (
         await crud.data.query(
             task_id=task.task_id,
-            data_id=req.data_id,
+            data_id=req.data_id if req.data_id else data_ids,
+            sort="data_id",
+            status=req.record_status
+            if req.record_status
+            in (
+                schemas.data.DataStatus.COMPLETED,
+                schemas.data.DataStatus.DISCARDED,
+            )
+            else None,
             questionnaire_id=req.questionnaire_id,
+            invalid=True
+            if req.record_status == schemas.record.RecordFullStatus.INVALID
+            else None,
         )
         .aggregate(
             [
-                {"$sample": {"size": 1}},
+                {"$limit": 1} if req.record_status else {"$sample": {"size": 1}},
             ],
             projection_model=models.data.Data,
         )
@@ -949,6 +1358,7 @@ async def preview_data(
     record = await crud.record.query(
         task_id=task.task_id,
         data_id=data.data_id,
+        user_id=req.user_id,
     ).first_or_none()
 
     label_user = (
@@ -962,10 +1372,12 @@ async def preview_data(
         data_id=data.data_id,
         prompt=data.prompt,
         conversation=[
-            schemas.message.MessageBase.parse_obj(message)
+            schemas.message.MessageBase.model_validate(message, from_attributes=True)
             for message in data.conversation
         ],
-        evaluation=schemas.evaluation.SingleEvaluation.parse_obj(data.evaluation),
+        evaluation=schemas.evaluation.SingleEvaluation.model_validate(
+            data.evaluation, from_attributes=True
+        ),
         reference_evaluation=data.reference_evaluation,
         label_user=(
             schemas.user.DoUserWithUsername(
@@ -975,6 +1387,7 @@ async def preview_data(
             if label_user
             else None
         ),
+        status=data.status,
     )
 
     return resp
@@ -1138,10 +1551,12 @@ async def preview_record(
         data_id=data.data_id,
         prompt=data.prompt,
         conversation=[
-            schemas.message.MessageBase.parse_obj(message)
+            schemas.message.MessageBase.model_validate(message, from_attributes=True)
             for message in data.conversation
         ],
-        evaluation=schemas.evaluation.SingleEvaluation.parse_obj(record.evaluation),
+        evaluation=schemas.evaluation.SingleEvaluation.model_validate(
+            record.evaluation, from_attributes=True
+        ),
         reference_evaluation=data.reference_evaluation,
         label_user=schemas.user.DoUserWithUsername(
             user_id=record.creator_id,

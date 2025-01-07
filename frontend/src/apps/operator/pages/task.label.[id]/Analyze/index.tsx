@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import type { RadioChangeEvent, TabsProps } from 'antd';
-import { Alert, Button, Drawer, Radio, Spin, Table, Tabs, Tag, Typography } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import type { MenuProps, RadioChangeEvent, TabsProps } from 'antd';
+import { Alert, Button, Drawer, Dropdown, Radio, Spin, Table, Tabs, Tag, Typography } from 'antd';
+import { CaretDownOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { ProCard, ProForm, ProFormDependency, ProFormList, ProFormSelect } from '@ant-design/pro-components';
 import { useParams, useRouteLoaderData } from 'react-router';
@@ -20,8 +20,11 @@ import {
   getTaskLabelStats,
   getTaskLabelId,
 } from '@/apps/operator/services/task';
-import Help from '@/apps/operator/components/Help';
+import Help from '@/components/Help';
 import CustomEmpty from '@/apps/operator/components/CustomEmpty';
+import QuickCreate from '../QuickCreate';
+import useLang from '@/hooks/useLang';
+import { DrawerStyles } from 'antd/es/drawer/DrawerPanel';
 
 const { Text } = Typography;
 
@@ -50,6 +53,8 @@ const Distributed = () => {
     setValue(value);
   };
 
+  const { setLang } = useLang();
+
   const { data, isFetching } = useQuery({
     queryKey: ['/v1/operator/task/label/stats', v],
     queryFn: async () => getTaskLabelStats({ _id: params.id!, scope: v }),
@@ -63,6 +68,7 @@ const Distributed = () => {
     onSuccess: (d) => {
       const ids = d?.data?.map((item) => item.data_id);
       saveIds('data_id', ids.join('\n'));
+      setLang('zh-CN');
       window.open(`/supplier/review/${task_id}?question_type=customize&data_id=${ids[0]}`, '_blank');
     },
   });
@@ -167,12 +173,25 @@ const Distributed = () => {
   );
 };
 
+const downloadItems: MenuProps['items'] = [
+  {
+    key: 'id',
+    label: 'ID',
+  },
+  {
+    key: 'result',
+    label: '标注结果',
+  },
+];
+
 // 数据筛选
 const Filter = () => {
   const { tool_config, task_id } = (useRouteLoaderData('labelTask') || {}) as OperatorTaskDetail;
   type TValues = Pick<ITaskLabelDataFilterParams, 'filters' | 'operator'>;
   const formRef = useRef<ProFormInstance<TValues>>();
   const refData = useRef<{ count: number }>();
+
+  const { setLang } = useLang();
 
   // 判断每一个筛选项是否有选择题
   type TQuestionsType = 'conversation' | 'message' | 'question';
@@ -214,13 +233,14 @@ const Filter = () => {
         : data.data?.map((item) => item.data_id);
 
       saveIds(key, ids.join('\n'));
+      setLang('zh-CN');
       if (isWithDuplicate) {
         window.open(
-          `/supplier/review/${task_id}?question_type=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}`,
+          `/supplier/review/${task_id}?record_status=customize&kind=${EKind.with_duplicate}&questionnaire_id=${ids[0]}&inlet=operator`,
           '_blank',
         );
       } else {
-        window.open(`/supplier/review/${task_id}?question_type=customize&data_id=${ids[0]}`, '_blank');
+        window.open(`/supplier/review/${task_id}?record_status=customize&data_id=${ids[0]}&inlet=operator`, '_blank');
       }
     },
   });
@@ -309,7 +329,6 @@ const Filter = () => {
                   creatorButtonText: '添加条件',
                   type: 'link',
                   block: false,
-                  className: 'p-0',
                 }}
                 itemRender={({ listDom, action }) => {
                   return (
@@ -416,12 +435,33 @@ const Filter = () => {
             <div className="flex justify-between items-center pb-2">
               <span>共 {refData.current?.count} 条符合条件的数据</span>
               <div className="flex space-x-3">
-                <Button onClick={() => download('result')} disabled={refData.current?.count === 0} type="primary" ghost>
-                  下载标注结果
-                </Button>
-                <Button onClick={() => download('id')} disabled={refData.current?.count === 0} type="primary" ghost>
-                  下载 ID
-                </Button>
+                <QuickCreate
+                  source="analyze"
+                  getIds={async () => {
+                    const result = await getTaskLabelIds(getFormData());
+                    const ids = result?.data?.map((item) => item.data_id);
+                    return (v === EKind.without_duplicate ? ids : ids.flat()) as string[];
+                  }}
+                  trigger={
+                    <Button disabled={refData.current?.count === 0} type="primary" ghost>
+                      以此新建任务
+                    </Button>
+                  }
+                />
+                <Dropdown
+                  menu={{
+                    items: refData.current?.count === 0 ? [] : downloadItems,
+                    onClick: (e) => {
+                      download(e.key as 'id' | 'result');
+                    },
+                  }}
+                  placement="bottom"
+                >
+                  <Button disabled={refData.current?.count === 0} type="primary" ghost>
+                    下载
+                    <CaretDownOutlined />
+                  </Button>
+                </Dropdown>
                 <Button
                   loading={idsLoading}
                   disabled={refData.current?.count === 0}
@@ -467,12 +507,18 @@ const Analyze: React.FC = () => {
     },
   ];
 
+  const drawerStyles: DrawerStyles = {
+    wrapper: {
+      transform: 'translateX(0) !important',
+    },
+  };
+
   return (
     <>
       <Button className="!p-0" type="link" onClick={showDrawer}>
         统计分析
       </Button>
-      <Drawer title="统计分析" width={900} destroyOnClose onClose={onClose} open={open}>
+      <Drawer title="统计分析" width={900} destroyOnClose onClose={onClose} open={open} styles={drawerStyles}>
         <Tabs size="large" className="-mt-4" defaultActiveKey={EScopeType.conversation} items={items} />
       </Drawer>
     </>

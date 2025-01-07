@@ -33,7 +33,7 @@ async def create_team(
             owner_cellphone=req.owner_cellphone,
         )
     )
-    resp = schemas.team.Team.parse_obj(team)
+    resp = schemas.team.Team.model_validate(team, from_attributes=True)
     return resp
 
 
@@ -68,7 +68,7 @@ async def update_team(
             owner_cellphone=req.owner_cellphone,
         ),
     )
-    return schemas.team.Team.parse_obj(team)
+    return schemas.team.Team.model_validate(team, from_attributes=True)
 
 
 @router.post(
@@ -80,13 +80,17 @@ async def update_team(
 async def list_team(
     page_size: int = Body(...),
     page: int = Body(...),
+    name: str = Body(None),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ) -> schemas.team.ListTeamResp:
     skip = (page - 1) * page_size
     limit = page_size
 
     teams = await crud.team.query(
-        skip=skip, limit=limit, sort=["-create_time"]
+        skip=skip,
+        limit=limit,
+        sort=["-create_time"],
+        name=name.strip() if isinstance(name, str) else None,
     ).to_list()
     if not teams:
         return schemas.team.ListTeamResp(list=[], total=0)

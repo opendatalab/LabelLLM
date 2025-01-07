@@ -2,7 +2,7 @@ import { Form, Steps } from 'antd';
 import { useLocation, useNavigate, useParams, useRouteLoaderData } from 'react-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useSessionStorage } from 'react-use';
+import { useSessionStorageState } from 'ahooks';
 
 import CustomPageContainer from '../../layouts/CustomPageContainer';
 import TaskBasic from './basic';
@@ -49,8 +49,8 @@ export default function CreateLabelTask() {
   const [basicForm] = Form.useForm();
   const [toolForm] = Form.useForm();
   const routeParams = useParams();
-  const [, setBasicCache] = useSessionStorage('label_task_basic_cache');
-  const [, setToolCache] = useSessionStorage('label_task_tool_cache');
+  const [, setBasicCache] = useSessionStorageState('label_task_basic_cache');
+  const [, setToolCache] = useSessionStorageState('label_task_tool_cache');
 
   const taskInfo = useRouteLoaderData('labelTask') as OperatorTaskDetail;
   const isNewTask = typeof routeParams.id === 'undefined';

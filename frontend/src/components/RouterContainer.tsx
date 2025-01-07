@@ -5,7 +5,7 @@
 import { Spin } from 'antd';
 import React, { useMemo } from 'react';
 import _ from 'lodash';
-import { useTitle } from 'react-use';
+import { useTitle } from 'ahooks';
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, useMatches } from 'react-router-dom';
 

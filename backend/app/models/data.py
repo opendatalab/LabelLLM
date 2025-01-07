@@ -1,4 +1,5 @@
 import time
+from typing import Annotated
 from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
@@ -9,22 +10,22 @@ from app import schemas
 
 class Data(Document):
     # 数据id
-    data_id: Indexed(UUID, unique=True)  # type: ignore
+    data_id: Annotated[UUID, Indexed(unique=True)]
 
     # 数据来源id
-    source_data_id: UUID | None
+    source_data_id: Annotated[UUID | None, Indexed] = Field(default=None)
 
     # 结果id
     result_id: UUID
 
     # 任务id
-    task_id: Indexed(UUID)  # type: ignore
+    task_id: Annotated[UUID, Indexed()]
 
     # 数据状态
     status: schemas.data.DataStatus
 
     # 问卷id
-    questionnaire_id: Indexed(UUID)  # type: ignore
+    questionnaire_id: Annotated[UUID, Indexed()]
 
     # 提示内容
     prompt: str
@@ -36,7 +37,7 @@ class Data(Document):
     conversation: list[schemas.message.Message]
 
     # 参考评价
-    reference_evaluation: schemas.evaluation.LabelEvaluation | None
+    reference_evaluation: schemas.evaluation.LabelEvaluation | None = Field(default=None)
 
     # 评价
     evaluation: schemas.evaluation.Evaluation
@@ -48,7 +49,7 @@ class Data(Document):
     custom: dict = Field(default_factory=dict)
 
     # 是否被抽样过
-    sampled: bool | None
+    sampled: bool | None = Field(default=None)
 
     class Settings:
         use_revision = True

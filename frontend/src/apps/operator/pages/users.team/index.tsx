@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { TablePaginationConfig } from 'antd';
 import { Button, Space, Divider, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useBoolean } from 'react-use';
+import { useToggle } from 'ahooks';
 import { useQuery } from '@tanstack/react-query';
 import useUrlState from '@ahooksjs/use-url-state';
 
@@ -14,11 +14,13 @@ import { getTeamList } from '@/apps/operator/services/team';
 import { teamKey } from '../../constant/query-key-factories';
 import CustomPageContainer from '../../layouts/CustomPageContainer';
 import Edit from './Edit';
+import { ProForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
 
 export default function UsersTeam() {
-  const [state, setState] = useUrlState({ page: 1, page_size: 10 });
+  const [state, setState] = useUrlState({ page: 1, page_size: 10, name: undefined });
+  const formRef = useRef<ProFormInstance>();
 
-  const [open, onOpenChange] = useBoolean(false);
+  const [open, { toggle }] = useToggle(false);
   const [teamInfo, setTeamInfo] = useState<ITeam | undefined>(undefined);
 
   const { data, isLoading, refetch } = useQuery({
@@ -56,7 +58,7 @@ export default function UsersTeam() {
           <a
             onClick={() => {
               setTeamInfo(record);
-              onOpenChange();
+              toggle();
             }}
           >
             编辑
@@ -69,7 +71,7 @@ export default function UsersTeam() {
 
   const onCreate = () => {
     setTeamInfo(undefined);
-    onOpenChange();
+    toggle();
   };
 
   const onChange = (pagination: TablePaginationConfig) => {
@@ -82,7 +84,34 @@ export default function UsersTeam() {
 
   return (
     <CustomPageContainer title="标注团队">
-      <div className="text-right mb-4">
+      <div className="mb-4 flex items-center justify-between">
+        <ProForm
+          layout="inline"
+          autoFocusFirstInput={false}
+          formRef={formRef}
+          onFinish={async (values) => {
+            setState({ name: values.name || undefined, page: undefined, page_size: undefined });
+            return true;
+          }}
+          submitter={{
+            searchConfig: {
+              submitText: '搜索',
+            },
+            render: (props, defaultDoms) => {
+              return [defaultDoms?.[1]];
+            },
+          }}
+        >
+          <ProFormText
+            name="name"
+            placeholder="请输入团队名称"
+            fieldProps={{
+              onPressEnter: () => {
+                formRef.current?.submit();
+              },
+            }}
+          />
+        </ProForm>
         <Button type="primary" icon={<PlusOutlined />} onClick={onCreate}>
           新建团队
         </Button>
@@ -115,7 +144,7 @@ export default function UsersTeam() {
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             isPage ? resetState() : refetch?.();
           }
-          onOpenChange();
+          toggle();
         }}
       />
     </CustomPageContainer>
