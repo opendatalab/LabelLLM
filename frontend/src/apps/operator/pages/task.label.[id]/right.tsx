@@ -244,7 +244,7 @@ export default function LabelDetailRight() {
                       </Button>
                     </JsonlUpload>
                     <Link
-                      className="ml-4 text-secondary"
+                      className="ml-4 text-color"
                       to="https://github.com/opendatalab/LabelLLM/wiki/%E6%95%B0%E6%8D%AE%E4%B8%8A%E4%BC%A0%E6%A0%BC%E5%BC%8F"
                       target="_blank"
                     >

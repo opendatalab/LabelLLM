@@ -27,7 +27,7 @@ import Help from '@/components/Help';
 
 const statusMap = {
   [ELabelStatus.pending]: '待标注',
-  [ELabelStatus.processing]: '进行中',
+  [ELabelStatus.processing]: '标注中',
   [ELabelStatus.completed]: '已完成',
   [ELabelStatus.discarded]: '标注完成(未达标)',
 };
