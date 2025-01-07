@@ -138,16 +138,19 @@ async def get_me(user: User = Depends(deps.get_current_user)):
     description="修改用户信息",
 )
 async def edit_user(
-    name: Optional[str] = Body(""),
-    role: schemas.user.UserType | None = Body(default=None),
-    user: User = Depends(deps.get_current_user),
+    user_info: schemas.user.EditUserInfo = Body(...),
+    user: schemas.user.DoUser = Depends(deps.get_current_user),
 ):
     """
     if user.user_id == user_info.user_id:
         raise exceptions.USER_NOT_ALLOWED_OPERATION
     """
+    if user_info.user_id is None and user_info.name is None:
+        raise exceptions.USER_NOT_EXIST
+    
 
-    db_user = await crud.user.query(name=name).first_or_none()
+
+    db_user = await crud.user.query(user_id=user_info.user_id, name=user_info.name).first_or_none()
     if not db_user:
         raise exceptions.USER_NOT_EXIST
 
@@ -160,13 +163,13 @@ async def edit_user(
     if db_user.role in (
         schemas.user.UserType.SUPER_ADMIN,
         schemas.user.UserType.ADMIN,
-    ) and role in (schemas.user.UserType.SUPER_ADMIN, schemas.user.UserType.ADMIN):
+    ) and user_info.role in (schemas.user.UserType.SUPER_ADMIN, schemas.user.UserType.ADMIN):
         raise exceptions.USER_IS_OPERATOR_ALREADY_YET
 
     await crud.user.update(
         db_obj=db_user,
         obj_in=models.user.UserUpdate(
-            role=role,
+            role=user_info.role,
         ),
     )
 
@@ -185,7 +188,6 @@ async def list_users(
     is_operator: bool = Body(default=False, description="是否是运营"),
     user: User = Depends(deps.get_current_user),
 ):
-    print()
     if user.role not in (
         schemas.user.UserType.SUPER_ADMIN,
         schemas.user.UserType.ADMIN,

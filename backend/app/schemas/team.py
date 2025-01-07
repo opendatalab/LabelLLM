@@ -21,8 +21,8 @@ class CreateTeamReq(BaseModel):
     """
 
     name: str = Field(description="团队名称", max_length=50)
-    owner: str | None = Field(description="联系人", max_length=20)
-    owner_cellphone: str | None = Field(description="联系人电话", max_length=20)
+    owner: str | None = Field(description="联系人", max_length=20, default=None)
+    owner_cellphone: str | None = Field(description="联系人电话", max_length=20, default=None)
 
 
 class UpdateTeamReq(BaseModel):
@@ -31,9 +31,9 @@ class UpdateTeamReq(BaseModel):
     """
 
     team_id: UUID = Field(description="团队 id")
-    name: str | None = Field(description="团队名称", max_length=50)
-    owner: str | None = Field(description="联系人", max_length=20)
-    owner_cellphone: str | None = Field(description="联系人电话", max_length=20)
+    name: str | None = Field(description="团队名称", max_length=50, default=None)
+    owner: str | None = Field(description="联系人", max_length=20, default=None)
+    owner_cellphone: str | None = Field(description="联系人电话", max_length=20, default=None)
 
 
 class Team(BaseModel):
@@ -43,10 +43,10 @@ class Team(BaseModel):
 
     team_id: UUID = Field(description="团队 id")
     name: str = Field(description="团队名称")
-    owner: str | None = Field(description="联系人")
-    owner_cellphone: str | None = Field(description="联系人电话")
+    owner: str | None = Field(description="联系人", default=None)
+    owner_cellphone: str | None = Field(description="联系人电话", default=None)
     user_count: int = Field(description="成员个数")
-    is_default_team: bool | None = Field(description="是否是默认团队")
+    is_default_team: bool | None = Field(description="是否是默认团队", default=None)
 
 
 class ListTeamResp(BaseModel):

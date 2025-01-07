@@ -80,13 +80,17 @@ async def update_team(
 async def list_team(
     page_size: int = Body(...),
     page: int = Body(...),
+    name: str = Body(None),
     user: schemas.user.DoUser = Depends(deps.get_current_user),
 ) -> schemas.team.ListTeamResp:
     skip = (page - 1) * page_size
     limit = page_size
 
     teams = await crud.team.query(
-        skip=skip, limit=limit, sort=["-create_time"]
+        skip=skip,
+        limit=limit,
+        sort=["-create_time"],
+        name=name.strip() if isinstance(name, str) else None,
     ).to_list()
     if not teams:
         return schemas.team.ListTeamResp(list=[], total=0)

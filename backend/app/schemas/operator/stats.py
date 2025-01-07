@@ -55,7 +55,7 @@ class RespStatsLabelTask(BaseModel):
 
 
 class StatsLabelTaskProjectModel(BaseModel):
-    value: str | None = Field(alias="_id")
+    value: str | None = Field(alias="_id", default=None)
     count: int = Field(description="数量统计")
 
 
