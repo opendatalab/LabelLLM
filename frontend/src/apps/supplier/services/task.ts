@@ -218,7 +218,7 @@ export const getPreviewData = (params: IQuestionParams): Promise<ILabelData> => 
 };
 // 获取某个标注员的标注数据
 export const getLabelDataByUserId = (params: IQuestionParams): Promise<ILabelData> => {
-  return request.post('/v1/operator/task/label/record/preview', params);
+  return request.post('/v1/task/label/record/preview', params);
 };
 
 // 获取预览数据id
