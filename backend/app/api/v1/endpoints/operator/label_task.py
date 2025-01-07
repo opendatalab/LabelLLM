@@ -291,6 +291,7 @@ async def update_label_task(
 
     return resp
 
+
 @router.patch(
     "/batch",
     summary="批量更新标注任务",
@@ -339,8 +340,6 @@ async def list_label_task(
         raise exceptions.USER_NOT_EXIST
 
     total_q_d = {"title": req.title, "status": req.status, "creator_id": req.creator_id}
-    if db_user.role != schemas.user.UserType.SUPER_ADMIN:
-        total_q_d["creator_id"] = db_user.user_id
 
     total = await crud.label_task.query(**total_q_d).count()
 
@@ -368,9 +367,6 @@ async def list_label_task(
         "sort": ["-create_time"],
         "creator_id": req.creator_id,
     }
-
-    if db_user.role != schemas.user.UserType.SUPER_ADMIN:
-        list_task_q["creator_id"] = db_user.user_id
 
     tasks = await crud.label_task.query(**list_task_q).to_list()
     if not tasks:
@@ -1021,6 +1017,9 @@ async def list_by_questionnaire_id(
     datas: list[models.data.Data] = await crud.data.query(
         task_id=task.task_id,
         questionnaire_id=req.questionnaire_id,
+        invalid=True
+        if req.record_status == schemas.operator.task.RecordFullStatus.INVALID
+        else None,
     ).to_list()
 
     return schemas.operator.task.RespQuestionnaireDataIDs(

@@ -32,7 +32,8 @@ class DoUser(DoUserBase):
 
 
 class EditUserInfo(BaseModel):
-    user_id: str = Field(description="用户ID")
+    user_id: str | None = Field(description="用户ID", default=None)
+    name: str | None = Field(description="用户名称", default=None)
     role: UserType = Field(description="用户角色")
 
 
@@ -66,7 +67,7 @@ class UserLoginRequest(BaseModel):
 
 class RespMe(DoUser):
     name: str = Field(..., description="用户名")
-    teams: list[TeamMember] | None = Field(description="teams that user joined")
+    teams: list[TeamMember] | None = Field(description="teams that user joined", default=None)
 
 
 class ListUserTaskResp(BaseModel):

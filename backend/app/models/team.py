@@ -35,8 +35,8 @@ class Team(Document):
 class TeamCreate(BaseModel):
     team_id: UUID = Field(default_factory=uuid4)
     name: str
-    owner: str | None
-    owner_cellphone: str | None
+    owner: str | None = Field(default=None)
+    owner_cellphone: str | None = Field(default=None)
     create_time: int = Field(default_factory=lambda: int(time.time()))
     update_time: int = Field(default_factory=lambda: int(time.time()))
     users: list[TeamMember] = Field(default_factory=list)

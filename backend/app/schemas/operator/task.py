@@ -239,7 +239,7 @@ class ReqRejectData(DoTaskBase):
 class ReqQuestionnaireDataIDs(BaseModel):
     task_id: UUID | None = Field(description="任务 id", default=None)
     questionnaire_id: UUID | None = Field(description="问卷 id", default=None)
-
+    record_status: RecordFullStatus | None = Field(description="状态", default=None)
 
 class RespQuestionnaireDataIDs(BaseModel):
     data: list[UUID] = Field(description="数据 id")
@@ -270,7 +270,7 @@ class ReqPreviewRecord(DoTaskBase):
 
 
 class RespPreviewRecord(DoDataForUser):
-    label_user: DoUserWithUsername | None = Field(description="标注员")
+    label_user: DoUserWithUsername | None = Field(description="标注员", default=None)
 
 
 class ReqRecordList(DoTaskBase):
