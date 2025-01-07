@@ -250,7 +250,11 @@ export const getAuditDataId = (params: IQuestionParams): Promise<IPreviewIdRRes>
 };
 
 // 根据 questionnaire_id 获取 data_id
-export const getTaskDataIds = (params: { questionnaire_id?: string; task_id: string }): Promise<{ data: string[] }> => {
+export const getTaskDataIds = (params: {
+  questionnaire_id?: string;
+  task_id: string;
+  record_status?: ERecordStatus;
+}): Promise<{ data: string[] }> => {
   return request.post('/v1/operator/task/label/data/list_by_questionnaire_id', params);
 };
 

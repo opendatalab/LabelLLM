@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Select } from 'antd';
 
-import { getTaskDataIds } from '@/apps/supplier/services/task';
+import { ERecordStatus, getTaskDataIds } from '@/apps/supplier/services/task';
 import { EKind, useTaskParams } from '@/apps/supplier/hooks/useTaskParams';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -15,6 +15,7 @@ const QuestionnaireSelect = ({ data_id, questionnaire_id }: { data_id?: string; 
       getTaskDataIds({
         task_id: taskId!,
         questionnaire_id: questionnaire_id,
+        record_status: urlState.record_status === ERecordStatus.invalid ? ERecordStatus.invalid : undefined,
       }),
     enabled: urlState.kind === EKind.with_duplicate && !!questionnaire_id,
   });
