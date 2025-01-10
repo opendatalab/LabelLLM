@@ -736,17 +736,15 @@ async def delete_label_task(
         with tempfile.TemporaryFile() as fp:
             with zipfile.ZipFile(fp, "w") as zf:
                 with zf.open("task.json", "w") as f:
-                    f.write(task.json(ensure_ascii=False).encode("utf-8"))
+                    f.write(task.model_dump_json().encode("utf-8"))
 
                 with zf.open("data.jsonl", "w", force_zip64=True) as f:
                     async for data in crud.data.query(task_id=req.task_id):
-                        f.write((data.json(ensure_ascii=False) + "\n").encode("utf-8"))
+                        f.write((data.model_dump_json() + "\n").encode("utf-8"))
 
                 with zf.open("record.jsonl", "w", force_zip64=True) as f:
                     async for record in crud.record.query(task_id=req.task_id):
-                        f.write(
-                            (record.json(ensure_ascii=False) + "\n").encode("utf-8")
-                        )
+                        f.write((record.model_dump_json() + "\n").encode("utf-8"))
 
             fp.seek(0)
             minio.minio.client.put_object(
