@@ -10,7 +10,7 @@ export default {
   'task.detail.upload.error1': '文件格式错误',
   'task.detail.upload.error2': '文件大小请控制在50以内M',
   'task.detail.upload.desc':
-    ' 支持格式：图片（png、jpg、jpeg、gif）、视频（mp4、mov）、音频（mp3）；单个文件大小不超过50M',
+    '支持格式：图片（png、jpg、jpeg、gif）、视频（mp4、mov）、音频（mp3）、文档（txt、pdf、doc、docx、ppt、pptx、xlsx、xls）；单个文件大小不超过50M',
   'task.detail.submit': '提交',
   'task.detail.skip': '跳过',
   'task.detail.cancel': '退出',
