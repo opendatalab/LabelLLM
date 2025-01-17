@@ -19,6 +19,16 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   setFieldValue: (name: string[], value: any) => void;
 }
 
+const docType = [
+  'text/plain',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
 const mediaType = [
   'image/png',
   'image/jpg',
@@ -28,6 +38,7 @@ const mediaType = [
   'video/quicktime',
   'audio/mp3',
   'audio/mpeg',
+  ...docType,
 ];
 
 const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, question, mdValue, setFieldValue }) => {
@@ -64,7 +75,13 @@ const CustomizeTextarea: React.FC<PropsWithChildren<IProps>> = ({ names, questio
       const { response, name } = info.file || {};
       if (response) {
         if (response.get_path) {
-          setFieldValue(names, `${mdValue} ![${name}](${response.get_path})`);
+          // 判断 文档类型 解析成 link  txt、doc、docx、ppt、pptx、xlsx、xls
+          const types = docType.filter((item) => !['application/pdf', 'text/plain'].includes(item));
+          if (types.includes(info.file.type as string)) {
+            setFieldValue(names, `${mdValue} [${name}](${response.get_path})`);
+          } else {
+            setFieldValue(names, `${mdValue} ![${name}](${response.get_path})`);
+          }
         } else {
           message.error('上传失败');
         }

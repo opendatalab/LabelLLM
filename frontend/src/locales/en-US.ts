@@ -10,7 +10,7 @@ export default {
   'task.detail.upload.error1': 'File format error',
   'task.detail.upload.error2': 'Please keep the file size within 50 M',
   'task.detail.upload.desc':
-    'Supported formats: image (png, jpg, jpeg, gif), video (mp4, mov), audio (mp3); single file size does not exceed 50M.',
+    'Supported formats: image (png, jpg, jpeg, gif), video (mp4, mov), audio (mp3), document (txt, pdf, doc, docx, ppt, pptx, xlsx, xls); single file size does not exceed 50M.',
   'task.detail.submit': 'Submit',
   'task.detail.skip': 'Skip',
   'task.detail.cancel': 'Exit',

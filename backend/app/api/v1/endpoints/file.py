@@ -48,12 +48,12 @@ async def file_upload(
     )
 
     return {
-        "get_path": f"/api/v1/file/file_preview?path={settings.ENVIRONMENT}/file_upload/{db_file.file_id}{Path(file.filename or '').suffix}",
+        "get_path": f"/api/v1/file/file_preview/{settings.ENVIRONMENT}/file_upload/{db_file.file_id}{Path(file.filename or '').suffix}",
     }
 
 
 @router.get(
-    "/file_preview",
+    "/file_preview/{path:path}",
     summary="获取文件预览",
     description="获取文件预览",
 )
