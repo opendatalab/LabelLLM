@@ -52,8 +52,14 @@ const markdownComponents = (imageLinks: string[]) => {
         return <video controls src={src} style={{ maxWidth: '100%' }} />;
       }
       // 解析文档类型 如果是 txt, pdf 则解析成iframe标签
-      if (['txt', 'pdf'].includes(parseDocumentType(src as string))) {
-        return <iframe src={src} allowFullScreen style={{ maxWidth: '100%', height: '700px', width: '100%' }} />;
+      if (['pdf', 'txt'].includes(parseDocumentType(src as string))) {
+        return (
+          <iframe
+            src={src}
+            allowFullScreen
+            style={{ border: 'none', maxWidth: '100%', height: '700px', width: '100%' }}
+          />
+        );
       }
 
       return (
