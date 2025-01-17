@@ -1,14 +1,19 @@
-import type { HTMLAttributes, PropsWithChildren } from 'react';
+import type { HTMLAttributes } from 'react';
 import React from 'react';
 import { clsx } from 'clsx';
-import MarkdownPreview from '@uiw/react-markdown-preview';
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import rehypeRaw from 'rehype-raw';
+import type { ExtraProps } from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Image } from 'antd';
 
-import { isUrlMedia } from '@/utils/isUrlMedia';
-
-import errorImage from './errorImage.png';
+import { parseDocumentType } from '@/utils/parseDocumentType';
 
 import 'katex/dist/katex.min.css';
 
@@ -16,22 +21,68 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   value: string;
 }
 
-const Image = (props: any) => {
-  return (
-    <img
-      {...props}
-      className="inline-block max-w-full"
-      onError={(e) => {
-        const target = e.target as HTMLImageElement;
-        target.onerror = null;
-        target.src = errorImage;
-      }}
-      alt={props.alt || 'image'}
-    />
-  );
+const markdownComponents = (imageLinks: string[]) => {
+  return {
+    code(props: React.ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { children, className, node, ...rest } = props;
+      const match = /language-(\w+)/.exec(className || '');
+      return match ? (
+        // @ts-ignore
+        <SyntaxHighlighter
+          {...rest}
+          PreTag="div"
+          // eslint-disable-next-line react/no-children-prop
+          children={String(children).replace(/\n$/, '')}
+          language={match[1]}
+          style={prism as any}
+        />
+      ) : (
+        <code {...rest} className={className}>
+          {children}
+        </code>
+      );
+    },
+    img({ src, alt }: { src?: string; alt?: string }) {
+      // 解析图片格式 如果是mp3格式的音频文件则解析成audio标签 如果是mp4格式的视频文件则解析成video标签
+      if (['mp3'].includes(parseDocumentType(src as string))) {
+        return <audio controls src={src} />;
+      }
+      if (['mp4', 'mov'].includes(parseDocumentType(src as string))) {
+        return <video controls src={src} style={{ maxWidth: '100%' }} />;
+      }
+      // 解析文档类型 如果是 txt, pdf 则解析成iframe标签
+      if (['txt', 'pdf'].includes(parseDocumentType(src as string))) {
+        return <iframe src={src} allowFullScreen style={{ maxWidth: '100%', height: '700px', width: '100%' }} />;
+      }
+
+      return (
+        <Image.PreviewGroup items={imageLinks}>
+          <Image
+            style={{
+              maxWidth: '100%',
+            }}
+            alt={alt}
+            src={src}
+          />
+        </Image.PreviewGroup>
+      );
+    },
+  };
 };
 
-const Markdown: React.FC<PropsWithChildren<IProps>> = ({ value, className }) => {
+const getImageLinks = (v: string) => {
+  const regex = /!\[.*?\]\((https?:\/\/.*?\.(?:jpg|jpeg|png|gif|bmp|webp))\s*(".*?")?\)/gi;
+  const links: string[] = [];
+  let match;
+  while ((match = regex.exec(v)) !== null) {
+    links.push(match[1]);
+  }
+  return links;
+};
+
+const MarkdownRenderer: React.FC<IProps> = ({ value, className: classNameb }) => {
+  const imageLinks = getImageLinks(value);
   return (
     <ErrorBoundary
       fallback={
@@ -40,39 +91,16 @@ const Markdown: React.FC<PropsWithChildren<IProps>> = ({ value, className }) => 
         </div>
       }
     >
-      <MarkdownPreview
-        disableCopy={true}
-        wrapperElement={{
-          'data-color-mode': 'light',
-        }}
-        remarkPlugins={[remarkMath]}
-        rehypePlugins={[rehypeKatex]}
-        className={clsx('chat-markdown !text-sm !text-color', className)}
-        source={value}
-        components={{
-          img: Image,
-        }}
-        rehypeRewrite={(node: any, index, parent: any) => {
-          if (node.tagName === 'a' && parent && /^h(1|2|3|4|5|6)/.test(parent.tagName)) {
-            parent.children = parent.children.slice(1);
-          }
-          // 检验图片是否为s3地址 如果是则替换成要转换的地址
-          if (node.tagName === 'img') {
-            // 解析图片格式 如果是mp3格式的音频文件则解析成audio标签 如果是mp4格式的视频文件则解析成video标签
-            if (['mp3'].includes(isUrlMedia(node.properties.src))) {
-              node.tagName = 'audio';
-              node.properties.controls = true;
-            }
-            if (['mp4', 'mov'].includes(isUrlMedia(node.properties.src))) {
-              node.tagName = 'video';
-              node.properties.controls = true;
-              node.properties.style = 'max-width: 100%';
-            }
-          }
-        }}
+      <ReactMarkdown
+        className={clsx('chat-markdown !text-sm !text-color', classNameb)}
+        // eslint-disable-next-line react/no-children-prop
+        children={value}
+        remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
+        rehypePlugins={[rehypeKatex, rehypeRaw]}
+        components={markdownComponents(imageLinks)}
       />
     </ErrorBoundary>
   );
 };
 
-export default Markdown;
+export default MarkdownRenderer;
