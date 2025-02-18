@@ -83,7 +83,7 @@ async def list_label_task(
         # 待提交的记录
         with sentry_sdk.start_span(description="get not submit record"):
             async for record in crud.record.query(
-                task_id=open_task_ids,
+                task_id=task_ids,
                 user_id=user.user_id,
                 is_submit=False,
             ):
@@ -93,7 +93,7 @@ async def list_label_task(
         # 统计剩余题数
         with sentry_sdk.start_span(description="count task remain"):
             async for task_remain in crud.data.query(
-                task_id=open_task_ids,
+                task_id=task_ids,
                 status=schemas.data.DataStatus.PENDING,
             ).aggregate(
                 [
